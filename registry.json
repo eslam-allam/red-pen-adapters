@@ -1,18 +1,19 @@
 {
-  "schema": 1,
+  "schema": 2,
   "name": "Red Pen official adapter registry",
   "adapters": [
     {
       "id": "logisim",
       "name": "Logisim",
-      "version": "1.0.0",
-      "description": "Compares a Logisim circuit's generated truth table with the key table.",
+      "version": "2.0.0",
+      "description": "Runs Logisim's truth-table mode and compares the generated table with the key.",
+      "author": "Red Pen",
       "permissions": [
         "files:read",
         "subprocess"
       ],
-      "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/v1.0.0/logisim.zip",
-      "sha256": "0c897ca9af2e386a6296a117636489bf496a04f5a6a344509a1b2f99baa947fe"
+      "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/v2.0.0/logisim.zip",
+      "sha256": "fee32280fb8939e41ba4ca961bbd2f7ad332d0f3a1f25812b5f5945d201ca6ea"
     }
   ]
 }

@@ -1,12 +1,16 @@
 {
+  "schema": 2,
   "id": "logisim",
   "name": "Logisim",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Runs Logisim's truth-table mode and compares the generated table with the key.",
   "author": "Red Pen",
+  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
   "extensions": ["circ"],
-  "command": "python3",
-  "args": ["logisim_adapter.py", "{file}"],
+  "runtime": "builtin",
+  "builtin": "logisim",
+  "command": "",
+  "args": [],
   "permissions": ["files:read", "subprocess"],
   "keyInput": [
     {
@@ -19,10 +23,12 @@
   ],
   "settings": [
     {
-      "key": "logisimBin",
+      "key": "programPath",
       "label": "Logisim executable",
-      "type": "text",
-      "help": "Optional. Defaults to LOGISIM_BIN, logisim-evolution, or logisim."
+      "type": "path",
+      "required": true,
+      "placeholder": "/usr/bin/logisim-evolution",
+      "help": "The path to logisim-evolution or logisim. The adapter runs it directly; no Python or other runtime is needed."
     }
   ]
 }
