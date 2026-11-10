@@ -49,3 +49,17 @@ The adapter package asks the app to download the `uv` launcher into its own
 folder on first install (`bootstrap.uv`). uv then downloads the requested
 Python version on first use and keeps it in its cache. The adapter declares
 `network` for that download and `subprocess` for running the student's code.
+
+## Language pack
+
+The language adapters run a submitted file or a question answer with the
+language's runtime and compare the printed output with the `expected` key
+field. They declare their supported extensions and work on both files and
+questions.
+
+Included: JavaScript, TypeScript, Ruby, PHP, Go, Rust, C, C++, Java, Kotlin,
+C#, F#, Swift, Lua, R, Julia, Haskell, Elixir, Erlang, Dart, Scala, Perl,
+Bash, and PowerShell. Python has its own uv adapter above.
+
+Each adapter uses `python3` to start its small runner. Set `programPath` if the
+target runtime is not on PATH.
