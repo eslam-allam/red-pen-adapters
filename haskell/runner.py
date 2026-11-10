@@ -123,7 +123,7 @@ def main() -> int:
     mode = str(request.get("mode") or "grade")
     expected = str(values.get("expected") or context.get("expected") or "")
     max_points = float(context.get("maxPoints") or 0)
-    program = str(settings.get("programPath") or "").strip() or None
+    program = str(settings.get("interpreterPath") or settings.get("programPath") or "").strip() or None
     try:
         timeout = max(1.0, min(300.0, float(settings.get("timeout") or 15)))
     except (TypeError, ValueError):

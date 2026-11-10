@@ -67,3 +67,10 @@ Bash, and PowerShell. Python has its own uv adapter above.
 Each adapter folder ships a small Python runner and asks the app to download
 uv on first install. The runner then starts the target language. Set
 `programPath` if the target runtime is not on PATH.
+
+## Runtime paths
+
+Language adapters do not download or bundle the language runtime. Each one
+declares a `Runtime executable` setting, and an empty value means the runtime
+is found on `PATH`. Python and Logisim keep using uv, which the app downloads
+into their adapter folder on first install.

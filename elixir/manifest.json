@@ -16,12 +16,8 @@
     "question"
   ],
   "runtime": "process",
-  "command": "uv",
+  "command": "python3",
   "args": [
-    "run",
-    "--no-project",
-    "--python",
-    "3.12",
     "runner.py"
   ],
   "permissions": [
@@ -40,6 +36,13 @@
   ],
   "settings": [
     {
+      "key": "interpreterPath",
+      "label": "Runtime executable",
+      "type": "path",
+      "placeholder": "/usr/bin/elixir",
+      "help": "The runtime that runs this language. Leave empty to use PATH."
+    },
+    {
       "key": "timeout",
       "label": "Seconds before stopping",
       "type": "number",
@@ -47,8 +50,5 @@
       "help": "How long the submitted program may run."
     }
   ],
-  "language": "elixir",
-  "bootstrap": {
-    "uv": "latest"
-  }
+  "language": "elixir"
 }
