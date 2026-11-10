@@ -17,6 +17,7 @@ its app-data folder.
       "version": "2.0.0",
       "description": "…",
       "author": "Red Pen",
+      "appliesTo": ["file", "question"],
       "permissions": ["files:read", "subprocess"],
       "downloadUrl": "https://…/logisim.zip",
       "sha256": "…"
@@ -36,3 +37,15 @@ compares the generated truth table with the `table` key input. Set the
 `programPath` setting to the Logisim executable, or set `LOGISIM_BIN`, or put
 `logisim-evolution`/`logisim` on `PATH`. No Python or other interpreter is
 required.
+
+
+## Python (uv)
+
+The Python adapter runs code supplied as a `.py` attachment or as the answer
+to a question. It compares the program's printed output with the `expected`
+key field. Choose the Python version and any packages in the adapter settings.
+
+The adapter package asks the app to download the `uv` launcher into its own
+folder on first install (`bootstrap.uv`). uv then downloads the requested
+Python version on first use and keeps it in its cache. The adapter declares
+`network` for that download and `subprocess` for running the student's code.
