@@ -1,0 +1,53 @@
+{
+  "schema": 2,
+  "id": "haskell",
+  "name": "Haskell",
+  "version": "1.0.0",
+  "description": "Runs a Haskell program with runghc.",
+  "author": "Red Pen",
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjNUQ0Rjg1IiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+SGFza2VsbDwvdGl0bGU+PHBhdGggZD0iTTAgMy41MzVMNS42NDcgMTIgMCAyMC40NjVoNC4yMzVMOS44ODMgMTIgNC4yMzUgMy41MzV6bTUuNjQ3IDBMMTEuMjk0IDEybC01LjY0NyA4LjQ2NWg0LjIzNWwzLjUzLTUuMjkgMy41MyA1LjI5aDQuMjM0TDkuODgzIDMuNTM1em04Ljk0MSA0LjkzOGwxLjg4MyAyLjgyMkgyNFY4LjQ3M3ptMi44MjQgNC4yMzJsMS44ODIgMi44MjJIMjR2LTIuODIyeiIvPjwvc3ZnPg==",
+  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
+  "extensions": [
+    "hs"
+  ],
+  "appliesTo": [
+    "file",
+    "question"
+  ],
+  "runtime": "process",
+  "command": "uv",
+  "args": [
+    "run",
+    "--no-project",
+    "--python",
+    "3.12",
+    "runner.py"
+  ],
+  "permissions": [
+    "files:read",
+    "network",
+    "subprocess"
+  ],
+  "keyInput": [
+    {
+      "key": "expected",
+      "label": "Expected output",
+      "type": "textarea",
+      "required": true,
+      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored."
+    }
+  ],
+  "settings": [
+    {
+      "key": "timeout",
+      "label": "Seconds before stopping",
+      "type": "number",
+      "default": "15",
+      "help": "How long the submitted program may run."
+    }
+  ],
+  "language": "haskell",
+  "bootstrap": {
+    "uv": "latest"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "schema": 2,
+  "id": "scala",
+  "name": "Scala",
+  "version": "1.0.0",
+  "description": "Runs a Scala program.",
+  "author": "Red Pen",
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjREMzMjJGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+U2NhbGE8L3RpdGxlPjxwYXRoIGQ9Ik00LjU4OSAyNGM0LjUzNyAwIDEzLjgxLTEuNTE2IDE0LjgyMS0zdi01LjcyOWMtLjk1NyAxLjQwOC0xMC4yODQgMi45MTItMTQuODIxIDIuOTEyVjI0ek00LjU4OSAxNi4zNjVjNC41MzcgMCAxMy44MS0xLjUxNiAxNC44MjEtM1Y3LjYzNmMtLjk1NyAxLjQwOC0xMC4yODQgMi45MTItMTQuODIxIDIuOTEydjUuODE3ek00LjU4OSA4LjcyOWM0LjUzNyAwIDEzLjgxLTEuNTE2IDE0LjgyMS0zVjBDMTguNDUzIDEuNDA4IDkuMTI2IDIuOTEyIDQuNTg5IDIuOTEydjUuODE3eiIvPjwvc3ZnPg==",
+  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
+  "extensions": [
+    "scala"
+  ],
+  "appliesTo": [
+    "file",
+    "question"
+  ],
+  "runtime": "process",
+  "command": "uv",
+  "args": [
+    "run",
+    "--no-project",
+    "--python",
+    "3.12",
+    "runner.py"
+  ],
+  "permissions": [
+    "files:read",
+    "network",
+    "subprocess"
+  ],
+  "keyInput": [
+    {
+      "key": "expected",
+      "label": "Expected output",
+      "type": "textarea",
+      "required": true,
+      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored."
+    }
+  ],
+  "settings": [
+    {
+      "key": "timeout",
+      "label": "Seconds before stopping",
+      "type": "number",
+      "default": "15",
+      "help": "How long the submitted program may run."
+    }
+  ],
+  "language": "scala",
+  "bootstrap": {
+    "uv": "latest"
+  }
+}

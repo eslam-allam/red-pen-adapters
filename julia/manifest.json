@@ -1,0 +1,53 @@
+{
+  "schema": 2,
+  "id": "julia",
+  "name": "Julia",
+  "version": "1.0.0",
+  "description": "Runs a Julia program.",
+  "author": "Red Pen",
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjOTU1OEIyIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+SnVsaWE8L3RpdGxlPjxwYXRoIGQ9Ik0xMS4xMzggMTcuNTY5YTUuNTY5IDUuNTY5IDAgMSAxLTExLjEzOCAwIDUuNTY5IDUuNTY5IDAgMSAxIDExLjEzOCAwem02LjQzMS0xMS4xMzhhNS41NjkgNS41NjkgMCAxIDEtMTEuMTM4IDAgNS41NjkgNS41NjkgMCAxIDEgMTEuMTM4IDB6TTI0IDE3LjU2OWE1LjU2OSA1LjU2OSAwIDEgMS0xMS4xMzggMCA1LjU2OSA1LjU2OSAwIDEgMSAxMS4xMzggMHoiLz48L3N2Zz4=",
+  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
+  "extensions": [
+    "jl"
+  ],
+  "appliesTo": [
+    "file",
+    "question"
+  ],
+  "runtime": "process",
+  "command": "uv",
+  "args": [
+    "run",
+    "--no-project",
+    "--python",
+    "3.12",
+    "runner.py"
+  ],
+  "permissions": [
+    "files:read",
+    "network",
+    "subprocess"
+  ],
+  "keyInput": [
+    {
+      "key": "expected",
+      "label": "Expected output",
+      "type": "textarea",
+      "required": true,
+      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored."
+    }
+  ],
+  "settings": [
+    {
+      "key": "timeout",
+      "label": "Seconds before stopping",
+      "type": "number",
+      "default": "15",
+      "help": "How long the submitted program may run."
+    }
+  ],
+  "language": "julia",
+  "bootstrap": {
+    "uv": "latest"
+  }
+}

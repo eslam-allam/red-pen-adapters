@@ -1,0 +1,54 @@
+{
+  "schema": 2,
+  "id": "kotlin",
+  "name": "Kotlin",
+  "version": "1.0.0",
+  "description": "Runs a Kotlin script.",
+  "author": "Red Pen",
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjN0Y1MkZGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+S290bGluPC90aXRsZT48cGF0aCBkPSJNMjQgMjRIMFYwaDI0TDEyIDEyWiIvPjwvc3ZnPg==",
+  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
+  "extensions": [
+    "kt",
+    "kts"
+  ],
+  "appliesTo": [
+    "file",
+    "question"
+  ],
+  "runtime": "process",
+  "command": "uv",
+  "args": [
+    "run",
+    "--no-project",
+    "--python",
+    "3.12",
+    "runner.py"
+  ],
+  "permissions": [
+    "files:read",
+    "network",
+    "subprocess"
+  ],
+  "keyInput": [
+    {
+      "key": "expected",
+      "label": "Expected output",
+      "type": "textarea",
+      "required": true,
+      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored."
+    }
+  ],
+  "settings": [
+    {
+      "key": "timeout",
+      "label": "Seconds before stopping",
+      "type": "number",
+      "default": "15",
+      "help": "How long the submitted program may run."
+    }
+  ],
+  "language": "kotlin",
+  "bootstrap": {
+    "uv": "latest"
+  }
+}

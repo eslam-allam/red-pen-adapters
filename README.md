@@ -1,8 +1,12 @@
 # Red Pen adapter registry
 
-The official registry for Red Pen adapters. The app reads `registry.json`,
-shows each adapter's declared permissions, and installs the adapter ZIP into
-its app-data folder.
+The official registry for Red Pen adapters. Every adapter is a folder with a
+`manifest.json` and its code. `registry.json` is the master index that points
+at those folders, in the same spirit as the Noctalia plugin registry.
+
+The app downloads the listed files from the folder and runs them directly; no
+ZIP packaging is needed. Adapters run on uv, which the app downloads on first
+install, so the adapter itself needs no user-installed interpreter.
 
 ## Registry format
 
@@ -19,20 +23,19 @@ its app-data folder.
       "author": "Red Pen",
       "appliesTo": ["file", "question"],
       "permissions": ["files:read", "subprocess"],
-      "downloadUrl": "https://…/logisim.zip",
-      "sha256": "…"
+      "folder": "logisim",
+      "files": ["manifest.json", "adapter.py"]
     }
   ]
 }
 ```
 
-The ZIP contains `manifest.json` at its root and, for a process adapter, the
-adapter's own program.
+Each folder contains `manifest.json` and the adapter's program. The registry
+entry lists both files, and the app resolves them relative to `registry.json`.
 
 ## Logisim
 
-The Logisim adapter is built into Red Pen, so its ZIP contains only the
-manifest. It runs `logisim-evolution -tty table <circuit>` (or `logisim`) and
+The Logisim adapter is a normal adapter folder now. It runs `logisim-evolution -tty table <circuit>` (or `logisim`) and
 compares the generated truth table with the `table` key input. Set the
 `programPath` setting to the Logisim executable, or set `LOGISIM_BIN`, or put
 `logisim-evolution`/`logisim` on `PATH`. No Python or other interpreter is
@@ -61,5 +64,6 @@ Included: JavaScript, TypeScript, Ruby, PHP, Go, Rust, C, C++, Java, Kotlin,
 C#, F#, Swift, Lua, R, Julia, Haskell, Elixir, Erlang, Dart, Scala, Perl,
 Bash, and PowerShell. Python has its own uv adapter above.
 
-Each adapter uses `python3` to start its small runner. Set `programPath` if the
-target runtime is not on PATH.
+Each adapter folder ships a small Python runner and asks the app to download
+uv on first install. The runner then starts the target language. Set
+`programPath` if the target runtime is not on PATH.

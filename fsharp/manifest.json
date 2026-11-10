@@ -1,0 +1,54 @@
+{
+  "schema": 2,
+  "id": "fsharp",
+  "name": "F#",
+  "version": "1.0.0",
+  "description": "Runs an F# script with dotnet fsi.",
+  "author": "Red Pen",
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMzc4QkJBIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RiM8L3RpdGxlPjxwYXRoIGQ9Ik0wIDEyIDExLjM5LjYxdjUuNjk1TDUuNjk1IDEybDUuNjk1IDUuNjk1djUuNjk1TDAgMTJ6bTcuMzIyIDAgNC4wNjgtNC4wNjh2OC4xMzZMNy4zMjIgMTJ6TTI0IDEyIDEyLjIwMy42MXY1LjY5NUwxNy44OTggMTJsLTUuNjk1IDUuNjk1djUuNjk1TDI0IDEyeiIvPjwvc3ZnPg==",
+  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
+  "extensions": [
+    "fsx",
+    "fs"
+  ],
+  "appliesTo": [
+    "file",
+    "question"
+  ],
+  "runtime": "process",
+  "command": "uv",
+  "args": [
+    "run",
+    "--no-project",
+    "--python",
+    "3.12",
+    "runner.py"
+  ],
+  "permissions": [
+    "files:read",
+    "network",
+    "subprocess"
+  ],
+  "keyInput": [
+    {
+      "key": "expected",
+      "label": "Expected output",
+      "type": "textarea",
+      "required": true,
+      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored."
+    }
+  ],
+  "settings": [
+    {
+      "key": "timeout",
+      "label": "Seconds before stopping",
+      "type": "number",
+      "default": "15",
+      "help": "How long the submitted program may run."
+    }
+  ],
+  "language": "fsharp",
+  "bootstrap": {
+    "uv": "latest"
+  }
+}
