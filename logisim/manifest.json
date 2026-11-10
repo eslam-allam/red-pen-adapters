@@ -1,0 +1,28 @@
+{
+  "id": "logisim",
+  "name": "Logisim",
+  "version": "1.0.0",
+  "description": "Runs Logisim's truth-table mode and compares the generated table with the key.",
+  "author": "Red Pen",
+  "extensions": ["circ"],
+  "command": "python3",
+  "args": ["logisim_adapter.py", "{file}"],
+  "permissions": ["files:read", "subprocess"],
+  "keyInput": [
+    {
+      "key": "table",
+      "label": "Key truth table",
+      "type": "textarea",
+      "required": true,
+      "placeholder": "Paste the expected truth table."
+    }
+  ],
+  "settings": [
+    {
+      "key": "logisimBin",
+      "label": "Logisim executable",
+      "type": "text",
+      "help": "Optional. Defaults to LOGISIM_BIN, logisim-evolution, or logisim."
+    }
+  ]
+}
