@@ -80,3 +80,10 @@ into their adapter folder on first install.
 Language adapters download mise, which installs the requested language version
 from the adapter's `Runtime version` setting. The runtime is cached by mise and
 used only for that adapter. Python and Logisim still use uv for their launcher.
+
+
+## Lua editor support
+
+`lua/red-pen-api.lua` is a LuaLS `---@meta` stub for the adapter host API.
+Editors using LuaLS get completion and type checking for `app`, `request`,
+`manifest`, and `result` when the repository is opened as a workspace.
