@@ -53,7 +53,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/javascript.zip",
-      "sha256": "f6b3aff10aefe6790b26ab8e51f8af8e35ba6527cba0fdc775a3e28ae8ff3cdb"
+      "sha256": "fbe01c95b9fc4638045f49f4741aaaf781610a21f9a69bd38be521d6d4fb1b46"
     },
     {
       "id": "typescript",
@@ -71,7 +71,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/typescript.zip",
-      "sha256": "af9ef310104d55dd90c0890db0d57b33359194451db2e5921ed71c949ec3023d"
+      "sha256": "7c53f6e06e548e15a5ce566375320c81578be0cec0a780416cc5429fcae3e9fa"
     },
     {
       "id": "ruby",
@@ -89,7 +89,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/ruby.zip",
-      "sha256": "9d9045c03c827172fda20f52630cd4f9077d201a60bd41fad0398507d2cde776"
+      "sha256": "78a9b52114527c40be03ddd20e10e1ff01a2b303b648f584c4a885bdaa9e69ea"
     },
     {
       "id": "php",
@@ -107,7 +107,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/php.zip",
-      "sha256": "077505e96cf4d394fb520fd90dc2e2ea51cb9f55de43ce7220be43030d1609ed"
+      "sha256": "575594f40037f65f8bce99985b9e23cc0ca064b98c2db0b4073927da1ec30d54"
     },
     {
       "id": "go",
@@ -125,7 +125,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/go.zip",
-      "sha256": "28cf014ad7318ccca227bd0ab1aea6176e8a467a8ab8b837d9fff501e4e79fa7"
+      "sha256": "b88d76559a470a1fc372933c6e87c02c5dcea2b9797f949cad2716845f472f61"
     },
     {
       "id": "rust",
@@ -143,7 +143,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/rust.zip",
-      "sha256": "b5db3a327018fe5082bb13836fdab2a5483cab51f870a1050409ac13469b34dc"
+      "sha256": "8eac47da957dc5ba7877fccae1f8bf7027a659ae6b1425315a21f93d60223d56"
     },
     {
       "id": "c",
@@ -161,7 +161,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/c.zip",
-      "sha256": "39667305201ae25a2feb46c44c4290b30b318fb35ab968f63dc60d571c6ae72d"
+      "sha256": "3edb2ae482138859ade80a44931a93c2ec1e1947e91c60aff9563c35685f877e"
     },
     {
       "id": "cpp",
@@ -179,7 +179,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/cpp.zip",
-      "sha256": "318954845bd2b67d4c884be3bf04788c9ba4b416e4fed0ae07f531fd892cd4ba"
+      "sha256": "61a402aef271f6517f27ce617dd5173634007e652a291914d5b78171df290000"
     },
     {
       "id": "java",
@@ -197,7 +197,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/java.zip",
-      "sha256": "219c678942369fe2a4ae9f30fd81a1f8de793ebf60f19c425b6f2bba56bf8c11"
+      "sha256": "beb378626c4b0e647dec6f26e841bd65ec67da25bac8e50c1e0a33db58fa7de4"
     },
     {
       "id": "kotlin",
@@ -215,7 +215,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/kotlin.zip",
-      "sha256": "bd0ab724a85e4783f9a116597ea6e8e6c3c1e9455a7d72b248463a13af1ba12e"
+      "sha256": "c67a59345029e9214a56806ffacab09633a7dd1764a6cec3cad8b9b5ac31112b"
     },
     {
       "id": "csharp",
@@ -233,7 +233,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/csharp.zip",
-      "sha256": "a7746cfbb8e3ef5f1b79030ea393ec1978c8141741fa349428b734fdbcb6ce86"
+      "sha256": "f4c91ac15e039dc1c96be87887bec04b7cca473a93f38bd20f9f63a96f686b13"
     },
     {
       "id": "fsharp",
@@ -251,7 +251,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/fsharp.zip",
-      "sha256": "586fb75e013fba27c77d1d009c1f4b8c9827c6ecee7509558fbee6abb51e211e"
+      "sha256": "b6dcfae8a5b61b1d653854956e48f4180eec120461c11cde06800ac106471177"
     },
     {
       "id": "swift",
@@ -269,7 +269,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/swift.zip",
-      "sha256": "21ac44b3bc5c81421edd16408adb495e97aa04d776facd3443b8625007df4258"
+      "sha256": "669c1a34169d9f3e94387e91d06ccae4f7f53e626704432a0d1f17b41ac52cfc"
     },
     {
       "id": "lua",
@@ -287,7 +287,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/lua.zip",
-      "sha256": "b65d7e336c9e44e8ae1758a1c294aa8fb8b0d2a0bda307d6c1ad09c2d8ebac03"
+      "sha256": "8e1bf89ecaa5d1b47f3dfa40c4f33be5d1df020b5e0bd566606c1da9861d0f21"
     },
     {
       "id": "r",
@@ -305,7 +305,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/r.zip",
-      "sha256": "0d98cde7c8e60150227a73a3818de0b54aed2657a4cc5f60549a38f8d5df3d8c"
+      "sha256": "434c903d272c6c2bd68c7911de8d882e7e7bf19eef8910a04df8d5d698f544f2"
     },
     {
       "id": "julia",
@@ -323,7 +323,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/julia.zip",
-      "sha256": "8e047b43e8fab691014ade001e0c91a35b8af5ffcfb408808891474922d52095"
+      "sha256": "b50883f0fdc22c0a9e12d4ea3500555d83f19e8966b2cb586831912dbba2df2b"
     },
     {
       "id": "haskell",
@@ -341,7 +341,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/haskell.zip",
-      "sha256": "b4e9171d8183d58e727e6544ad769571fb99dac10d977ef7b75424130630ae9b"
+      "sha256": "7825ae699e552e984ba271b3750479f7021f250d8793dfe341630d3bb5cacc68"
     },
     {
       "id": "elixir",
@@ -359,7 +359,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/elixir.zip",
-      "sha256": "a2222df51830199b6cbd39436c328011cd299615003672550a0ad8ee27c28b7b"
+      "sha256": "0c251ec3824c4a3e4070a4fc94bbc13a5b760cb07e5f5c2096adb01ceee024f6"
     },
     {
       "id": "erlang",
@@ -377,7 +377,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/erlang.zip",
-      "sha256": "0a95e31c606aac14482d4e640dc3e386e896f0a232a512df3ef26e51cb575284"
+      "sha256": "e7d983aa6f11d3c132d13bd6b61d4b36a3cb8f32aae6ca373e5433f8f5e5b464"
     },
     {
       "id": "dart",
@@ -395,7 +395,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/dart.zip",
-      "sha256": "f10836e6846ab1a66713cfa2cd0a4e0593bddcf0222236659d6c3fb3848f4034"
+      "sha256": "8cfa67ccdb4105274230ee0f5594b9d3263901b6c100f76f3b82f17e91e8e214"
     },
     {
       "id": "scala",
@@ -413,7 +413,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/scala.zip",
-      "sha256": "e3bc8549720a99be5c25711cd96bbb5c810ff0b875d8d9e253c44734bf994431"
+      "sha256": "c8378d87206fbddd291e48844fcad4c78fcb8ebfbb15071fa5ffca19fdc33101"
     },
     {
       "id": "perl",
@@ -431,7 +431,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/perl.zip",
-      "sha256": "d995f0f93b6ff2e6da42befe42026fdbfd8a6da7fe8d112d31143ecc543bbf77"
+      "sha256": "215b154ecce96b87ab5e18800da257b95f9af27550bf435138a101761a0cb41e"
     },
     {
       "id": "bash",
@@ -449,7 +449,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/bash.zip",
-      "sha256": "67b19a5ecf72d5c2d46f59217b4509b172fde1496e7c37d74cf1e4d8d1b4f86f"
+      "sha256": "b3424acd07ca12c2a5b83a22eff412dd365b51854cb64a85affe94ded93a53f7"
     },
     {
       "id": "powershell",
@@ -467,7 +467,7 @@
         "subprocess"
       ],
       "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/language-pack-v1.0.0/powershell.zip",
-      "sha256": "692205a1aaeb995e69b108154724a1e1d1a3407420646b652ae9c7cda474077c"
+      "sha256": "177cc01cf7013dccde219263baee344b076de07da117e19da5107343c4890ac1"
     }
   ]
 }
