@@ -31,6 +31,7 @@
 
 ---@class RedPenApp
 ---@field read_file fun(path: string): string
+---@field write_file fun(path: string, data: string): boolean
 ---@field temp_dir fun(): string
 ---@field run_runtime fun(tool: string, version: string, program: string, args: string[]|nil, stdin: string|nil): RedPenProcess
 ---@field run_command fun(program: string, args: string[]|nil, stdin: string|nil): RedPenProcess

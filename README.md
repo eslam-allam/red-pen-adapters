@@ -85,5 +85,8 @@ used only for that adapter. Python and Logisim still use uv for their launcher.
 ## Lua editor support
 
 `lua/red-pen-api.lua` is a LuaLS `---@meta` stub for the adapter host API.
+Adapters get a per-adapter temp folder from `app.temp_dir()` and can create
+files there with `app.write_file(path, data)`. Both are sandboxed to that
+folder.
 Editors using LuaLS get completion and type checking for `app`, `request`,
 `manifest`, and `result` when the repository is opened as a workspace.
