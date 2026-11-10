@@ -13,17 +13,13 @@
     "file",
     "question"
   ],
-  "runtime": "process",
-  "command": "uv",
+  "runtime": "lua",
+  "command": "lua",
   "args": [
-    "run",
-    "--no-project",
-    "--python",
-    "3.12",
-    "adapter.py"
+    "adapter.lua"
   ],
   "bootstrap": {
-    "uv": "latest"
+    "mise": "latest"
   },
   "permissions": [
     "files:read",

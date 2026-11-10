@@ -9,14 +9,10 @@
   "extensions": [
     "circ"
   ],
-  "runtime": "process",
-  "command": "uv",
+  "runtime": "lua",
+  "command": "lua",
   "args": [
-    "run",
-    "--no-project",
-    "--python",
-    "3.12",
-    "adapter.py"
+    "adapter.lua"
   ],
   "permissions": [
     "files:read",
@@ -53,6 +49,6 @@
     "file"
   ],
   "bootstrap": {
-    "uv": "latest"
+    "mise": "latest"
   }
 }

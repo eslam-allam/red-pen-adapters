@@ -1,5 +1,5 @@
 {
-  "schema": 3,
+  "schema": 4,
   "name": "Red Pen official adapter registry",
   "adapters": [
     {
@@ -25,7 +25,7 @@
       "folder": "bash",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -50,7 +50,7 @@
       "folder": "c",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -77,7 +77,7 @@
       "folder": "cpp",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -102,7 +102,7 @@
       "folder": "csharp",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -127,7 +127,7 @@
       "folder": "dart",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -153,7 +153,7 @@
       "folder": "elixir",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -178,7 +178,7 @@
       "folder": "erlang",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -204,7 +204,7 @@
       "folder": "fsharp",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -229,7 +229,7 @@
       "folder": "go",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -254,7 +254,7 @@
       "folder": "haskell",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -279,7 +279,7 @@
       "folder": "java",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -306,7 +306,7 @@
       "folder": "javascript",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -331,7 +331,7 @@
       "folder": "julia",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -357,7 +357,7 @@
       "folder": "kotlin",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -381,7 +381,7 @@
       "folder": "logisim",
       "files": [
         "manifest.json",
-        "adapter.py"
+        "adapter.lua"
       ]
     },
     {
@@ -406,7 +406,7 @@
       "folder": "lua",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -431,7 +431,7 @@
       "folder": "perl",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -456,7 +456,7 @@
       "folder": "php",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -481,7 +481,7 @@
       "folder": "powershell",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -506,7 +506,7 @@
       "folder": "python",
       "files": [
         "manifest.json",
-        "adapter.py"
+        "adapter.lua"
       ]
     },
     {
@@ -531,7 +531,7 @@
       "folder": "r",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -556,7 +556,7 @@
       "folder": "ruby",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -581,7 +581,7 @@
       "folder": "rust",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -606,7 +606,7 @@
       "folder": "scala",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -631,7 +631,7 @@
       "folder": "swift",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     },
     {
@@ -659,7 +659,7 @@
       "folder": "typescript",
       "files": [
         "manifest.json",
-        "runner.py"
+        "adapter.lua"
       ]
     }
   ]

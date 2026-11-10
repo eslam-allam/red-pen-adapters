@@ -17,14 +17,10 @@
     "file",
     "question"
   ],
-  "runtime": "process",
-  "command": "uv",
+  "runtime": "lua",
+  "command": "lua",
   "args": [
-    "run",
-    "--no-project",
-    "--python",
-    "3.12",
-    "runner.py"
+    "adapter.lua"
   ],
   "permissions": [
     "files:read",
@@ -66,7 +62,6 @@
   ],
   "language": "typescript",
   "bootstrap": {
-    "uv": "latest",
     "mise": "latest"
   },
   "miseTool": "node"
