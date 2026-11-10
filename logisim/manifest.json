@@ -2,23 +2,28 @@
   "schema": 2,
   "id": "logisim",
   "name": "Logisim",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Runs Logisim's truth-table mode and compares the generated table with the key.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
-  "extensions": ["circ"],
+  "extensions": [
+    "circ"
+  ],
   "runtime": "builtin",
   "builtin": "logisim",
   "command": "",
   "args": [],
-  "permissions": ["files:read", "subprocess"],
+  "permissions": [
+    "files:read",
+    "subprocess"
+  ],
   "keyInput": [
     {
       "key": "table",
       "label": "Key truth table",
-      "type": "textarea",
+      "type": "table",
       "required": true,
-      "placeholder": "Paste the expected truth table."
+      "help": "Add one row per truth-table line. The adapter also accepts rows pasted with spaces or | separators."
     }
   ],
   "settings": [

@@ -5,15 +5,15 @@
     {
       "id": "logisim",
       "name": "Logisim",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "description": "Runs Logisim's truth-table mode and compares the generated table with the key.",
       "author": "Red Pen",
       "permissions": [
         "files:read",
         "subprocess"
       ],
-      "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/v2.0.0/logisim.zip",
-      "sha256": "fee32280fb8939e41ba4ca961bbd2f7ad332d0f3a1f25812b5f5945d201ca6ea"
+      "downloadUrl": "https://github.com/eslam-allam/red-pen-adapters/releases/download/v2.1.0/logisim.zip",
+      "sha256": "4e2ec5880cf3806bc3c0cf2204488d958fbf8594c93314b06cb14bdf2e97debd"
     }
   ]
 }
