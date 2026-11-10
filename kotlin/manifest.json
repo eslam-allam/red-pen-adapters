@@ -2,7 +2,7 @@
   "schema": 2,
   "id": "kotlin",
   "name": "Kotlin",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Runs a Kotlin script.",
   "author": "Red Pen",
   "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjN0Y1MkZGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+S290bGluPC90aXRsZT48cGF0aCBkPSJNMjQgMjRIMFYwaDI0TDEyIDEyWiIvPjwvc3ZnPg==",

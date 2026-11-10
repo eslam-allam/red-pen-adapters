@@ -2,7 +2,7 @@
   "schema": 2,
   "id": "haskell",
   "name": "Haskell",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Runs a Haskell program with runghc.",
   "author": "Red Pen",
   "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjNUQ0Rjg1IiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+SGFza2VsbDwvdGl0bGU+PHBhdGggZD0iTTAgMy41MzVMNS42NDcgMTIgMCAyMC40NjVoNC4yMzVMOS44ODMgMTIgNC4yMzUgMy41MzV6bTUuNjQ3IDBMMTEuMjk0IDEybC01LjY0NyA4LjQ2NWg0LjIzNWwzLjUzLTUuMjkgMy41MyA1LjI5aDQuMjM0TDkuODgzIDMuNTM1em04Ljk0MSA0LjkzOGwxLjg4MyAyLjgyMkgyNFY4LjQ3M3ptMi44MjQgNC4yMzJsMS44ODIgMi44MjJIMjR2LTIuODIyeiIvPjwvc3ZnPg==",

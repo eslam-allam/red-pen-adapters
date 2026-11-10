@@ -2,7 +2,7 @@
   "schema": 2,
   "id": "julia",
   "name": "Julia",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Runs a Julia program.",
   "author": "Red Pen",
   "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjOTU1OEIyIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+SnVsaWE8L3RpdGxlPjxwYXRoIGQ9Ik0xMS4xMzggMTcuNTY5YTUuNTY5IDUuNTY5IDAgMSAxLTExLjEzOCAwIDUuNTY5IDUuNTY5IDAgMSAxIDExLjEzOCAwem02LjQzMS0xMS4xMzhhNS41NjkgNS41NjkgMCAxIDEtMTEuMTM4IDAgNS41NjkgNS41NjkgMCAxIDEgMTEuMTM4IDB6TTI0IDE3LjU2OWE1LjU2OSA1LjU2OSAwIDEgMS0xMS4xMzggMCA1LjU2OSA1LjU2OSAwIDEgMSAxMS4xMzggMHoiLz48L3N2Zz4=",
