@@ -74,3 +74,9 @@ Language adapters do not download or bundle the language runtime. Each one
 declares a `Runtime executable` setting, and an empty value means the runtime
 is found on `PATH`. Python and Logisim keep using uv, which the app downloads
 into their adapter folder on first install.
+
+## Runtime versions
+
+Language adapters download mise, which installs the requested language version
+from the adapter's `Runtime version` setting. The runtime is cached by mise and
+used only for that adapter. Python and Logisim still use uv for their launcher.

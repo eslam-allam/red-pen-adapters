@@ -35,11 +35,22 @@ def split_packages(value: object) -> list[str]:
     return [item.strip() for item in raw if item.strip()]
 
 
-def uv_beside_self() -> str:
-    local = Path(__file__).resolve().parent / ("uv.exe" if os.name == "nt" else "uv")
+def tool_beside_self(name: str) -> str:
+    local = Path(__file__).resolve().parent / (f"{name}.exe" if os.name == "nt" else name)
     if local.is_file():
         return str(local)
-    return shutil.which("uv") or "uv"
+    return shutil.which(name) or name
+
+
+def with_runtime(command: list[str], manifest: dict, settings: dict) -> list[str]:
+    tool = str(manifest.get("miseTool") or "").strip()
+    version = str(settings.get("runtimeVersion") or "").strip() or "latest"
+    if not tool:
+        return command
+    mise = tool_beside_self("mise")
+    if not Path(mise).is_file() and shutil.which("mise") is None:
+        return command
+    return [mise, "x", f"{tool}@{version}", "--"] + command
 
 
 def build_command(language: str, program: str | None, source: Path, work: Path) -> list[str]:
@@ -140,8 +151,8 @@ def main() -> int:
         compile_command, executable = compile_step(language, program, source, work)
         if compile_command:
             compiled = subprocess.run(
-                compile_command, cwd=str(work), env=env, capture_output=True, text=True,
-                timeout=timeout, check=False,
+                with_runtime(compile_command, manifest, settings), cwd=str(work), env=env,
+                capture_output=True, text=True, timeout=timeout, check=False,
             )
             if compiled.returncode != 0:
                 print(json.dumps({
@@ -156,8 +167,8 @@ def main() -> int:
             command = build_command(language, program, source, work)
         try:
             result = subprocess.run(
-                command, cwd=str(work), env=env, capture_output=True, text=True,
-                timeout=timeout, check=False,
+                with_runtime(command, manifest, settings), cwd=str(work), env=env,
+                capture_output=True, text=True, timeout=timeout, check=False,
             )
         except subprocess.TimeoutExpired:
             print(json.dumps({

@@ -15,8 +15,12 @@
     "question"
   ],
   "runtime": "process",
-  "command": "python3",
+  "command": "uv",
   "args": [
+    "run",
+    "--no-project",
+    "--python",
+    "3.12",
     "runner.py"
   ],
   "permissions": [
@@ -35,6 +39,14 @@
   ],
   "settings": [
     {
+      "key": "runtimeVersion",
+      "label": "Runtime version",
+      "type": "text",
+      "default": "latest",
+      "placeholder": "latest",
+      "help": "The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use."
+    },
+    {
       "key": "interpreterPath",
       "label": "Runtime executable",
       "type": "path",
@@ -49,5 +61,10 @@
       "help": "How long the submitted program may run."
     }
   ],
-  "language": "r"
+  "language": "r",
+  "bootstrap": {
+    "uv": "latest",
+    "mise": "latest"
+  },
+  "miseTool": "r"
 }
