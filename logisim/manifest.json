@@ -2,7 +2,7 @@
   "schema": 3,
   "id": "logisim",
   "name": "Logisim",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Runs Logisim's truth-table mode and compares the generated table with the key.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -23,7 +23,21 @@
       "label": "Key truth table",
       "type": "table",
       "required": true,
-      "help": "Add one row per truth-table line. The adapter also accepts rows pasted with spaces or | separators."
+      "help": "Enter the four product bits for each combination of A1 A0 B1 B0.",
+      "table": {
+        "inputs": [
+          "A1",
+          "A0",
+          "B1",
+          "B0"
+        ],
+        "outputs": [
+          "P3",
+          "P2",
+          "P1",
+          "P0"
+        ]
+      }
     }
   ],
   "settings": [
