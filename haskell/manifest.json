@@ -1,4 +1,5 @@
 {
+  "$schema": "../schemas/manifest.schema.json",
   "schema": 3,
   "id": "haskell",
   "name": "Haskell",

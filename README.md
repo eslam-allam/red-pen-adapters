@@ -167,3 +167,35 @@ Adapters get a per-run temp folder from `app.temp_dir()` and can read/write
 inside their sandbox without a permission. Use `app.read_file`,
 `app.write_file`, `app.run_runtime` and `app.run_command`; the standard
 libraries that would bypass the sandbox are not present.
+
+## JSON schemas
+
+Two JSON Schemas describe the registry and adapter manifests:
+
+- `schemas/registry.schema.json` — the root `registry.json`
+- `schemas/manifest.schema.json` — each adapter folder's `manifest.json`
+
+Every JSON file includes a `$schema` reference, so editors with JSON language
+support get completion, hover docs, and error squiggles while writing manifests
+or registry entries. `.vscode/settings.json` wires the schemas to the matching
+file patterns.
+
+The schemas document:
+
+- permissions, targets, folder grants, folder pickers, and runtimes
+- adapter key and settings field types
+- truth-table column sections, row sections, and safe formulas such as
+  `2 ^ inputs`
+- registry file entries, including their optional SHA-256 checksums
+
+Run local validation before publishing:
+
+```sh
+python -m pip install jsonschema
+python scripts/validate.py
+```
+
+The script validates both schemas and checks cross-file consistency: folder
+contents, manifest/registry version and id agreement, runtime settings, and
+formula variables. The same validation runs in GitHub Actions on pushes and
+pull requests.

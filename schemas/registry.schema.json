@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/schemas/registry.schema.json",
+  "title": "Red Pen adapter registry",
+  "description": "The master registry.json that indexes every adapter folder.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "name",
+    "adapters"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "schema": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "adapters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entry"
+      },
+      "minItems": 1
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "version",
+        "description",
+        "author",
+        "appliesTo",
+        "permissions",
+        "extensions",
+        "folder",
+        "files",
+        "readmeUrl"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
+        },
+        "description": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "homepage": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "appliesTo": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/target"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/permission"
+          },
+          "uniqueItems": true
+        },
+        "extensions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9+.-]*$"
+          }
+        },
+        "folder": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-fA-F0-9]{64}$"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "readmeUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "runtimes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/runtime"
+          }
+        }
+      }
+    },
+    "permission": {
+      "type": "string",
+      "enum": [
+        "network",
+        "subprocess",
+        "environment",
+        "files:read",
+        "files:write",
+        "directories"
+      ]
+    },
+    "target": {
+      "type": "string",
+      "enum": [
+        "file",
+        "question"
+      ]
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool"
+      ],
+      "properties": {
+        "tool": {
+          "type": "string",
+          "minLength": 1
+        },
+        "setting": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "setting",
+            "installer"
+          ],
+          "properties": {
+            "setting": {
+              "type": "string"
+            },
+            "installer": {
+              "type": "string",
+              "enum": [
+                "pip"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

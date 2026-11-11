@@ -1,0 +1,1486 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/schemas/manifest.schema.json",
+  "title": "Red Pen adapter manifest",
+  "description": "One adapter folder's manifest.json, as read by the Red Pen app.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "id",
+    "name",
+    "version",
+    "extensions",
+    "appliesTo",
+    "runtime",
+    "command",
+    "args",
+    "permissions",
+    "keyInput",
+    "settings"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "schema": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
+    },
+    "description": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "string",
+      "description": "A data URI or HTTPS URL."
+    },
+    "homepage": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "extensions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9+.-]*$"
+      }
+    },
+    "appliesTo": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "file",
+          "question"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "runtime": {
+      "type": "string",
+      "enum": [
+        "process",
+        "builtin",
+        "lua"
+      ]
+    },
+    "command": {
+      "type": "string"
+    },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "builtin": {
+      "type": "string"
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "network",
+          "subprocess",
+          "environment",
+          "files:read",
+          "files:write",
+          "directories"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "directories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "directoryPicker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "r",
+            "rw"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "help": {
+          "type": "string"
+        }
+      }
+    },
+    "runtimes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tool"
+        ],
+        "properties": {
+          "tool": {
+            "type": "string",
+            "minLength": 1
+          },
+          "setting": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "packages": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "setting",
+              "installer"
+            ],
+            "properties": {
+              "setting": {
+                "type": "string"
+              },
+              "installer": {
+                "type": "string",
+                "enum": [
+                  "pip"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "bootstrap": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "uv": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mise": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "keyInput": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "label",
+          "type"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "label": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "text",
+              "textarea",
+              "number",
+              "boolean",
+              "select",
+              "multiselect",
+              "path",
+              "directory",
+              "table"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "placeholder": {
+            "type": "string"
+          },
+          "help": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "table": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "columns": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "key"
+                  ],
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "input",
+                        "output"
+                      ]
+                    },
+                    "binary": {
+                      "type": "boolean"
+                    },
+                    "names": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "min": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                        }
+                      ]
+                    },
+                    "max": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                        }
+                      ]
+                    },
+                    "default": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "rowSections": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "key"
+                  ],
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "input",
+                        "output"
+                      ]
+                    },
+                    "binary": {
+                      "type": "boolean"
+                    },
+                    "names": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "min": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                        }
+                      ]
+                    },
+                    "max": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                        }
+                      ]
+                    },
+                    "default": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "rows": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "min": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  },
+                  "max": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  },
+                  "count": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  },
+                  "default": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  }
+                }
+              },
+              "inputs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "outputs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "minInputs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "minOutputs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "inputLabel": {
+                "type": "string"
+              },
+              "outputLabel": {
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "type": "string"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "select",
+                    "multiselect"
+                  ]
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "required": [
+                "options"
+              ],
+              "properties": {
+                "options": {
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "settings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "label",
+          "type"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "label": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "text",
+              "textarea",
+              "number",
+              "boolean",
+              "select",
+              "multiselect",
+              "path",
+              "directory",
+              "table"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "placeholder": {
+            "type": "string"
+          },
+          "help": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "table": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "columns": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "key"
+                  ],
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "input",
+                        "output"
+                      ]
+                    },
+                    "binary": {
+                      "type": "boolean"
+                    },
+                    "names": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "min": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                        }
+                      ]
+                    },
+                    "max": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                        }
+                      ]
+                    },
+                    "default": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "rowSections": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "key"
+                  ],
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "input",
+                        "output"
+                      ]
+                    },
+                    "binary": {
+                      "type": "boolean"
+                    },
+                    "names": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "min": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                        }
+                      ]
+                    },
+                    "max": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                        }
+                      ]
+                    },
+                    "default": {
+                      "oneOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "rows": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "min": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  },
+                  "max": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  },
+                  "count": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  },
+                  "default": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  }
+                }
+              },
+              "inputs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "outputs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "minInputs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "minOutputs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "inputLabel": {
+                "type": "string"
+              },
+              "outputLabel": {
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "type": "string"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "select",
+                    "multiselect"
+                  ]
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "required": [
+                "options"
+              ],
+              "properties": {
+                "options": {
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "language": {
+      "type": "string",
+      "description": "Adapter-defined language hint."
+    },
+    "miseTool": {
+      "type": "string",
+      "description": "Legacy mise tool hint."
+    }
+  },
+  "$defs": {
+    "formula": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string",
+          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+        }
+      ]
+    },
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+        },
+        "label": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "input",
+            "output"
+          ]
+        },
+        "binary": {
+          "type": "boolean"
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "min": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+            }
+          ]
+        },
+        "max": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+            }
+          ]
+        },
+        "default": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+            }
+          ]
+        }
+      }
+    },
+    "table": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key"
+            ],
+            "properties": {
+              "key": {
+                "type": "string",
+                "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+              },
+              "label": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "input",
+                  "output"
+                ]
+              },
+              "binary": {
+                "type": "boolean"
+              },
+              "names": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "min": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                  }
+                ]
+              },
+              "max": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                  }
+                ]
+              },
+              "default": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "rowSections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key"
+            ],
+            "properties": {
+              "key": {
+                "type": "string",
+                "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+              },
+              "label": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "input",
+                  "output"
+                ]
+              },
+              "binary": {
+                "type": "boolean"
+              },
+              "names": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "min": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                  }
+                ]
+              },
+              "max": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                  }
+                ]
+              },
+              "default": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "rows": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "min": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                }
+              ]
+            },
+            "max": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                }
+              ]
+            },
+            "count": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                }
+              ]
+            },
+            "default": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                }
+              ]
+            }
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "minInputs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "minOutputs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "inputLabel": {
+          "type": "string"
+        },
+        "outputLabel": {
+          "type": "string"
+        }
+      }
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "label",
+        "type"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+        },
+        "label": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "text",
+            "textarea",
+            "number",
+            "boolean",
+            "select",
+            "multiselect",
+            "path",
+            "directory",
+            "table"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "help": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "table": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "key"
+                ],
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "input",
+                      "output"
+                    ]
+                  },
+                  "binary": {
+                    "type": "boolean"
+                  },
+                  "names": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "min": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  },
+                  "max": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  },
+                  "default": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "rowSections": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "key"
+                ],
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "input",
+                      "output"
+                    ]
+                  },
+                  "binary": {
+                    "type": "boolean"
+                  },
+                  "names": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "min": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  },
+                  "max": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  },
+                  "default": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "rows": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "min": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                    }
+                  ]
+                },
+                "max": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                    }
+                  ]
+                },
+                "count": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                    }
+                  ]
+                },
+                "default": {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
+                    }
+                  ]
+                }
+              }
+            },
+            "inputs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "outputs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "minInputs": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "minOutputs": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "inputLabel": {
+              "type": "string"
+            },
+            "outputLabel": {
+              "type": "string"
+            }
+          }
+        },
+        "default": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "select",
+                  "multiselect"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "options"
+            ],
+            "properties": {
+              "options": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool"
+      ],
+      "properties": {
+        "tool": {
+          "type": "string",
+          "minLength": 1
+        },
+        "setting": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "setting",
+            "installer"
+          ],
+          "properties": {
+            "setting": {
+              "type": "string"
+            },
+            "installer": {
+              "type": "string",
+              "enum": [
+                "pip"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "permission": {
+      "type": "string",
+      "enum": [
+        "network",
+        "subprocess",
+        "environment",
+        "files:read",
+        "files:write",
+        "directories"
+      ]
+    },
+    "target": {
+      "type": "string",
+      "enum": [
+        "file",
+        "question"
+      ]
+    },
+    "bootstrap": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "uv": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mise": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}
