@@ -84,9 +84,9 @@ manifest = nil
 ---@field temp_dir fun(): string
 --- Runs a program from a runtime the manifest declared. The runtime is
 --- installed by the app; the adapter does not download it.
----@field run_runtime fun(tool: string, version: string, program: string, args?: string[], stdin?: string): RedPenProcess
+---@field run_runtime fun(tool: string, version: string, program: string, args: string[]|nil, stdin: string|nil): RedPenProcess
 --- Runs a program directly inside the sandbox.
----@field run_command fun(program: string, args?: string[], stdin?: string): RedPenProcess
+---@field run_command fun(program: string, args: string[]|nil, stdin: string|nil): RedPenProcess
 ---@field log fun(message: string)
 
 ---@type RedPenApp
