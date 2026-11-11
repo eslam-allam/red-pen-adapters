@@ -14,7 +14,11 @@ local function rows(text)
     line = line:gsub("%s+", " "):match("^%s*(.-)%s*$")
     local lower = line:lower()
     if line ~= "" and line:sub(1, 1) ~= "#" and not lower:find("truth table", 1, true) and not line:match("^[%-|+= ]+$") then
-      out[#out + 1] = line:upper()
+      -- Logisim prints a pin-name header before the rows. Only lines made of
+      -- binary cells are table rows; names and warnings are not.
+      if line:match("^[01%s]+$") then
+        out[#out + 1] = line:upper()
+      end
     end
   end
   return out
