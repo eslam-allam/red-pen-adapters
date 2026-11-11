@@ -13,7 +13,7 @@ local function rows(text)
     local line = raw:gsub("|", " ")
     line = line:gsub("%s+", " "):match("^%s*(.-)%s*$")
     local lower = line:lower()
-    if line ~= "" and not lower:find("truth table", 1, true) and not line:match("^[%-|+= ]+$") then
+    if line ~= "" and line:sub(1, 1) ~= "#" and not lower:find("truth table", 1, true) and not line:match("^[%-|+= ]+$") then
       out[#out + 1] = line:upper()
     end
   end
