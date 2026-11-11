@@ -1,8 +1,8 @@
 {
-  "schema": 2,
+  "schema": 3,
   "id": "c",
   "name": "C",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Compiles and runs a C program.",
   "author": "Red Pen",
   "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQThCOUNDIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+QzwvdGl0bGU+PHBhdGggZD0iTTE2LjU5MjEgOS4xOTYycy0uMzU0LTMuMjk4LTMuNjI3LTMuMzljLTMuMjc0MS0uMDktNC45NTUyIDIuNDc0LTQuOTU1MiA2LjE0IDAgMy42NjUxIDEuODU4IDYuNTk3MiA1LjA0NTEgNi41OTcyIDMuMTg0IDAgMy41MzgxLTMuNjY1IDMuNTM4MS0zLjY2NWw2LjEwNDEuMzY1cy4zNiAzLjMxLTIuMTk2IDUuODM2Yy0yLjU1MiAyLjUyNDEtNS42OTAxIDIuOTM3MS03Ljg3NjIgMi45MjAxLTIuMTktLjAxNy01LjIyNjEuMDM0LTguMTYwMi0yLjk3LTIuOTM4LTMuMDEwMS0zLjQzNi01LjkzMDItMy40MzYtOC44MDAyIDAtMi44NzAxLjU1Ni02LjY3MDIgNC4wNDctOS41NTAyQzcuNDQ0LjcyIDkuODQ5IDAgMTIuMjU0IDBjMTAuMDQyMiAwIDEwLjcxNzIgOS4yNjAyIDEwLjcxNzIgOS4yNjAyeiIvPjwvc3ZnPg==",
@@ -20,8 +20,6 @@
     "adapter.lua"
   ],
   "permissions": [
-    "files:read",
-    "network",
     "subprocess"
   ],
   "keyInput": [
@@ -61,5 +59,12 @@
   "bootstrap": {
     "mise": "latest"
   },
-  "miseTool": "gcc"
+  "miseTool": "gcc",
+  "runtimes": [
+    {
+      "tool": "gcc",
+      "setting": "runtimeVersion",
+      "version": "latest"
+    }
+  ]
 }

@@ -1,6 +1,25 @@
 {
   "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
-  "workspace.library": ["./lua"],
   "runtime.version": "Lua 5.4",
-  "diagnostics.globals": ["app", "request", "manifest", "result"]
+  "runtime.builtin": {
+    "basic": "enable",
+    "coroutine": "enable",
+    "math": "enable",
+    "string": "enable",
+    "table": "enable",
+    "utf8": "enable",
+    "debug": "disable",
+    "io": "disable",
+    "os": "disable",
+    "package": "disable"
+  },
+  "workspace.library": [
+    "./lua"
+  ],
+  "diagnostics.globals": [
+    "request",
+    "manifest",
+    "result",
+    "app"
+  ]
 }

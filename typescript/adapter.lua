@@ -24,7 +24,8 @@ end
 
 local commands = {
   javascript = { "node", { file } },
-  typescript = { "npx", { "--yes", "tsx", file } },
+  -- Node 22.6+ strips TypeScript types; this avoids downloading tsx at run time.
+  typescript = { "node", { "--experimental-strip-types", file } },
   ruby = { "ruby", { file } },
   php = { "php", { file } },
   go = { "go", { "run", file } },

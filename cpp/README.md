@@ -2,10 +2,10 @@
 
 Compiles and runs a C++ program.
 
-- **Version:** 2.0.0
+- **Version:** 2.1.0
 - **Works on:** files, questions
 - **File extensions:** .cpp, .cc, .cxx
-- **Permissions:** files:read, network, subprocess
+- **Permissions:** subprocess
 
 ## How it works
 

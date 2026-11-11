@@ -1,8 +1,8 @@
 {
-  "schema": 2,
+  "schema": 3,
   "id": "fsharp",
   "name": "F#",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Runs an F# script with dotnet fsi.",
   "author": "Red Pen",
   "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMzc4QkJBIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RiM8L3RpdGxlPjxwYXRoIGQ9Ik0wIDEyIDExLjM5LjYxdjUuNjk1TDUuNjk1IDEybDUuNjk1IDUuNjk1djUuNjk1TDAgMTJ6bTcuMzIyIDAgNC4wNjgtNC4wNjh2OC4xMzZMNy4zMjIgMTJ6TTI0IDEyIDEyLjIwMy42MXY1LjY5NUwxNy44OTggMTJsLTUuNjk1IDUuNjk1djUuNjk1TDI0IDEyeiIvPjwvc3ZnPg==",
@@ -21,8 +21,6 @@
     "adapter.lua"
   ],
   "permissions": [
-    "files:read",
-    "network",
     "subprocess"
   ],
   "keyInput": [
@@ -62,5 +60,12 @@
   "bootstrap": {
     "mise": "latest"
   },
-  "miseTool": "dotnet"
+  "miseTool": "dotnet",
+  "runtimes": [
+    {
+      "tool": "dotnet",
+      "setting": "runtimeVersion",
+      "version": "latest"
+    }
+  ]
 }

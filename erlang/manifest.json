@@ -1,8 +1,8 @@
 {
-  "schema": 2,
+  "schema": 3,
   "id": "erlang",
   "name": "Erlang",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Runs an Erlang script with escript.",
   "author": "Red Pen",
   "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQTkwNTMzIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RXJsYW5nPC90aXRsZT48cGF0aCBkPSJNOC44NTkgNy44ODljLjE1NC0xLjg2MyAxLjYyMy0zLjExNSAzLjM0NC0zLjExOSAxLjczNC4wMDQgMi45ODYgMS4yNTYgMy4wMjkgMy4xMTl6bTEyLjExIDExLjcwN2MuODAyLS44NiAxLjUyLTEuODcyIDIuMTcyLTMuMDNsLTMuNjE2LTEuODA3Yy0xLjI3IDIuMDY0LTMuMTI3IDMuOTY1LTUuNjk0IDMuOTc3LTMuNzM4LS4wMTItNS4yMDYtMy4yMDgtNS4xOTgtNy4zMjJoMTMuOTY2Yy4wMTktLjQ2NC4wMTktLjY4IDAtLjkwNC4wOTEtMi40NDctLjU1OC00LjUwNC0xLjczNy02LjEwNmwtLjAwNy4wMDVIMjR2MTUuMTg2aC0zLjAzOXptLTE3LjIwNi0uMDAxQzEuOTAxIDE3LjYyLjgxMSAxNC44OTQuODEzIDExLjY0Yy0uMDAyLTIuODc3LjkwMi01LjM1IDIuNDU2LTcuMjMySDB2MTUuMTg3aDMuNzYxWiIvPjwvc3ZnPg==",
@@ -20,8 +20,6 @@
     "adapter.lua"
   ],
   "permissions": [
-    "files:read",
-    "network",
     "subprocess"
   ],
   "keyInput": [
@@ -61,5 +59,12 @@
   "bootstrap": {
     "mise": "latest"
   },
-  "miseTool": "erlang"
+  "miseTool": "erlang",
+  "runtimes": [
+    {
+      "tool": "erlang",
+      "setting": "runtimeVersion",
+      "version": "latest"
+    }
+  ]
 }

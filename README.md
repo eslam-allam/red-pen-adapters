@@ -5,53 +5,122 @@ The official registry for Red Pen adapters. Every adapter is a folder with a
 at those folders, in the same spirit as the Noctalia plugin registry.
 
 The app downloads the listed files from the folder and runs them directly; no
-ZIP packaging is needed. Adapters run on uv, which the app downloads on first
-install, so the adapter itself needs no user-installed interpreter.
+ZIP packaging is needed. Language runtimes are installed by the app, not by
+the adapter.
 
 ## Registry format
 
 ```json
 {
-  "schema": 2,
+  "schema": 5,
   "name": "Red Pen official adapter registry",
   "adapters": [
     {
-      "id": "logisim",
-      "name": "Logisim",
-      "version": "2.0.0",
-      "description": "…",
+      "id": "python",
+      "name": "Python",
+      "version": "2.1.0",
+      "description": "Runs Python code and compares its output with the key.",
       "author": "Red Pen",
       "appliesTo": ["file", "question"],
-      "permissions": ["files:read", "subprocess"],
-      "folder": "logisim",
-      "files": ["manifest.json", "adapter.py"]
+      "permissions": ["subprocess"],
+      "runtimes": [
+        {
+          "tool": "python",
+          "setting": "pythonVersion",
+          "version": "3.12",
+          "packages": { "setting": "packages", "installer": "pip" }
+        }
+      ],
+      "folder": "python",
+      "files": ["manifest.json", "adapter.lua"]
     }
   ]
 }
 ```
 
-Each folder contains `manifest.json` and the adapter's program. The registry
+Each folder contains `manifest.json` and the adapter's Lua script. The registry
 entry lists both files, and the app resolves them relative to `registry.json`.
+
+The entry mirrors the manifest. The app refuses an install whose manifest asks
+for a permission, folder grant, folder picker or runtime the entry did not
+list, so keep the two files in step.
+
+## Permissions
+
+Adapters declare only what they need outside their sandbox:
+
+| Permission | Meaning |
+| --- | --- |
+| `network` | Make network requests from the adapter or the student's program. |
+| `subprocess` | Start another program. |
+| `environment` | Read the parent environment. |
+
+The submitted file, the adapter folder and the adapter temp folder need no
+permission. Other folders are declared with `directories`:
+
+```json
+"directories": ["user-home:r", "user-documents:r", "/opt/course-data:rw"]
+```
+
+Each entry is `<folder>[:r|:ro|:rw]`; the folder may be an absolute path or one
+of `user-home`, `user-documents`, `user-downloads`, `user-desktop`,
+`user-pictures`, `user-videos`, `user-audio`, `temp`.
+
+An adapter that needs a folder the instructor chooses declares a picker:
+
+```json
+"directoryPicker": { "mode": "rw", "label": "Test-case folder" }
+```
+
+The folder is chosen in the Key step (question adapters) or Settings (file
+adapters) and passed to the adapter as `grantedDirectory`.
+
+## Runtimes and packages
+
+Language runtimes are declared in the manifest, and the app installs them with
+mise using its own network access. The adapter therefore does not declare
+`network` just to download a runtime.
+
+```json
+"runtimes": [
+  { "tool": "python", "setting": "pythonVersion", "version": "3.12" }
+]
+```
+
+- `tool` is the mise tool (`python`, `node`, `gcc`, `go`, `java`, …).
+- `setting` names a settings field that selects the version. When it is empty,
+  `version` is used. Changing the setting makes the app install the new
+  version before the next run; no `network` permission is involved.
+- `version` is the version used when the setting is empty.
+
+For a runtime with packages, the app creates a managed environment (a Python
+venv for `pip`) and installs the packages named in the settings:
+
+```json
+"packages": { "setting": "packages", "installer": "pip" }
+```
+
+The environment is passed to the adapter as `request.runtime`:
+
+```lua
+local runner = request.runtime and request.runtime.program
+if runner then
+  output = app.run_command(runner, { request.filePath }, "")
+else
+  output = app.run_runtime("python", request.runtime.version, "python", { request.filePath }, "")
+end
+```
+
+The app installs only wheels (`pip --only-binary=:all:`) and refuses package
+lines that look like options, URLs or paths. Package installation runs outside
+the adapter sandbox, before the student's code starts.
 
 ## Logisim
 
-The Logisim adapter is a normal adapter folder now. It runs `logisim-evolution -tty table <circuit>` (or `logisim`) and
-compares the generated truth table with the `table` key input. Set the
-`programPath` setting to the Logisim executable, or set `LOGISIM_BIN`, or put
-`logisim-evolution`/`logisim` on `PATH`. No Python or other interpreter is
-required.
-
-
-## Python (uv)
-
-The Python adapter runs code supplied as a `.py` attachment or as the answer
-to a question. It compares the program's printed output with the `expected`
-key field. Choose the Python version and any packages in the adapter settings.
-
-The adapter package asks the app to download the `uv` launcher into its own
-folder on first install (`bootstrap.uv`). uv then downloads the requested
-Python version on first use and keeps it in its cache. The adapter declares
-`network` for that download and `subprocess` for running the student's code.
+The Logisim adapter runs `logisim-evolution -tty table <circuit>` (or
+`logisim`) and compares the generated truth table with the `table` key input.
+Set the `programPath` setting to the Logisim executable, or put
+`logisim-evolution`/`logisim` on `PATH`. It uses no runtime download.
 
 ## Language pack
 
@@ -62,31 +131,24 @@ questions.
 
 Included: JavaScript, TypeScript, Ruby, PHP, Go, Rust, C, C++, Java, Kotlin,
 C#, F#, Swift, Lua, R, Julia, Haskell, Elixir, Erlang, Dart, Scala, Perl,
-Bash, and PowerShell. Python has its own uv adapter above.
+Bash, PowerShell, and Python.
 
-Each adapter folder ships a small Python runner and asks the app to download
-uv on first install. The runner then starts the target language. Set
-`programPath` if the target runtime is not on PATH.
-
-## Runtime paths
-
-Language adapters do not download or bundle the language runtime. Each one
-declares a `Runtime executable` setting, and an empty value means the runtime
-is found on `PATH`. Python and Logisim keep using uv, which the app downloads
-into their adapter folder on first install.
-
-## Runtime versions
-
-Language adapters download mise, which installs the requested language version
-from the adapter's `Runtime version` setting. The runtime is cached by mise and
-used only for that adapter. Python and Logisim still use uv for their launcher.
-
+Every adapter declares its mise runtime in `runtimes`; the app downloads it.
+No adapter declares `network`.
 
 ## Lua editor support
 
-`lua/red-pen-api.lua` is a LuaLS `---@meta` stub for the adapter host API.
-Adapters get a per-adapter temp folder from `app.temp_dir()` and can create
-files there with `app.write_file(path, data)`. Both are sandboxed to that
-folder.
-Editors using LuaLS get completion and type checking for `app`, `request`,
-`manifest`, and `result` when the repository is opened as a workspace.
+The repository's `.luarc.json` configures LuaLS for adapter authors:
+
+- `lua/red-pen-api.lua` defines `request`, `manifest`, `result`, `app` and the
+  process result type.
+- `runtime.builtin` disables `io`, `os`, `package` and `debug`, so the editor
+  reports those libraries as unavailable. It also documents that `load`,
+  `loadfile` and `dofile` are absent at runtime.
+- `workspace.library` points to `lua`, so completion works when the repository
+  is opened as a workspace.
+
+Adapters get a per-run temp folder from `app.temp_dir()` and can read/write
+inside their sandbox without a permission. Use `app.read_file`,
+`app.write_file`, `app.run_runtime` and `app.run_command`; the standard
+libraries that would bypass the sandbox are not present.

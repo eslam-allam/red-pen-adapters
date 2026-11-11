@@ -1,8 +1,8 @@
 {
-  "schema": 2,
+  "schema": 3,
   "id": "scala",
   "name": "Scala",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Runs a Scala program.",
   "author": "Red Pen",
   "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjREMzMjJGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+U2NhbGE8L3RpdGxlPjxwYXRoIGQ9Ik00LjU4OSAyNGM0LjUzNyAwIDEzLjgxLTEuNTE2IDE0LjgyMS0zdi01LjcyOWMtLjk1NyAxLjQwOC0xMC4yODQgMi45MTItMTQuODIxIDIuOTEyVjI0ek00LjU4OSAxNi4zNjVjNC41MzcgMCAxMy44MS0xLjUxNiAxNC44MjEtM1Y3LjYzNmMtLjk1NyAxLjQwOC0xMC4yODQgMi45MTItMTQuODIxIDIuOTEydjUuODE3ek00LjU4OSA4LjcyOWM0LjUzNyAwIDEzLjgxLTEuNTE2IDE0LjgyMS0zVjBDMTguNDUzIDEuNDA4IDkuMTI2IDIuOTEyIDQuNTg5IDIuOTEydjUuODE3eiIvPjwvc3ZnPg==",
@@ -20,8 +20,6 @@
     "adapter.lua"
   ],
   "permissions": [
-    "files:read",
-    "network",
     "subprocess"
   ],
   "keyInput": [
@@ -61,5 +59,12 @@
   "bootstrap": {
     "mise": "latest"
   },
-  "miseTool": "scala"
+  "miseTool": "scala",
+  "runtimes": [
+    {
+      "tool": "scala",
+      "setting": "runtimeVersion",
+      "version": "latest"
+    }
+  ]
 }

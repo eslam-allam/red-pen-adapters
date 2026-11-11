@@ -1,8 +1,8 @@
 {
-  "schema": 2,
+  "schema": 3,
   "id": "logisim",
   "name": "Logisim",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "description": "Runs Logisim's truth-table mode and compares the generated table with the key.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -15,7 +15,6 @@
     "adapter.lua"
   ],
   "permissions": [
-    "files:read",
     "subprocess"
   ],
   "keyInput": [
