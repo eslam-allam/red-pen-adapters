@@ -9,7 +9,7 @@ Runs Logisim's truth-table mode and compares the generated table with the key.
 
 ## How it works
 
-Runs the configured Logisim executable in truth-table mode and compares the generated rows with the **Key truth table** field. The key table starts with one input column and one output column. Add as many inputs and outputs as the circuit needs, then fill every output bit.
+Runs the configured Logisim executable in truth-table mode and compares the generated rows with the **Key truth table** field. The key table declares one input section and one output section. Add as many inputs and outputs as the circuit needs. The number of rows follows `2 ^ inputs`, and every output bit must be filled.
 
 Set the Logisim executable in the adapter settings. The app runs it through the adapter host API; the adapter never starts a shell.
 

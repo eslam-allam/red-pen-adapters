@@ -2,7 +2,7 @@
   "schema": 3,
   "id": "logisim",
   "name": "Logisim",
-  "version": "4.1.2",
+  "version": "4.2.0",
   "description": "Runs Logisim's truth-table mode and compares the generated table with the key.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -23,12 +23,27 @@
       "label": "Key truth table",
       "type": "table",
       "required": true,
-      "help": "Add at least one input column and one output column, then fill the output bits for every input combination.",
+      "help": "Add at least one input and one output column. The row count follows 2 to the power of the input columns; fill every output cell.",
       "table": {
-        "minInputs": 1,
-        "minOutputs": 1,
-        "inputLabel": "Inputs",
-        "outputLabel": "Outputs"
+        "columns": [
+          {
+            "key": "inputs",
+            "label": "Inputs",
+            "role": "input",
+            "binary": true,
+            "min": 1
+          },
+          {
+            "key": "outputs",
+            "label": "Outputs",
+            "role": "output",
+            "min": 1
+          }
+        ],
+        "rows": {
+          "count": "2 ^ inputs",
+          "max": 256
+        }
       }
     }
   ],
