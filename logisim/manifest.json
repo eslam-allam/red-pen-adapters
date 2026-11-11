@@ -2,7 +2,7 @@
   "schema": 3,
   "id": "logisim",
   "name": "Logisim",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "Runs Logisim's truth-table mode and compares the generated table with the key.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -23,20 +23,12 @@
       "label": "Key truth table",
       "type": "table",
       "required": true,
-      "help": "Enter the four product bits for each combination of A1 A0 B1 B0.",
+      "help": "Add at least one input column and one output column, then fill the output bits for every input combination.",
       "table": {
-        "inputs": [
-          "A1",
-          "A0",
-          "B1",
-          "B0"
-        ],
-        "outputs": [
-          "P3",
-          "P2",
-          "P1",
-          "P0"
-        ]
+        "minInputs": 1,
+        "minOutputs": 1,
+        "inputLabel": "Inputs",
+        "outputLabel": "Outputs"
       }
     }
   ],
