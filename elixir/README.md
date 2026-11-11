@@ -16,5 +16,3 @@ Runtime versions are managed by the app through mise; the adapter does not downl
 ## Settings
 
 - **Runtime version:** The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use. Default: `latest`.
-- **Runtime executable:** The runtime that runs this language. Leave empty to use PATH.
-- **Seconds before stopping:** How long the submitted program may run. Default: `15`.

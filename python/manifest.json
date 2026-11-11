@@ -53,13 +53,6 @@
       "type": "textarea",
       "default": "",
       "help": "One package per line (or comma-separated), for example numpy or pandas==2.2. Red Pen installs them into a managed environment before the program runs."
-    },
-    {
-      "key": "timeout",
-      "label": "Seconds before stopping",
-      "type": "number",
-      "default": "10",
-      "help": "How long the submitted program may run."
     }
   ],
   "runtimes": [

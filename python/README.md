@@ -9,7 +9,7 @@ Runs Python code from a submitted .py file or from the answer text, and compares
 
 ## How it works
 
-Runs the submitted Python file, or the Python answer text, in a temporary virtual environment created by the app. The requested Python version is installed by mise.
+Runs the submitted Python file, or the Python answer text, in a managed virtual environment created by the app. The requested Python version is installed by mise.
 
 The **Packages** setting accepts one package per line. Printed output is compared with the **Expected output** key field.
 
@@ -19,4 +19,3 @@ Runtime versions are managed by the app through mise; the adapter does not downl
 
 - **Python version:** Red Pen downloads this version before the first run and keeps it in its cache. Default: `3.12`.
 - **Packages:** One package per line, for example numpy or pandas==2.2. Red Pen installs them into a managed environment before the program runs.
-- **Seconds before stopping:** How long the submitted program may run. Default: `10`.

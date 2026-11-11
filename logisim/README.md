@@ -18,4 +18,3 @@ Runtime versions are managed by the app through mise; the adapter does not downl
 ## Settings
 
 - **Logisim executable:** The path to logisim-evolution or logisim.
-- **Seconds before stopping:**  Default: `20`.
