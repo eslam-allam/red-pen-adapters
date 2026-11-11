@@ -1,6 +1,6 @@
 # TypeScript
 
-Runs TypeScript with tsx.
+Runs TypeScript and TSX with Bun.
 
 - **Version:** 2.1.0
 - **Works on:** files, questions
@@ -9,10 +9,10 @@ Runs TypeScript with tsx.
 
 ## How it works
 
-Runs the submitted TypeScript through `tsx` using the requested Node.js version. Printed output is compared with the **Expected output** key field.
+Runs the submitted TypeScript or TSX code with the app-managed Bun runtime. Printed output is compared with the **Expected output** key field.
 
-Runtime versions are managed by the app through mise; the adapter does not download or expose a mise path.
+Runtime versions are managed by the app through mise; the adapter does not download or expose a mise path. Bun runs TypeScript and TSX directly, so no package is fetched at run time.
 
 ## Settings
 
-- **Runtime version:** The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use. Default: `latest`.
+- **Runtime version:** The Bun version to install with mise, for example 1.4.4. It is downloaded on first use. Default: `latest`.

@@ -104,6 +104,16 @@ venv for `pip`) and installs the packages named in the settings:
 "packages": { "setting": "packages", "installer": "pip" }
 ```
 
+`request.runtime.version` is the concrete installed version, not `latest`.
+Use it when calling `run_runtime`; the sandbox has no network for mise to
+resolve `latest`:
+
+```lua
+local version = (request.runtime and request.runtime.version)
+  or settings.runtimeVersion
+  or "latest"
+```
+
 The environment is passed to the adapter as `request.runtime`:
 
 ```lua
@@ -138,7 +148,8 @@ C#, F#, Swift, Lua, R, Julia, Haskell, Elixir, Erlang, Dart, Scala, Perl,
 Bash, PowerShell, and Python.
 
 Every adapter declares its mise runtime in `runtimes`; the app downloads it.
-No adapter declares `network`.
+No adapter declares `network`. TypeScript runs through Bun's built-in
+TypeScript/TSX support, so it does not download `tsx` at run time.
 
 ## Lua editor support
 

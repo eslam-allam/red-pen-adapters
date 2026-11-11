@@ -4,7 +4,7 @@ local context = request.context or {}
 local values = context.values or {}
 local expected = values.expected or context.expected or ""
 local max_points = tonumber(context.maxPoints) or 0
-local version = settings.runtimeVersion or "latest"
+local version = (request.runtime and request.runtime.version) or settings.runtimeVersion or "latest"
 local file = request.filePath
 local language = manifest.language or ""
 
@@ -24,8 +24,8 @@ end
 
 local commands = {
   javascript = { "node", { file } },
-  -- Node 22.6+ strips TypeScript types; this avoids downloading tsx at run time.
-  typescript = { "node", { "--experimental-strip-types", file } },
+  -- Bun runs TypeScript and TSX directly, so the app only downloads the runtime.
+  typescript = { "bun", { file } },
   ruby = { "ruby", { file } },
   php = { "php", { file } },
   go = { "go", { "run", file } },

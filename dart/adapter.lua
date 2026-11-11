@@ -4,7 +4,7 @@ local context = request.context or {}
 local values = context.values or {}
 local expected = values.expected or context.expected or ""
 local max_points = tonumber(context.maxPoints) or 0
-local version = settings.runtimeVersion or "latest"
+local version = (request.runtime and request.runtime.version) or settings.runtimeVersion or "latest"
 local file = request.filePath
 local language = manifest.language or ""
 

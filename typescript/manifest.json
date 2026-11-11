@@ -41,17 +41,17 @@
       "type": "text",
       "default": "latest",
       "placeholder": "latest",
-      "help": "The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use."
+      "help": "The Bun version to install with mise, for example 1.4.4. It is downloaded on first use."
     }
   ],
   "language": "typescript",
   "bootstrap": {
     "mise": "latest"
   },
-  "miseTool": "node",
+  "miseTool": "bun",
   "runtimes": [
     {
-      "tool": "node",
+      "tool": "bun",
       "setting": "runtimeVersion",
       "version": "latest"
     }
