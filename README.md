@@ -55,6 +55,10 @@ Adapters declare only what they need outside their sandbox:
 | `subprocess` | Start another program. |
 | `environment` | Read the parent environment. |
 
+The official adapters declare only `subprocess`. Add `network` back only when
+the student's own program needs to make network requests; runtime and package
+setup never need it.
+
 The submitted file, the adapter folder and the adapter temp folder need no
 permission. Other folders are declared with `directories`:
 
