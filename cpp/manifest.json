@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "cpp",
   "name": "C++",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Compiles and runs a C++ program.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -19,7 +19,9 @@
   "language": "cpp",
   "miseTool": "gcc",
   "output": {
-    "kind": "diff",
+    "kinds": [
+      "diff"
+    ],
     "label": "Program output"
   },
   "permissions": [

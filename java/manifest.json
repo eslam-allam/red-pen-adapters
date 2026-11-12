@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "java",
   "name": "Java",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Runs a single-file Java program.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -17,7 +17,9 @@
   "language": "java",
   "miseTool": "java",
   "output": {
-    "kind": "diff",
+    "kinds": [
+      "diff"
+    ],
     "label": "Program output"
   },
   "permissions": [

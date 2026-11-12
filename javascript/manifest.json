@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "javascript",
   "name": "JavaScript",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Runs JavaScript with Node.js.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -19,7 +19,9 @@
   "language": "javascript",
   "miseTool": "node",
   "output": {
-    "kind": "diff",
+    "kinds": [
+      "diff"
+    ],
     "label": "Program output"
   },
   "permissions": [

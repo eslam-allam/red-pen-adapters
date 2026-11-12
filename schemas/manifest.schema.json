@@ -75,19 +75,24 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "kind"
+        "kinds"
       ],
       "properties": {
-        "kind": {
-          "type": "string",
-          "enum": [
-            "none",
-            "text",
-            "table",
-            "diff",
-            "image",
-            "json"
-          ]
+        "kinds": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "none",
+              "text",
+              "table",
+              "tableDiff",
+              "diff",
+              "image",
+              "json"
+            ]
+          }
         },
         "label": {
           "type": "string"

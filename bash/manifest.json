@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "bash",
   "name": "Bash",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Runs a Bash script.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -18,7 +18,9 @@
   "language": "bash",
   "miseTool": "bash",
   "output": {
-    "kind": "diff",
+    "kinds": [
+      "diff"
+    ],
     "label": "Program output"
   },
   "permissions": [

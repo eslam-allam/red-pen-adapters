@@ -2,7 +2,7 @@
 
 Runs a Bash script.
 
-- **Version:** 2.1.0
+- **Version:** 2.3.0
 - **Works on:** files, questions
 - **File extensions:** .sh, .bash
 - **Permissions:** subprocess

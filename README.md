@@ -22,7 +22,7 @@ the adapter.
       "description": "Runs Python code and compares its output with the key.",
       "author": "Red Pen",
       "appliesTo": ["file", "question"],
-      "output": { "kind": "diff", "label": "Program output" },
+      "output": { "kinds": ["diff"], "label": "Program output" },
       "permissions": ["subprocess"],
       "runtimes": [
         {
@@ -69,17 +69,20 @@ app.result({
 })
 ```
 
-The manifest declares what output the script may return:
+The manifest declares what outputs the script returns, in order:
 
 ```json
-"output": { "kind": "diff", "label": "Program output" }
+"output": { "kinds": ["diff"], "label": "Program output" }
 ```
 
-`kind` is one of `none`, `text`, `table`, `diff`, `image` or `json`. The app
-rejects any other kind, and rejects output from an adapter that declares
-`none`. The grading panel shows the output in an overlay; tables highlight
-mismatched rows and cells, and diffs compare expected and actual line by
-line. See `lua/red-pen-api.lua` for the full Lua API and the output shapes.
+`kinds` is a list of `none`, `text`, `table`, `tableDiff`, `diff`, `image`
+or `json`. The app requires the returned `kind`s to match this list exactly
+and in the same order. The app rejects any other kind, and rejects output
+from an adapter that declares `none`. One output is shown directly; a list of
+two or more is shown behind a drop-down. `tableDiff` itself shows the
+expected and actual tables side by side: correct cells are green and wrong
+cells are red. Plain tables highlight mismatched rows and cells in red. See
+`lua/red-pen-api.lua` for the full Lua API and the output shapes.
 
 ## Permissions
 

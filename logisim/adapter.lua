@@ -77,9 +77,10 @@ local function column_order(actual_headers, wanted_headers)
   return order
 end
 
--- Builds the table shown to the instructor: the circuit's own values, with
--- every cell that differs from the key marked.
-local function build_table(actual_headers, actual, wanted_headers, wanted)
+-- Builds the two tables shown to the instructor: the key's correct values on
+-- the left, and the circuit's own values on the right, with the cells that
+-- differ marked in both.
+local function build_tables(actual_headers, actual, wanted_headers, wanted)
   local order = column_order(actual_headers, wanted_headers)
   local names_mismatch = #wanted_headers > 0 and order == nil
   local columns = {}
@@ -96,40 +97,65 @@ local function build_table(actual_headers, actual, wanted_headers, wanted)
     for index = 1, width do columns[index] = tostring(index) end
   end
 
-  local rows = {}
-  local mismatched_rows = {}
-  local mismatched_cells = {}
+  local key_rows, student_rows = {}, {}
+  local student_bad_rows = {}
+  local key_bad_cells, student_bad_cells = {}, {}
   local row_count = math.max(#actual, #wanted)
   for row_index = 1, row_count do
     local actual_row = actual[row_index]
     local wanted_row = wanted[row_index]
-    local cells = {}
+    local key_cells, student_cells = {}, {}
     for column_index = 1, #columns do
-      local value = "—"
-      if actual_row then
-        local at = order and order[column_index] or column_index
-        if actual_row[at] ~= nil then value = actual_row[at] end
-      end
-      cells[column_index] = value
+      local at = order and order[column_index] or column_index
+      key_cells[column_index] = wanted_row and wanted_row[column_index] or "—"
+      student_cells[column_index] = actual_row and actual_row[at] or "—"
     end
-    if names_mismatch or not actual_row or not wanted_row then
-      mismatched_rows[#mismatched_rows + 1] = row_index - 1
+    key_rows[row_index] = key_cells
+    student_rows[row_index] = student_cells
+    if names_mismatch then
+      student_bad_rows[#student_bad_rows + 1] = row_index - 1
+      for column_index = 1, #columns do
+        key_bad_cells[#key_bad_cells + 1] = {
+          row = row_index - 1,
+          column = column_index - 1,
+        }
+        student_bad_cells[#student_bad_cells + 1] = {
+          row = row_index - 1,
+          column = column_index - 1,
+        }
+      end
+    elseif not wanted_row then
+      student_bad_rows[#student_bad_rows + 1] = row_index - 1
+    elseif not actual_row then
+      student_bad_rows[#student_bad_rows + 1] = row_index - 1
+      for column_index = 1, #columns do
+        key_bad_cells[#key_bad_cells + 1] = {
+          row = row_index - 1,
+          column = column_index - 1,
+        }
+        student_bad_cells[#student_bad_cells + 1] = {
+          row = row_index - 1,
+          column = column_index - 1,
+        }
+      end
     else
       for column_index = 1, #columns do
         local at = order and order[column_index] or column_index
-        local actual_value = actual_row[at]
-        local wanted_value = wanted_row[column_index]
-        if actual_value ~= wanted_value then
-          mismatched_cells[#mismatched_cells + 1] = {
+        if actual_row[at] ~= wanted_row[column_index] then
+          key_bad_cells[#key_bad_cells + 1] = {
+            row = row_index - 1,
+            column = column_index - 1,
+          }
+          student_bad_cells[#student_bad_cells + 1] = {
             row = row_index - 1,
             column = column_index - 1,
           }
         end
       end
     end
-    rows[#rows + 1] = cells
   end
-  return columns, rows, mismatched_rows, mismatched_cells
+  return columns, key_rows, student_rows,
+    student_bad_rows, key_bad_cells, student_bad_cells
 end
 
 local output = app.run_command(program, { "-tty", "table", request.filePath }, "")
@@ -175,15 +201,19 @@ end
 -- different, even if the values happen to line up by position.
 if #wanted_headers > 0 and order == nil then same = false end
 
-local columns, rows, mismatched_rows, mismatched_cells =
-  build_table(actual_headers, actual, wanted_headers, wanted)
+local columns, key_rows, student_rows,
+  student_bad_rows, _, student_bad_cells =
+  build_tables(actual_headers, actual, wanted_headers, wanted)
 local table_output = {
-  kind = "table",
+  kind = "tableDiff",
   title = "Truth table",
   columns = columns,
-  rows = rows,
-  mismatchedRows = mismatched_rows,
-  mismatchedCells = mismatched_cells,
+  expectedRows = key_rows,
+  actualRows = student_rows,
+  mismatchedRows = student_bad_rows,
+  mismatchedCells = student_bad_cells,
+  expectedLabel = "Key",
+  actualLabel = "Student",
 }
 
 if same then
@@ -205,7 +235,7 @@ if #wanted_headers > 0 and order == nil then
   rationale = "Match the input and output names in the key to the names in the circuit."
 elseif #actual ~= #wanted then
   rationale = "The circuit produced a different number of truth-table rows."
-elseif #mismatched_cells > 0 then
+elseif #student_bad_cells > 0 then
   rationale = "The highlighted cells do not match the key."
 end
 app.result({

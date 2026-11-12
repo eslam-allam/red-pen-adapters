@@ -81,8 +81,9 @@ manifest = nil
 ---@field text? string
 ---@field outputPath? string
 ---@field error? string
---- The output declared by the manifest. Only return the declared kind.
----@field output? RedPenOutput
+--- The outputs declared by the manifest. Return one object for one kind, or
+--- a list whose kinds match the manifest exactly and in the same order.
+---@field output? RedPenOutput|RedPenOutput[]
 
 ---@class RedPenTableOutput
 ---@field kind "table"
@@ -91,6 +92,19 @@ manifest = nil
 ---@field rows string[][]
 ---@field mismatchedRows? integer[] Zero-based row indexes.
 ---@field mismatchedCells? { row: integer, column: integer }[] Zero-based cells.
+
+---@class RedPenTableDiffOutput
+---@field kind "tableDiff"
+---@field title? string
+---@field columns string[]
+--- The correct values, shown on the left in green.
+---@field expectedRows string[][]
+--- The student's values, shown on the right in red.
+---@field actualRows string[][]
+---@field mismatchedRows? integer[] Zero-based row indexes.
+---@field mismatchedCells? { row: integer, column: integer }[] Zero-based cells.
+---@field expectedLabel? string
+---@field actualLabel? string
 
 ---@class RedPenDiffOutput
 ---@field kind "diff"
@@ -117,7 +131,7 @@ manifest = nil
 ---@field title? string
 ---@field value any
 
----@alias RedPenOutput RedPenTableOutput|RedPenDiffOutput|RedPenTextOutput|RedPenImageOutput|RedPenJsonOutput
+---@alias RedPenOutput RedPenTableOutput|RedPenTableDiffOutput|RedPenDiffOutput|RedPenTextOutput|RedPenImageOutput|RedPenJsonOutput
 
 ---@class RedPenProcess
 ---@field stdout string

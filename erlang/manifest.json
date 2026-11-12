@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "erlang",
   "name": "Erlang",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Runs an Erlang script with escript.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -17,7 +17,9 @@
   "language": "erlang",
   "miseTool": "erlang",
   "output": {
-    "kind": "diff",
+    "kinds": [
+      "diff"
+    ],
     "label": "Program output"
   },
   "permissions": [

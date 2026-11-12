@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "elixir",
   "name": "Elixir",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Runs an Elixir script.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -18,7 +18,9 @@
   "language": "elixir",
   "miseTool": "elixir",
   "output": {
-    "kind": "diff",
+    "kinds": [
+      "diff"
+    ],
     "label": "Program output"
   },
   "permissions": [

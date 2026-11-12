@@ -2,7 +2,7 @@
 
 Runs an Erlang script with escript.
 
-- **Version:** 2.1.0
+- **Version:** 2.3.0
 - **Works on:** files, questions
 - **File extensions:** .erl
 - **Permissions:** subprocess

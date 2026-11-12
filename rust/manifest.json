@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "rust",
   "name": "Rust",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Compiles and runs a Rust program.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -17,7 +17,9 @@
   "language": "rust",
   "miseTool": "rust",
   "output": {
-    "kind": "diff",
+    "kinds": [
+      "diff"
+    ],
     "label": "Program output"
   },
   "permissions": [

@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "python",
   "name": "Python",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Runs Python code from a submitted .py file or from the answer text, and compares what it prints with the key answer.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -15,7 +15,9 @@
     "question"
   ],
   "output": {
-    "kind": "diff",
+    "kinds": [
+      "diff"
+    ],
     "label": "Program output"
   },
   "permissions": [

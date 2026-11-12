@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "haskell",
   "name": "Haskell",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Runs a Haskell program with runghc.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -17,7 +17,9 @@
   "language": "haskell",
   "miseTool": "ghc",
   "output": {
-    "kind": "diff",
+    "kinds": [
+      "diff"
+    ],
     "label": "Program output"
   },
   "permissions": [

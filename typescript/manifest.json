@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "typescript",
   "name": "TypeScript",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Runs TypeScript with tsx.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -20,7 +20,9 @@
   "language": "typescript",
   "miseTool": "bun",
   "output": {
-    "kind": "diff",
+    "kinds": [
+      "diff"
+    ],
     "label": "Program output"
   },
   "permissions": [
