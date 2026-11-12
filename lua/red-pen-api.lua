@@ -19,6 +19,8 @@
 ---@field questionId string
 ---@field expected? string
 ---@field values table<string, string>
+--- Values for the adapter's per-question `questionInput` fields.
+---@field questionValues table<string, string>
 
 ---@class RedPenRuntime
 ---@field tool string

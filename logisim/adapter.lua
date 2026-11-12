@@ -1,10 +1,13 @@
 local settings = request.settings or {}
 local context = request.context or {}
 local values = context.values or {}
+local question = context.questionValues or {}
 local expected = values.table or context.expected or ""
 local max_points = tonumber(context.maxPoints) or 0
 local program = settings.programPath
 if not program or program == "" then program = "logisim-evolution" end
+local circuit = (question.circuit or "main"):match("^%s*(.-)%s*$")
+if circuit == "" then circuit = "main" end
 
 local function trim(text)
   return (text:gsub("^%s*(.-)%s*$", "%1"))
@@ -158,7 +161,14 @@ local function build_tables(actual_headers, actual, wanted_headers, wanted)
     student_bad_rows, key_bad_cells, student_bad_cells
 end
 
-local output = app.run_command(program, { "-tty", "table", request.filePath }, "")
+local args = {
+  "--toplevel-circuit",
+  circuit,
+  "-tty",
+  "table",
+  request.filePath,
+}
+local output = app.run_command(program, args, "")
 if output.code ~= 0 then
   app.result({ error = (output.stderr ~= "" and output.stderr) or "Logisim failed.", text = output.stdout or "" })
   return

@@ -528,6 +528,12 @@
         ]
       }
     },
+    "questionInput": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/field"
+      }
+    },
     "settings": {
       "type": "array",
       "items": {

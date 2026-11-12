@@ -84,6 +84,16 @@ expected and actual tables side by side: correct cells are green and wrong
 cells are red. Plain tables highlight mismatched rows and cells in red. See
 `lua/red-pen-api.lua` for the full Lua API and the output shapes.
 
+An adapter can also declare `questionInput` fields. They are shown in the Key
+step for each question, separate from the key fields, and sent to the script
+as `context.questionValues`. A field with a `default` starts with that value:
+
+```json
+"questionInput": [
+  { "key": "circuit", "label": "Circuit name", "type": "text", "default": "main" }
+]
+```
+
 ## Permissions
 
 Adapters declare only what they need outside their sandbox:
@@ -184,10 +194,7 @@ the adapter sandbox, before the student's code starts.
 
 ## Logisim
 
-The Logisim adapter runs `logisim-evolution -tty table <circuit>` (or
-`logisim`) and compares the generated truth table with the `table` key input.
-Set the `programPath` setting to the Logisim executable, or put
-`logisim-evolution`/`logisim` on `PATH`. It uses no runtime download.
+The Logisim adapter runs `logisim-evolution --toplevel-circuit <name> -tty table <circuit>` (or `logisim`) and compares the generated truth table with the `table` key input. The circuit name comes from the question's **Circuit name** setting and defaults to `main`. Set the `programPath` setting to the Logisim executable, or put `logisim-evolution`/`logisim` on `PATH`. It uses no runtime download.
 
 Name the key table's input and output columns after the circuit's pins. When
 the key has a `# red-pen header:` line, the adapter matches the generated
