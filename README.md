@@ -42,6 +42,10 @@ the adapter.
 Each folder contains `manifest.json` and the adapter's Lua script. The registry
 entry lists both files, and the app resolves them relative to `registry.json`.
 
+A folder may also include `README.md` and an `assets/` folder for its images.
+README images must use relative links such as `![Screenshot](assets/shot.png)`;
+the app fetches them from the same adapter folder for the marketplace.
+
 The entry mirrors the manifest. The app refuses an install whose manifest asks
 for a permission, folder grant, folder picker or runtime the entry did not
 list, so keep the two files in step.
