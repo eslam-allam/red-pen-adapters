@@ -68,7 +68,9 @@ An adapter that needs a per-user registry key declares it in the manifest:
 ```
 
 The key must be under `HKCU` or `HKLM`. The app creates a missing `HKCU` key
-and opens it to the adapter's AppContainer. Other platforms ignore the list.
+and opens it to the adapter's AppContainer. Grants are per key, so a program
+that writes nested keys (Java preferences, for example) must list each one.
+Other platforms ignore the list.
 setup never need it.
 
 The submitted file, the adapter folder and the adapter temp folder need no

@@ -3,7 +3,7 @@
   "schema": 3,
   "id": "logisim",
   "name": "Logisim",
-  "version": "4.4.0",
+  "version": "4.4.1",
   "description": "Runs Logisim's truth-table mode and compares the generated table with the key.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -19,7 +19,10 @@
     "subprocess"
   ],
   "registry": [
-    "HKCU\\Software\\JavaSoft\\Prefs"
+    "HKCU\\Software\\JavaSoft\\Prefs",
+    "HKCU\\Software\\JavaSoft\\Prefs\\com",
+    "HKCU\\Software\\JavaSoft\\Prefs\\com\\cburch",
+    "HKCU\\Software\\JavaSoft\\Prefs\\com\\cburch\\logisim"
   ],
   "keyInput": [
     {
