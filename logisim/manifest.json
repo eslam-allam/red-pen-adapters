@@ -3,7 +3,7 @@
   "schema": 3,
   "id": "logisim",
   "name": "Logisim",
-  "version": "4.2.2",
+  "version": "4.3.0",
   "description": "Runs Logisim's truth-table mode and compares the generated table with the key.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -32,7 +32,8 @@
             "label": "Inputs",
             "role": "input",
             "binary": true,
-            "min": 1
+            "min": 1,
+            "fill": "binary"
           },
           {
             "key": "outputs",

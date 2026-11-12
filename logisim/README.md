@@ -2,14 +2,16 @@
 
 Runs Logisim's truth-table mode and compares the generated table with the key.
 
-- **Version:** 4.1.0
+- **Version:** 4.3.0
 - **Works on:** files
 - **File extensions:** .circ
 - **Permissions:** subprocess
 
 ## How it works
 
-Runs the configured Logisim executable in truth-table mode and compares the generated rows with the **Key truth table** field. The key table declares one input section and one output section. Add as many inputs and outputs as the circuit needs. The number of rows follows `2 ^ inputs`, and every output bit must be filled.
+Runs the configured Logisim executable in truth-table mode and compares the generated rows with the **Key truth table** field. The key table declares one input section and one output section. Add as many inputs and outputs as the circuit needs. The number of rows follows `2 ^ inputs`, and every output bit must be filled. The input columns are prefilled with the binary counting sequence.
+
+Name the input and output columns after the pins in the circuit (for example `A1 A0 B1 B0` and `P3 P2 P1 P0`). When the key names its columns, the adapter matches the circuit's columns by name, so reordering inputs or outputs does not change the result. Without a named header the adapter compares columns by position.
 
 Set the Logisim executable in the adapter settings. The app runs it through the adapter host API; the adapter never starts a shell.
 

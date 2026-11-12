@@ -136,6 +136,12 @@ The Logisim adapter runs `logisim-evolution -tty table <circuit>` (or
 Set the `programPath` setting to the Logisim executable, or put
 `logisim-evolution`/`logisim` on `PATH`. It uses no runtime download.
 
+Name the key table's input and output columns after the circuit's pins. When
+the key has a `# red-pen header:` line, the adapter matches the generated
+table's columns by name, so the same circuit is accepted even if its pins are
+listed in a different order. Without a header the columns are compared by
+position.
+
 ## Language pack
 
 The language adapters run a submitted file or a question answer with the
@@ -186,6 +192,8 @@ The schemas document:
 - adapter key and settings field types
 - truth-table column sections, row sections, and safe formulas such as
   `2 ^ inputs`
+- per-section `fill: "binary"` or `fill: "none"` to choose whether the table
+  editor prefills that section, and optional `names` for fixed headings
 - registry file entries, including their optional SHA-256 checksums
 
 Run local validation before publishing:
