@@ -50,6 +50,9 @@ local function run(program, args)
   return app.run_runtime(manifest.miseTool or language, version, program, args or {}, "")
 end
 
+local question = context.questionValues or {}
+local input_file = (question.inputFile or ""):match("^%s*(.-)%s*$")
+
 local output
 if language == "rust" or language == "c" or language == "cpp" then
   local binary = app.temp_dir() .. "/program"
@@ -60,14 +63,19 @@ if language == "rust" or language == "c" or language == "cpp" then
     fail("The program did not compile.\n\n" .. (build.stderr or ""), build.stdout)
     return
   end
-  output = app.run_command(binary, {}, "")
+  local args = {}
+  if input_file ~= "" then args[#args + 1] = input_file end
+  output = app.run_command(binary, args, "")
 else
   local spec = commands[language]
   if not spec then
     fail("No command is configured for " .. language .. ".")
     return
   end
-  output = run(spec[1], spec[2])
+  local args = {}
+  for _, arg in ipairs(spec[2]) do args[#args + 1] = arg end
+  if input_file ~= "" then args[#args + 1] = input_file end
+  output = run(spec[1], args)
 end
 
 if output.code ~= 0 then

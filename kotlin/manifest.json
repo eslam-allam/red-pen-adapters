@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "kotlin",
   "name": "Kotlin",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Runs a Kotlin script.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -55,5 +55,14 @@
   "bootstrap": {
     "mise": "latest"
   },
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjN0Y1MkZGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+S290bGluPC90aXRsZT48cGF0aCBkPSJNMjQgMjRIMFYwaDI0TDEyIDEyWiIvPjwvc3ZnPg=="
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjN0Y1MkZGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+S290bGluPC90aXRsZT48cGF0aCBkPSJNMjQgMjRIMFYwaDI0TDEyIDEyWiIvPjwvc3ZnPg==",
+  "questionInput": [
+    {
+      "key": "inputFile",
+      "label": "Input file",
+      "type": "path",
+      "required": false,
+      "help": "An optional file to pass to the program as its first argument."
+    }
+  ]
 }

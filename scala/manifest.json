@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "scala",
   "name": "Scala",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Runs a Scala program.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -54,5 +54,14 @@
   "bootstrap": {
     "mise": "latest"
   },
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjREMzMjJGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+U2NhbGE8L3RpdGxlPjxwYXRoIGQ9Ik00LjU4OSAyNGM0LjUzNyAwIDEzLjgxLTEuNTE2IDE0LjgyMS0zdi01LjcyOWMtLjk1NyAxLjQwOC0xMC4yODQgMi45MTItMTQuODIxIDIuOTEyVjI0ek00LjU4OSAxNi4zNjVjNC41MzcgMCAxMy44MS0xLjUxNiAxNC44MjEtM1Y3LjYzNmMtLjk1NyAxLjQwOC0xMC4yODQgMi45MTItMTQuODIxIDIuOTEydjUuODE3ek00LjU4OSA4LjcyOWM0LjUzNyAwIDEzLjgxLTEuNTE2IDE0LjgyMS0zVjBDMTguNDUzIDEuNDA4IDkuMTI2IDIuOTEyIDQuNTg5IDIuOTEydjUuODE3eiIvPjwvc3ZnPg=="
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjREMzMjJGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+U2NhbGE8L3RpdGxlPjxwYXRoIGQ9Ik00LjU4OSAyNGM0LjUzNyAwIDEzLjgxLTEuNTE2IDE0LjgyMS0zdi01LjcyOWMtLjk1NyAxLjQwOC0xMC4yODQgMi45MTItMTQuODIxIDIuOTEyVjI0ek00LjU4OSAxNi4zNjVjNC41MzcgMCAxMy44MS0xLjUxNiAxNC44MjEtM1Y3LjYzNmMtLjk1NyAxLjQwOC0xMC4yODQgMi45MTItMTQuODIxIDIuOTEydjUuODE3ek00LjU4OSA4LjcyOWM0LjUzNyAwIDEzLjgxLTEuNTE2IDE0LjgyMS0zVjBDMTguNDUzIDEuNDA4IDkuMTI2IDIuOTEyIDQuNTg5IDIuOTEydjUuODE3eiIvPjwvc3ZnPg==",
+  "questionInput": [
+    {
+      "key": "inputFile",
+      "label": "Input file",
+      "type": "path",
+      "required": false,
+      "help": "An optional file to pass to the program as its first argument."
+    }
+  ]
 }

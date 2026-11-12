@@ -2,7 +2,7 @@
 
 Runs a Kotlin script.
 
-- **Version:** 2.3.0
+- **Version:** 2.4.0
 - **Works on:** files, questions
 - **File extensions:** .kt, .kts
 - **Permissions:** subprocess

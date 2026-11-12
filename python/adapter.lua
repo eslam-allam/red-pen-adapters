@@ -20,11 +20,16 @@ local function normalise(text)
   return table.concat(lines, "\n"):match("^%s*(.-)%s*$")
 end
 
+local question = context.questionValues or {}
+local input_file = (question.inputFile or ""):match("^%s*(.-)%s*$")
+local args = { request.filePath }
+if input_file ~= "" then args[#args + 1] = input_file end
+
 local output
 if runner and runner ~= "" then
-  output = app.run_command(runner, { request.filePath }, "")
+  output = app.run_command(runner, args, "")
 else
-  output = app.run_runtime("python", runtime.version or version, "python", { request.filePath }, "")
+  output = app.run_runtime("python", runtime.version or version, "python", args, "")
 end
 if output.code ~= 0 then
   app.result({ score = 0, comment = "The program stopped with an error.\n\n" .. (output.stderr or ""), rationale = "Python exited with an error.", text = output.stdout or "" })

@@ -2,7 +2,7 @@
 
 Runs JavaScript with Node.js.
 
-- **Version:** 2.3.0
+- **Version:** 2.4.0
 - **Works on:** files, questions
 - **File extensions:** .js, .mjs, .cjs
 - **Permissions:** subprocess

@@ -210,6 +210,11 @@ language's runtime and compare the printed output with the `expected` key
 field. They declare their supported extensions and work on both files and
 questions.
 
+Each language question also offers an optional **Input file** path. When set,
+the app makes that file readable to the adapter sandbox and the adapter passes
+its path to the student program as the next argument after the submitted
+file.
+
 Included: JavaScript, TypeScript, Ruby, PHP, Go, Rust, C, C++, Java, Kotlin,
 C#, F#, Swift, Lua, R, Julia, Haskell, Elixir, Erlang, Dart, Scala, Perl,
 Bash, PowerShell, and Python.

@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "elixir",
   "name": "Elixir",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Runs an Elixir script.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -55,5 +55,14 @@
   "bootstrap": {
     "mise": "latest"
   },
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjNEIyNzVGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RWxpeGlyPC90aXRsZT48cGF0aCBkPSJNMTkuNzkzIDE2LjU3NWMwIDMuNzUyLTIuOTI3IDcuNDI2LTcuNzQzIDcuNDI2LTUuMjQ5IDAtNy44NDMtMy43MS03Ljg0My04LjI5IDAtNS4yMSAzLjg5Mi0xMi45NTIgOC0xNS42NDdhLjM5Ny4zOTcgMCAwIDEgLjYxLjM3MSA5LjcxNiA5LjcxNiAwIDAgMCAxLjY5NCA2LjUxOGMuNTIyLjc5NSAxLjA5MiAxLjQ3OCAxLjc2MyAyLjM1Mi45NCAxLjIyNyAxLjYzNyAxLjkwNiAyLjY0NCAzLjg0MmwuMDE1LjAyOGE3LjEwNyA3LjEwNyAwIDAgMSAuODYgMy40eiIvPjwvc3ZnPg=="
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjNEIyNzVGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RWxpeGlyPC90aXRsZT48cGF0aCBkPSJNMTkuNzkzIDE2LjU3NWMwIDMuNzUyLTIuOTI3IDcuNDI2LTcuNzQzIDcuNDI2LTUuMjQ5IDAtNy44NDMtMy43MS03Ljg0My04LjI5IDAtNS4yMSAzLjg5Mi0xMi45NTIgOC0xNS42NDdhLjM5Ny4zOTcgMCAwIDEgLjYxLjM3MSA5LjcxNiA5LjcxNiAwIDAgMCAxLjY5NCA2LjUxOGMuNTIyLjc5NSAxLjA5MiAxLjQ3OCAxLjc2MyAyLjM1Mi45NCAxLjIyNyAxLjYzNyAxLjkwNiAyLjY0NCAzLjg0MmwuMDE1LjAyOGE3LjEwNyA3LjEwNyAwIDAgMSAuODYgMy40eiIvPjwvc3ZnPg==",
+  "questionInput": [
+    {
+      "key": "inputFile",
+      "label": "Input file",
+      "type": "path",
+      "required": false,
+      "help": "An optional file to pass to the program as its first argument."
+    }
+  ]
 }

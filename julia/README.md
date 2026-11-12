@@ -2,7 +2,7 @@
 
 Runs a Julia program.
 
-- **Version:** 2.3.0
+- **Version:** 2.4.0
 - **Works on:** files, questions
 - **File extensions:** .jl
 - **Permissions:** subprocess

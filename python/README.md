@@ -2,7 +2,7 @@
 
 Runs Python code from a submitted .py file or from the answer text, and compares what it prints with the key answer.
 
-- **Version:** 2.3.0
+- **Version:** 2.4.0
 - **Works on:** files, questions
 - **File extensions:** .py
 - **Permissions:** subprocess
