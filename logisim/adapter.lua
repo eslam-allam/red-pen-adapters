@@ -179,6 +179,15 @@ if request.mode == "preview" then
 end
 
 local actual_headers, actual = parse_table(output.stdout)
+if #actual == 0 then
+  app.result({
+    error = "Logisim returned no truth table for circuit '"
+      .. circuit
+      .. "'. Check the circuit name in the question settings.",
+    text = output.stdout or "",
+  })
+  return
+end
 local wanted_headers, wanted = parse_table(expected)
 if #wanted == 0 then
   app.result({
