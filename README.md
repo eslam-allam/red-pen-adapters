@@ -57,6 +57,18 @@ Adapters declare only what they need outside their sandbox:
 
 The official adapters declare only `subprocess`. Add `network` back only when
 the student's own program needs to make network requests; runtime and package
+downloads are handled by the app, not by the adapter.
+
+### Windows registry
+
+An adapter that needs a per-user registry key declares it in the manifest:
+
+```json
+"registry": ["HKCU\\Software\\JavaSoft\\Prefs"]
+```
+
+The key must be under `HKCU` or `HKLM`. The app creates a missing `HKCU` key
+and opens it to the adapter's AppContainer. Other platforms ignore the list.
 setup never need it.
 
 The submitted file, the adapter folder and the adapter temp folder need no
@@ -189,6 +201,8 @@ file patterns.
 The schemas document:
 
 - permissions, targets, folder grants, folder pickers, and runtimes
+- Windows registry keys an adapter declares with `registry`
+- the operating system passed to adapters as `request.os`
 - adapter key and settings field types
 - truth-table column sections, row sections, and safe formulas such as
   `2 ^ inputs`

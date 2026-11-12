@@ -89,6 +89,15 @@
           },
           "uniqueItems": true
         },
+        "registry": {
+          "type": "array",
+          "description": "Per-user registry keys the adapter needs on Windows.",
+          "items": {
+            "type": "string",
+            "pattern": "^(HKCU|HKEY_CURRENT_USER|HKLM|HKEY_LOCAL_MACHINE)\\\\.+$"
+          },
+          "uniqueItems": true
+        },
         "extensions": {
           "type": "array",
           "items": {

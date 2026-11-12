@@ -27,12 +27,22 @@
 --- (a Python venv with the packages from the settings, for example).
 ---@field program? string
 
+---@class RedPenOs
+--- The platform name, e.g. "windows", "linux" or "macos".
+---@field platform string
+--- "windows" or "unix".
+---@field family "windows"|"unix"
+--- The CPU architecture, e.g. "x86_64" or "aarch64".
+---@field arch string
+
 ---@class RedPenRequest
 ---@field version integer
 ---@field mode "preview"|"grade"
 ---@field filePath string
 ---@field fileName string
 ---@field extension string
+--- The operating system, so an adapter can pick the right command.
+---@field os RedPenOs
 ---@field permissions string[]
 ---@field settings table<string, string>
 ---@field context? RedPenContext
@@ -54,6 +64,8 @@ request = nil
 ---@field miseTool? string
 ---@field extensions string[]
 ---@field permissions string[]
+--- Per-user registry keys the adapter needs on Windows.
+---@field registry? string[]
 ---@field settings? table[]
 ---@field keyInput? table[]
 ---@field [string] any

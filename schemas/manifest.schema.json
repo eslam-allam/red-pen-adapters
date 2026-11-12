@@ -114,6 +114,15 @@
         "type": "string"
       }
     },
+    "registry": {
+      "type": "array",
+      "description": "Per-user registry keys the adapter needs on Windows, for example HKCU\\Software\\JavaSoft\\Prefs.",
+      "items": {
+        "type": "string",
+        "pattern": "^(HKCU|HKEY_CURRENT_USER|HKLM|HKEY_LOCAL_MACHINE)\\\\.+$"
+      },
+      "uniqueItems": true
+    },
     "directoryPicker": {
       "type": "object",
       "additionalProperties": false,
