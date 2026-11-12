@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "logisim",
   "name": "Logisim",
-  "version": "4.7.1",
+  "version": "4.7.2",
   "description": "Runs Logisim's truth-table mode and compares the generated table with the key.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -75,8 +75,7 @@
       "key": "circuit",
       "label": "Circuit name",
       "type": "text",
-      "default": "main",
-      "help": "The circuit whose truth table is generated. Use the circuit with the input and output pins, for example Multiplier2x2. The default is main."
+      "help": "Optional. The circuit whose truth table is generated, for example Multiplier2x2. Leave empty to use the circuit file's main circuit."
     }
   ]
 }

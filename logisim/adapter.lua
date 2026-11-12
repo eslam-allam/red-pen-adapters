@@ -6,8 +6,7 @@ local expected = values.table or context.expected or ""
 local max_points = tonumber(context.maxPoints) or 0
 local program = settings.programPath
 if not program or program == "" then program = "logisim-evolution" end
-local circuit = (question.circuit or "main"):match("^%s*(.-)%s*$")
-if circuit == "" then circuit = "main" end
+local circuit = (question.circuit or ""):match("^%s*(.-)%s*$")
 
 local function trim(text)
   return (text:gsub("^%s*(.-)%s*$", "%1"))
@@ -161,13 +160,14 @@ local function build_tables(actual_headers, actual, wanted_headers, wanted)
     student_bad_rows, key_bad_cells, student_bad_cells
 end
 
-local args = {
-  "--toplevel-circuit",
-  circuit,
-  "-tty",
-  "table",
-  request.filePath,
-}
+local args = {}
+if circuit ~= "" then
+  args[#args + 1] = "--toplevel-circuit"
+  args[#args + 1] = circuit
+end
+args[#args + 1] = "-tty"
+args[#args + 1] = "table"
+args[#args + 1] = request.filePath
 local output = app.run_command(program, args, "")
 if output.code ~= 0 then
   app.result({ error = (output.stderr ~= "" and output.stderr) or "Logisim failed.", text = output.stdout or "" })
@@ -181,9 +181,11 @@ end
 local actual_headers, actual = parse_table(output.stdout)
 if #actual == 0 then
   app.result({
-    error = "Logisim returned no truth table for circuit '"
-      .. circuit
-      .. "'. Check the circuit name in the question settings.",
+    error = circuit ~= ""
+      and ("Logisim returned no truth table for circuit '"
+        .. circuit
+        .. "'. Check the circuit name in the question settings.")
+      or "Logisim returned no truth table. Check the circuit file.",
     text = output.stdout or "",
   })
   return
