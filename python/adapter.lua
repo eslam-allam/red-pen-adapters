@@ -27,21 +27,29 @@ else
   output = app.run_runtime("python", runtime.version or version, "python", { request.filePath }, "")
 end
 if output.code ~= 0 then
-  result = { score = 0, comment = "The program stopped with an error.\n\n" .. (output.stderr or ""), rationale = "Python exited with an error.", text = output.stdout or "" }
+  app.result({ score = 0, comment = "The program stopped with an error.\n\n" .. (output.stderr or ""), rationale = "Python exited with an error.", text = output.stdout or "" })
   return
 end
 if request.mode == "preview" then
-  result = { text = output.stdout or "", rationale = "Python ran successfully." }
+  app.result({ text = output.stdout or "", rationale = "Python ran successfully." })
   return
 end
 if normalise(expected) == "" then
-  result = { score = 0, comment = "The key has no expected output to compare with.", rationale = "No expected output.", text = output.stdout or "" }
+  app.result({ score = 0, comment = "The key has no expected output to compare with.", rationale = "No expected output.", text = output.stdout or "" })
   return
 end
 local same = normalise(output.stdout) == normalise(expected)
-result = {
+app.result({
   score = same and max_points or 0,
   comment = same and "The output matches the expected answer." or "The output does not match the expected answer.",
   rationale = same and "Printed output matched the key." or "Printed output differed from the key.",
   text = output.stdout or "",
-}
+  output = {
+    kind = "diff",
+    title = "Program output",
+    expected = expected,
+    actual = output.stdout or "",
+    expectedLabel = "Expected",
+    actualLabel = "Actual",
+  },
+})

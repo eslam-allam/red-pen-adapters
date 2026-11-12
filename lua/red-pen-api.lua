@@ -2,7 +2,7 @@
 
 -- Definitions for the Red Pen adapter runtime. Point lua-language-server at
 -- this folder (the repository's .luarc.json does that already) so `request`,
--- `manifest`, `result` and `app` are typed, and so `io`, `os`, `package` and
+-- `manifest` and `app` are typed, and so `io`, `os`, `package` and
 -- `debug` are reported as unavailable.
 
 ---@class RedPenFieldContext
@@ -77,9 +77,47 @@ manifest = nil
 ---@field score? number
 ---@field comment? string
 ---@field rationale? string
+--- Preview text shown when the attachment is opened.
 ---@field text? string
 ---@field outputPath? string
 ---@field error? string
+--- The output declared by the manifest. Only return the declared kind.
+---@field output? RedPenOutput
+
+---@class RedPenTableOutput
+---@field kind "table"
+---@field title? string
+---@field columns string[]
+---@field rows string[][]
+---@field mismatchedRows? integer[] Zero-based row indexes.
+---@field mismatchedCells? { row: integer, column: integer }[] Zero-based cells.
+
+---@class RedPenDiffOutput
+---@field kind "diff"
+---@field title? string
+---@field expected string
+---@field actual string
+---@field expectedLabel? string
+---@field actualLabel? string
+
+---@class RedPenTextOutput
+---@field kind "text"
+---@field title? string
+---@field text string
+
+---@class RedPenImageOutput
+---@field kind "image"
+---@field title? string
+--- A base64 image data URI.
+---@field src string
+---@field alt? string
+
+---@class RedPenJsonOutput
+---@field kind "json"
+---@field title? string
+---@field value any
+
+---@alias RedPenOutput RedPenTableOutput|RedPenDiffOutput|RedPenTextOutput|RedPenImageOutput|RedPenJsonOutput
 
 ---@class RedPenProcess
 ---@field stdout string
@@ -99,14 +137,12 @@ manifest = nil
 ---@field run_runtime fun(tool: string, version: string, program: string, args: string[]|nil, stdin: string|nil): RedPenProcess
 --- Runs a program directly inside the sandbox.
 ---@field run_command fun(program: string, args: string[]|nil, stdin: string|nil): RedPenProcess
+--- Returns the adapter's result. Call this once, at the end of the script.
+---@field result fun(value: RedPenResult)
 ---@field log fun(message: string)
 
 ---@type RedPenApp
 app = nil
-
---- Set this to the table the adapter returns: text and/or score/comment.
----@type RedPenResult|nil
-result = nil
 
 -- Unavailable in the embedded adapter runtime: io, os, package, debug,
 -- load, loadfile and dofile. Use `app` for files and processes instead.

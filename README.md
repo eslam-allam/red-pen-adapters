@@ -18,10 +18,11 @@ the adapter.
     {
       "id": "python",
       "name": "Python",
-      "version": "2.1.0",
+      "version": "2.2.0",
       "description": "Runs Python code and compares its output with the key.",
       "author": "Red Pen",
       "appliesTo": ["file", "question"],
+      "output": { "kind": "diff", "label": "Program output" },
       "permissions": ["subprocess"],
       "runtimes": [
         {
@@ -44,6 +45,41 @@ entry lists both files, and the app resolves them relative to `registry.json`.
 The entry mirrors the manifest. The app refuses an install whose manifest asks
 for a permission, folder grant, folder picker or runtime the entry did not
 list, so keep the two files in step.
+
+## Adapter scripts
+
+Every adapter is a Lua script named `adapter.lua`. The app runs it in its
+embedded Lua runtime; there is no command line, process runtime or built-in
+handler in a manifest.
+
+The script returns one result table through `app.result`:
+
+```lua
+app.result({
+  score = 2.5,
+  comment = "Student-facing comment",
+  rationale = "Grader-only explanation",
+  text = "Preview text shown when the attachment is opened",
+  output = {
+    kind = "diff",
+    title = "Program output",
+    expected = expected,
+    actual = output.stdout,
+  },
+})
+```
+
+The manifest declares what output the script may return:
+
+```json
+"output": { "kind": "diff", "label": "Program output" }
+```
+
+`kind` is one of `none`, `text`, `table`, `diff`, `image` or `json`. The app
+rejects any other kind, and rejects output from an adapter that declares
+`none`. The grading panel shows the output in an overlay; tables highlight
+mismatched rows and cells, and diffs compare expected and actual line by
+line. See `lua/red-pen-api.lua` for the full Lua API and the output shapes.
 
 ## Permissions
 
@@ -154,7 +190,8 @@ Name the key table's input and output columns after the circuit's pins. When
 the key has a `# red-pen header:` line, the adapter matches the generated
 table's columns by name, so the same circuit is accepted even if its pins are
 listed in a different order. Without a header the columns are compared by
-position.
+position. The adapter returns a `table` output that shows the circuit's table
+and highlights every row or cell that differs from the key.
 
 ## Language pack
 
@@ -167,16 +204,16 @@ Included: JavaScript, TypeScript, Ruby, PHP, Go, Rust, C, C++, Java, Kotlin,
 C#, F#, Swift, Lua, R, Julia, Haskell, Elixir, Erlang, Dart, Scala, Perl,
 Bash, PowerShell, and Python.
 
-Every adapter declares its mise runtime in `runtimes`; the app downloads it.
-No adapter declares `network`. TypeScript runs through Bun's built-in
-TypeScript/TSX support, so it does not download `tsx` at run time.
+Every language adapter declares its mise runtime in `runtimes`; the app
+downloads it. No adapter declares `network`. TypeScript runs through Bun's
+built-in TypeScript/TSX support, so it does not download `tsx` at run time.
 
 ## Lua editor support
 
 The repository's `.luarc.json` configures LuaLS for adapter authors:
 
-- `lua/red-pen-api.lua` defines `request`, `manifest`, `result`, `app` and the
-  process result type.
+- `lua/red-pen-api.lua` defines `request`, `manifest`, `app`, the process result
+  type, `app.result`, and the output shapes an adapter may return.
 - `runtime.builtin` disables `io`, `os`, `package` and `debug`, so the editor
   reports those libraries as unavailable. It also documents that `load`,
   `loadfile` and `dofile` are absent at runtime.
@@ -203,6 +240,7 @@ file patterns.
 The schemas document:
 
 - permissions, targets, folder grants, folder pickers, and runtimes
+- the declared `output` kind and the shapes it may return
 - Windows registry keys an adapter declares with `registry`
 - the operating system passed to adapters as `request.os`
 - adapter key and settings field types

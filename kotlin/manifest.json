@@ -1,12 +1,11 @@
 {
   "$schema": "../schemas/manifest.schema.json",
-  "schema": 3,
+  "schema": 4,
   "id": "kotlin",
   "name": "Kotlin",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Runs a Kotlin script.",
   "author": "Red Pen",
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjN0Y1MkZGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+S290bGluPC90aXRsZT48cGF0aCBkPSJNMjQgMjRIMFYwaDI0TDEyIDEyWiIvPjwvc3ZnPg==",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
   "extensions": [
     "kt",
@@ -16,13 +15,21 @@
     "file",
     "question"
   ],
-  "runtime": "lua",
-  "command": "lua",
-  "args": [
-    "adapter.lua"
-  ],
+  "language": "kotlin",
+  "miseTool": "kotlin",
+  "output": {
+    "kind": "diff",
+    "label": "Program output"
+  },
   "permissions": [
     "subprocess"
+  ],
+  "runtimes": [
+    {
+      "tool": "kotlin",
+      "setting": "runtimeVersion",
+      "version": "latest"
+    }
   ],
   "keyInput": [
     {
@@ -43,16 +50,8 @@
       "help": "The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use."
     }
   ],
-  "language": "kotlin",
   "bootstrap": {
     "mise": "latest"
   },
-  "miseTool": "kotlin",
-  "runtimes": [
-    {
-      "tool": "kotlin",
-      "setting": "runtimeVersion",
-      "version": "latest"
-    }
-  ]
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjN0Y1MkZGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+S290bGluPC90aXRsZT48cGF0aCBkPSJNMjQgMjRIMFYwaDI0TDEyIDEyWiIvPjwvc3ZnPg=="
 }

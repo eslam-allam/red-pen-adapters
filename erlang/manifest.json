@@ -1,12 +1,11 @@
 {
   "$schema": "../schemas/manifest.schema.json",
-  "schema": 3,
+  "schema": 4,
   "id": "erlang",
   "name": "Erlang",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Runs an Erlang script with escript.",
   "author": "Red Pen",
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQTkwNTMzIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RXJsYW5nPC90aXRsZT48cGF0aCBkPSJNOC44NTkgNy44ODljLjE1NC0xLjg2MyAxLjYyMy0zLjExNSAzLjM0NC0zLjExOSAxLjczNC4wMDQgMi45ODYgMS4yNTYgMy4wMjkgMy4xMTl6bTEyLjExIDExLjcwN2MuODAyLS44NiAxLjUyLTEuODcyIDIuMTcyLTMuMDNsLTMuNjE2LTEuODA3Yy0xLjI3IDIuMDY0LTMuMTI3IDMuOTY1LTUuNjk0IDMuOTc3LTMuNzM4LS4wMTItNS4yMDYtMy4yMDgtNS4xOTgtNy4zMjJoMTMuOTY2Yy4wMTktLjQ2NC4wMTktLjY4IDAtLjkwNC4wOTEtMi40NDctLjU1OC00LjUwNC0xLjczNy02LjEwNmwtLjAwNy4wMDVIMjR2MTUuMTg2aC0zLjAzOXptLTE3LjIwNi0uMDAxQzEuOTAxIDE3LjYyLjgxMSAxNC44OTQuODEzIDExLjY0Yy0uMDAyLTIuODc3LjkwMi01LjM1IDIuNDU2LTcuMjMySDB2MTUuMTg3aDMuNzYxWiIvPjwvc3ZnPg==",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
   "extensions": [
     "erl"
@@ -15,13 +14,21 @@
     "file",
     "question"
   ],
-  "runtime": "lua",
-  "command": "lua",
-  "args": [
-    "adapter.lua"
-  ],
+  "language": "erlang",
+  "miseTool": "erlang",
+  "output": {
+    "kind": "diff",
+    "label": "Program output"
+  },
   "permissions": [
     "subprocess"
+  ],
+  "runtimes": [
+    {
+      "tool": "erlang",
+      "setting": "runtimeVersion",
+      "version": "latest"
+    }
   ],
   "keyInput": [
     {
@@ -42,16 +49,8 @@
       "help": "The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use."
     }
   ],
-  "language": "erlang",
   "bootstrap": {
     "mise": "latest"
   },
-  "miseTool": "erlang",
-  "runtimes": [
-    {
-      "tool": "erlang",
-      "setting": "runtimeVersion",
-      "version": "latest"
-    }
-  ]
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQTkwNTMzIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RXJsYW5nPC90aXRsZT48cGF0aCBkPSJNOC44NTkgNy44ODljLjE1NC0xLjg2MyAxLjYyMy0zLjExNSAzLjM0NC0zLjExOSAxLjczNC4wMDQgMi45ODYgMS4yNTYgMy4wMjkgMy4xMTl6bTEyLjExIDExLjcwN2MuODAyLS44NiAxLjUyLTEuODcyIDIuMTcyLTMuMDNsLTMuNjE2LTEuODA3Yy0xLjI3IDIuMDY0LTMuMTI3IDMuOTY1LTUuNjk0IDMuOTc3LTMuNzM4LS4wMTItNS4yMDYtMy4yMDgtNS4xOTgtNy4zMjJoMTMuOTY2Yy4wMTktLjQ2NC4wMTktLjY4IDAtLjkwNC4wOTEtMi40NDctLjU1OC00LjUwNC0xLjczNy02LjEwNmwtLjAwNy4wMDVIMjR2MTUuMTg2aC0zLjAzOXptLTE3LjIwNi0uMDAxQzEuOTAxIDE3LjYyLjgxMSAxNC44OTQuODEzIDExLjY0Yy0uMDAyLTIuODc3LjkwMi01LjM1IDIuNDU2LTcuMjMySDB2MTUuMTg3aDMuNzYxWiIvPjwvc3ZnPg=="
 }

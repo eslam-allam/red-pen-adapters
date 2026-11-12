@@ -1,12 +1,11 @@
 {
   "$schema": "../schemas/manifest.schema.json",
-  "schema": 3,
+  "schema": 4,
   "id": "scala",
   "name": "Scala",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Runs a Scala program.",
   "author": "Red Pen",
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjREMzMjJGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+U2NhbGE8L3RpdGxlPjxwYXRoIGQ9Ik00LjU4OSAyNGM0LjUzNyAwIDEzLjgxLTEuNTE2IDE0LjgyMS0zdi01LjcyOWMtLjk1NyAxLjQwOC0xMC4yODQgMi45MTItMTQuODIxIDIuOTEyVjI0ek00LjU4OSAxNi4zNjVjNC41MzcgMCAxMy44MS0xLjUxNiAxNC44MjEtM1Y3LjYzNmMtLjk1NyAxLjQwOC0xMC4yODQgMi45MTItMTQuODIxIDIuOTEydjUuODE3ek00LjU4OSA4LjcyOWM0LjUzNyAwIDEzLjgxLTEuNTE2IDE0LjgyMS0zVjBDMTguNDUzIDEuNDA4IDkuMTI2IDIuOTEyIDQuNTg5IDIuOTEydjUuODE3eiIvPjwvc3ZnPg==",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
   "extensions": [
     "scala"
@@ -15,13 +14,21 @@
     "file",
     "question"
   ],
-  "runtime": "lua",
-  "command": "lua",
-  "args": [
-    "adapter.lua"
-  ],
+  "language": "scala",
+  "miseTool": "scala",
+  "output": {
+    "kind": "diff",
+    "label": "Program output"
+  },
   "permissions": [
     "subprocess"
+  ],
+  "runtimes": [
+    {
+      "tool": "scala",
+      "setting": "runtimeVersion",
+      "version": "latest"
+    }
   ],
   "keyInput": [
     {
@@ -42,16 +49,8 @@
       "help": "The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use."
     }
   ],
-  "language": "scala",
   "bootstrap": {
     "mise": "latest"
   },
-  "miseTool": "scala",
-  "runtimes": [
-    {
-      "tool": "scala",
-      "setting": "runtimeVersion",
-      "version": "latest"
-    }
-  ]
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjREMzMjJGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+U2NhbGE8L3RpdGxlPjxwYXRoIGQ9Ik00LjU4OSAyNGM0LjUzNyAwIDEzLjgxLTEuNTE2IDE0LjgyMS0zdi01LjcyOWMtLjk1NyAxLjQwOC0xMC4yODQgMi45MTItMTQuODIxIDIuOTEyVjI0ek00LjU4OSAxNi4zNjVjNC41MzcgMCAxMy44MS0xLjUxNiAxNC44MjEtM1Y3LjYzNmMtLjk1NyAxLjQwOC0xMC4yODQgMi45MTItMTQuODIxIDIuOTEydjUuODE3ek00LjU4OSA4LjcyOWM0LjUzNyAwIDEzLjgxLTEuNTE2IDE0LjgyMS0zVjBDMTguNDUzIDEuNDA4IDkuMTI2IDIuOTEyIDQuNTg5IDIuOTEydjUuODE3eiIvPjwvc3ZnPg=="
 }

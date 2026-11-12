@@ -19,7 +19,7 @@ local function normalise(text)
 end
 
 local function fail(message, text)
-  result = { score = 0, comment = message, rationale = message, text = text or "" }
+  app.result({ score = 0, comment = message, rationale = message, text = text or "" })
 end
 
 local commands = {
@@ -75,7 +75,7 @@ if output.code ~= 0 then
   return
 end
 if request.mode == "preview" then
-  result = { text = output.stdout or "", rationale = "Program ran successfully." }
+  app.result({ text = output.stdout or "", rationale = "Program ran successfully." })
   return
 end
 if normalise(expected) == "" then
@@ -83,9 +83,17 @@ if normalise(expected) == "" then
   return
 end
 local same = normalise(output.stdout) == normalise(expected)
-result = {
+app.result({
   score = same and max_points or 0,
   comment = same and "The output matches the expected answer." or "The output does not match the expected answer.",
   rationale = same and "Printed output matched the key." or "Printed output differed from the key.",
   text = output.stdout or "",
-}
+  output = {
+    kind = "diff",
+    title = "Program output",
+    expected = expected,
+    actual = output.stdout or "",
+    expectedLabel = "Expected",
+    actualLabel = "Actual",
+  },
+})

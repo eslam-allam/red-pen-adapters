@@ -1,12 +1,11 @@
 {
   "$schema": "../schemas/manifest.schema.json",
-  "schema": 3,
+  "schema": 4,
   "id": "fsharp",
   "name": "F#",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Runs an F# script with dotnet fsi.",
   "author": "Red Pen",
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMzc4QkJBIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RiM8L3RpdGxlPjxwYXRoIGQ9Ik0wIDEyIDExLjM5LjYxdjUuNjk1TDUuNjk1IDEybDUuNjk1IDUuNjk1djUuNjk1TDAgMTJ6bTcuMzIyIDAgNC4wNjgtNC4wNjh2OC4xMzZMNy4zMjIgMTJ6TTI0IDEyIDEyLjIwMy42MXY1LjY5NUwxNy44OTggMTJsLTUuNjk1IDUuNjk1djUuNjk1TDI0IDEyeiIvPjwvc3ZnPg==",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
   "extensions": [
     "fsx",
@@ -16,13 +15,21 @@
     "file",
     "question"
   ],
-  "runtime": "lua",
-  "command": "lua",
-  "args": [
-    "adapter.lua"
-  ],
+  "language": "fsharp",
+  "miseTool": "dotnet",
+  "output": {
+    "kind": "diff",
+    "label": "Program output"
+  },
   "permissions": [
     "subprocess"
+  ],
+  "runtimes": [
+    {
+      "tool": "dotnet",
+      "setting": "runtimeVersion",
+      "version": "latest"
+    }
   ],
   "keyInput": [
     {
@@ -43,16 +50,8 @@
       "help": "The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use."
     }
   ],
-  "language": "fsharp",
   "bootstrap": {
     "mise": "latest"
   },
-  "miseTool": "dotnet",
-  "runtimes": [
-    {
-      "tool": "dotnet",
-      "setting": "runtimeVersion",
-      "version": "latest"
-    }
-  ]
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMzc4QkJBIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RiM8L3RpdGxlPjxwYXRoIGQ9Ik0wIDEyIDExLjM5LjYxdjUuNjk1TDUuNjk1IDEybDUuNjk1IDUuNjk1djUuNjk1TDAgMTJ6bTcuMzIyIDAgNC4wNjgtNC4wNjh2OC4xMzZMNy4zMjIgMTJ6TTI0IDEyIDEyLjIwMy42MXY1LjY5NUwxNy44OTggMTJsLTUuNjk1IDUuNjk1djUuNjk1TDI0IDEyeiIvPjwvc3ZnPg=="
 }
