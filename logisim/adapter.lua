@@ -160,6 +160,18 @@ local function build_tables(actual_headers, actual, wanted_headers, wanted)
     student_bad_rows, key_bad_cells, student_bad_cells
 end
 
+---@param code integer
+---@param error string
+---@param circuitName string
+local function handleBadExitLogisim(code, error, circuitName)
+  error = error ~= "" and error or "Logisim failed"
+  if string.find(error, "\"circuit\" is null") ~= nil then
+    app.result({error = "Circuit '" .. circuitName or "main" .. "' Not present."})
+    return
+  end
+  app.result({ error = error})
+end
+
 local args = {}
 if circuit ~= "" then
   args[#args + 1] = "--toplevel-circuit"
@@ -170,8 +182,7 @@ args[#args + 1] = "table"
 args[#args + 1] = request.filePath
 local output = app.run_command(program, args, "")
 if output.code ~= 0 then
-  app.result({ error = (output.stderr ~= "" and output.stderr) or "Logisim failed.", text = output.stdout or "" })
-  return
+  return handleBadExitLogisim(output.code, output.stderr, circuit)
 end
 if request.mode == "preview" then
   app.result({ text = output.stdout or "" })
