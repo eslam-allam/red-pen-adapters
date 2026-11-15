@@ -166,7 +166,7 @@ end
 local function handleBadExitLogisim(code, error, circuitName)
   error = error ~= "" and error or "Logisim failed"
   if string.find(error, "\"circuit\" is null") ~= nil then
-    app.result({error = "Circuit '" .. circuitName or "main" .. "' Not present."})
+    app.result({error = "Circuit '" .. (circuitName or "main") .. "' Not present."})
     return
   end
   app.result({ error = error})
