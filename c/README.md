@@ -2,7 +2,7 @@
 
 Compiles and runs a C program.
 
-- **Version:** 2.4.0
+- **Version:** 2.4.1
 - **Works on:** files, questions
 - **File extensions:** .c
 - **Permissions:** subprocess

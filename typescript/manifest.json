@@ -3,8 +3,8 @@
   "schema": 4,
   "id": "typescript",
   "name": "TypeScript",
-  "version": "2.4.0",
-  "description": "Runs TypeScript with tsx.",
+  "version": "2.4.1",
+  "description": "Runs TypeScript and TSX with Bun.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
   "extensions": [

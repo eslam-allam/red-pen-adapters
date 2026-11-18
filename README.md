@@ -18,12 +18,12 @@ the adapter.
     {
       "id": "python",
       "name": "Python",
-      "version": "2.2.0",
-      "description": "Runs Python code and compares its output with the key.",
+      "version": "2.4.0",
+      "description": "Runs Python code from a submitted .py file or from the answer text, and compares what it prints with the key answer.",
       "author": "Red Pen",
       "appliesTo": ["file", "question"],
-      "output": { "kinds": ["diff"], "label": "Program output" },
       "permissions": ["subprocess"],
+      "extensions": ["py"],
       "runtimes": [
         {
           "tool": "python",
@@ -33,7 +33,8 @@ the adapter.
         }
       ],
       "folder": "python",
-      "files": ["manifest.json", "adapter.lua"]
+      "files": ["manifest.json", "adapter.lua"],
+      "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/python/README.md"
     }
   ]
 }
@@ -46,9 +47,12 @@ A folder may also include `README.md` and an `assets/` folder for its images.
 README images must use relative links such as `![Screenshot](assets/shot.png)`;
 the app fetches them from the same adapter folder for the marketplace.
 
-The entry mirrors the manifest. The app refuses an install whose manifest asks
-for a permission, folder grant, folder picker or runtime the entry did not
-list, so keep the two files in step.
+The entry mirrors the install-gating parts of the manifest: permissions,
+runtimes, and Windows registry keys. The app refuses an install whose manifest
+asks for one of them that the entry did not list, so keep the two files in
+step. Fields the entry has no place for (`output`, `keyInput`,
+`questionInput`, `directories`, `directoryPicker`, and `bootstrap`) live only
+in the manifest.
 
 ## Adapter scripts
 
@@ -227,6 +231,11 @@ Every language adapter declares its mise runtime in `runtimes`; the app
 downloads it. No adapter declares `network`. TypeScript runs through Bun's
 built-in TypeScript/TSX support, so it does not download `tsx` at run time.
 
+The language adapters are generated from
+`scripts/templates/language_adapter.lua` using the command data in
+`scripts/languages.json`; `python` and `logisim` are hand-written. Edit the
+template or the data, then run `python scripts/generate.py`.
+
 ## Lua editor support
 
 The repository's `.luarc.json` configures LuaLS for adapter authors:
@@ -267,16 +276,21 @@ The schemas document:
   `2 ^ inputs`
 - per-section `fill: "binary"` or `fill: "none"` to choose whether the table
   editor prefills that section, and optional `names` for fixed headings
-- registry file entries, including their optional SHA-256 checksums
+- registry file entries and their SHA-256 checksums
 
 Run local validation before publishing:
 
 ```sh
 python -m pip install jsonschema
+python scripts/generate.py --check
 python scripts/validate.py
 ```
 
-The script validates both schemas and checks cross-file consistency: folder
-contents, manifest/registry version and id agreement, runtime settings, and
-formula variables. The same validation runs in GitHub Actions on pushes and
-pull requests.
+`generate.py --check` fails if a committed language `adapter.lua` differs from
+the template. The validator checks both schemas and cross-file consistency:
+folder contents, manifest/registry id, version, permissions, runtimes, registry
+keys and description agreement, README version lines, runtime settings, formula
+variables, and each declared file's SHA-256 checksum. After changing a manifest
+or script, run `python scripts/update_checksums.py` and commit the updated
+`registry.json`. The same checks run in GitHub Actions on pushes and pull
+requests.

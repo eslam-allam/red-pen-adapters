@@ -2,7 +2,7 @@
 
 Runs Logisim's truth-table mode and compares the generated table with the key.
 
-- **Version:** 4.7.3
+- **Version:** 4.7.5
 - **Works on:** files
 - **File extensions:** .circ
 - **Permissions:** subprocess

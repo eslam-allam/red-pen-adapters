@@ -2,7 +2,7 @@
 
 Runs an Elixir script.
 
-- **Version:** 2.4.0
+- **Version:** 2.4.1
 - **Works on:** files, questions
 - **File extensions:** .exs, .ex
 - **Permissions:** subprocess

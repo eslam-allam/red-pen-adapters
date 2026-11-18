@@ -2,7 +2,7 @@
 
 Runs a PowerShell script with pwsh.
 
-- **Version:** 2.4.0
+- **Version:** 2.4.1
 - **Works on:** files, questions
 - **File extensions:** .ps1
 - **Permissions:** subprocess

@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "php",
   "name": "PHP",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Runs a PHP program.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",

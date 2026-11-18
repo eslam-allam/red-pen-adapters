@@ -1,4 +1,5 @@
--- Generic language adapter: the app runs it in its embedded Lua runtime.
+-- Generated from scripts/templates/language_adapter.lua. Do not edit by hand.
+-- Regenerate with: python scripts/generate.py
 local settings = request.settings or {}
 local context = request.context or {}
 local values = context.values or {}
@@ -22,30 +23,6 @@ local function fail(message, text)
   app.result({ score = 0, comment = message, rationale = message, text = text or "" })
 end
 
-local commands = {
-  javascript = { "node", { file } },
-  typescript = { "npx", { "--yes", "tsx", file } },
-  ruby = { "ruby", { file } },
-  php = { "php", { file } },
-  go = { "go", { "run", file } },
-  java = { "java", { file } },
-  kotlin = { "kotlinc", { "-script", file } },
-  csharp = { "dotnet", { "script", file } },
-  fsharp = { "dotnet", { "fsi", file } },
-  swift = { "swift", { file } },
-  lua = { "lua", { file } },
-  r = { "Rscript", { file } },
-  julia = { "julia", { file } },
-  haskell = { "runghc", { file } },
-  elixir = { "elixir", { file } },
-  erlang = { "escript", { file } },
-  dart = { "dart", { "run", file } },
-  scala = { "scala", { file } },
-  perl = { "perl", { file } },
-  bash = { "bash", { file } },
-  powershell = { "pwsh", { "-NoLogo", "-NonInteractive", "-File", file } },
-}
-
 local function run(program, args)
   return app.run_runtime(manifest.miseTool or language, version, program, args or {}, "")
 end
@@ -53,30 +30,16 @@ end
 local question = context.questionValues or {}
 local input_file = (question.inputFile or ""):match("^%s*(.-)%s*$")
 
-local output
-if language == "rust" or language == "c" or language == "cpp" then
-  local binary = app.temp_dir() .. "/program"
-  if app.temp_dir():match("\\$") then binary = binary .. ".exe" end
-  local compiler = language == "rust" and "rustc" or (language == "c" and "gcc" or "g++")
-  local build = run(compiler, { file, "-o", binary })
-  if build.code ~= 0 then
-    fail("The program did not compile.\n\n" .. (build.stderr or ""), build.stdout)
-    return
-  end
-  local args = {}
-  if input_file ~= "" then args[#args + 1] = input_file end
-  output = app.run_command(binary, args, "")
-else
-  local spec = commands[language]
-  if not spec then
-    fail("No command is configured for " .. language .. ".")
-    return
-  end
-  local args = {}
-  for _, arg in ipairs(spec[2]) do args[#args + 1] = arg end
-  if input_file ~= "" then args[#args + 1] = input_file end
-  output = run(spec[1], args)
+local binary = app.temp_dir() .. "/program"
+if app.temp_dir():match("\\$") then binary = binary .. ".exe" end
+local build = run("gcc", { file, "-o", binary })
+if build.code ~= 0 then
+  fail("The program did not compile.\n\n" .. (build.stderr or ""), build.stdout)
+  return
 end
+local args = {}
+if input_file ~= "" then args[#args + 1] = input_file end
+local output = app.run_command(binary, args, "")
 
 if output.code ~= 0 then
   fail("The program stopped with an error.\n\n" .. (output.stderr or ""), output.stdout)

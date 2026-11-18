@@ -19,7 +19,6 @@
   "diagnostics.globals": [
     "request",
     "manifest",
-    "result",
     "app"
   ]
 }

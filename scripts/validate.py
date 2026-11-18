@@ -9,6 +9,7 @@ that refers to an unknown column section.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import sys
@@ -19,6 +20,21 @@ from jsonschema import Draft202012Validator, FormatChecker
 ROOT = Path(__file__).resolve().parent.parent
 IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 FORMULA_NUMBER = re.compile(r"^[0-9]+(?:\.[0-9]+)?$")
+VERSION_LINE = re.compile(r"^-\s+\*\*Version:\*\*\s+(\S+)\s*$", re.MULTILINE)
+README_BASE = "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main"
+# Fields the registry entry mirrors from the manifest. The entry has no place
+# for output, keyInput, questionInput, directories, directoryPicker or
+# bootstrap, so those are not compared here.
+MIRRORED_FIELDS = (
+    "name",
+    "description",
+    "author",
+    "extensions",
+    "appliesTo",
+    "permissions",
+    "registry",
+    "runtimes",
+)
 
 
 def load(path: Path):
@@ -93,6 +109,28 @@ def field_errors(field: dict, label: str) -> list[str]:
     return errors
 
 
+def mirrored_field_errors(entry: dict, manifest: dict, label: str) -> list[str]:
+    errors = []
+    for field in MIRRORED_FIELDS:
+        if manifest.get(field) != entry.get(field):
+            errors.append(
+                f"{label}: manifest {field} {manifest.get(field)!r} does not match "
+                f"registry {field} {entry.get(field)!r}"
+            )
+    if entry.get("folder") != entry.get("id"):
+        errors.append(
+            f"{label}: folder {entry.get('folder')!r} does not match id "
+            f"{entry.get('id')!r}"
+        )
+    expected_readme = f"{README_BASE}/{entry.get('folder')}/README.md"
+    if entry.get("readmeUrl") != expected_readme:
+        errors.append(
+            f"{label}: readmeUrl {entry.get('readmeUrl')!r} does not match "
+            f"{expected_readme!r}"
+        )
+    return errors
+
+
 def main() -> int:
     errors: list[str] = []
     registry_schema = load(ROOT / "schemas" / "registry.schema.json")
@@ -106,6 +144,22 @@ def main() -> int:
     if duplicates:
         errors.append(f"registry.json: duplicate adapter ids: {', '.join(duplicates)}")
 
+    languages = load(ROOT / "scripts" / "languages.json")
+    generated = {item["id"] for item in languages["generated"]}
+    classified = generated | set(languages["manual"])
+    for adapter_id in ids:
+        if adapter_id not in classified:
+            errors.append(
+                f"registry entry {adapter_id}: not listed in scripts/languages.json "
+                f"(add it under generated or manual)"
+            )
+    for adapter_id in sorted(generated):
+        if adapter_id not in ids:
+            errors.append(
+                f"scripts/languages.json: generated adapter {adapter_id!r} is "
+                f"not in registry.json"
+            )
+
     for entry in entries:
         folder = ROOT / entry["folder"]
         label = f"registry entry {entry['id']}"
@@ -118,6 +172,7 @@ def main() -> int:
             continue
         manifest = load(manifest_path)
         errors.extend(validate(manifest, manifest_schema, f"{label}/manifest.json"))
+        errors.extend(mirrored_field_errors(entry, manifest, label))
         if manifest.get("id") != entry["id"]:
             errors.append(
                 f"{label}: manifest id {manifest.get('id')!r} does not match"
@@ -129,8 +184,22 @@ def main() -> int:
             )
         for declared in entry.get("files", []):
             name = declared["path"] if isinstance(declared, dict) else declared
-            if not (folder / name).is_file():
+            path = folder / name
+            if not path.is_file():
                 errors.append(f"{label}: missing declared file {name!r}")
+                continue
+            if not isinstance(declared, dict) or "sha256" not in declared:
+                errors.append(
+                    f"{label}: file {name!r} needs a sha256 checksum "
+                    f"(run python scripts/update_checksums.py)"
+                )
+                continue
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            if actual != declared["sha256"].lower():
+                errors.append(
+                    f"{label}: file {name!r} does not match its sha256 checksum "
+                    f"(run python scripts/update_checksums.py)"
+                )
         settings_keys = {field["key"] for field in manifest.get("settings", [])}
         for runtime in manifest.get("runtimes", []):
             setting = runtime.get("setting")
@@ -150,6 +219,17 @@ def main() -> int:
         readme = folder / "README.md"
         if not readme.is_file():
             errors.append(f"{label}: missing README.md for the marketplace page")
+        else:
+            documented = VERSION_LINE.search(readme.read_text(encoding="utf-8"))
+            if not documented:
+                errors.append(
+                    f"{label}: README.md needs a '- **Version:** <version>' line"
+                )
+            elif documented.group(1) != manifest.get("version"):
+                errors.append(
+                    f"{label}: README.md says version {documented.group(1)!r} but "
+                    f"manifest says {manifest.get('version')!r}"
+                )
 
     if errors:
         for error in errors:

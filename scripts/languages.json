@@ -1,0 +1,29 @@
+{
+  "generated": [
+    { "id": "bash", "kind": "interpreted", "program": "bash", "args": ["{file}"] },
+    { "id": "c", "kind": "compiled", "compiler": "gcc" },
+    { "id": "cpp", "kind": "compiled", "compiler": "g++" },
+    { "id": "csharp", "kind": "interpreted", "program": "dotnet", "args": ["script", "{file}"] },
+    { "id": "dart", "kind": "interpreted", "program": "dart", "args": ["run", "{file}"] },
+    { "id": "elixir", "kind": "interpreted", "program": "elixir", "args": ["{file}"] },
+    { "id": "erlang", "kind": "interpreted", "program": "escript", "args": ["{file}"] },
+    { "id": "fsharp", "kind": "interpreted", "program": "dotnet", "args": ["fsi", "{file}"] },
+    { "id": "go", "kind": "interpreted", "program": "go", "args": ["run", "{file}"] },
+    { "id": "haskell", "kind": "interpreted", "program": "runghc", "args": ["{file}"] },
+    { "id": "java", "kind": "interpreted", "program": "java", "args": ["{file}"] },
+    { "id": "javascript", "kind": "interpreted", "program": "node", "args": ["{file}"] },
+    { "id": "julia", "kind": "interpreted", "program": "julia", "args": ["{file}"] },
+    { "id": "kotlin", "kind": "interpreted", "program": "kotlinc", "args": ["-script", "{file}"] },
+    { "id": "lua", "kind": "interpreted", "program": "lua", "args": ["{file}"] },
+    { "id": "perl", "kind": "interpreted", "program": "perl", "args": ["{file}"] },
+    { "id": "php", "kind": "interpreted", "program": "php", "args": ["{file}"] },
+    { "id": "powershell", "kind": "interpreted", "program": "pwsh", "args": ["-NoLogo", "-NonInteractive", "-File", "{file}"] },
+    { "id": "r", "kind": "interpreted", "program": "Rscript", "args": ["{file}"] },
+    { "id": "ruby", "kind": "interpreted", "program": "ruby", "args": ["{file}"] },
+    { "id": "rust", "kind": "compiled", "compiler": "rustc" },
+    { "id": "scala", "kind": "interpreted", "program": "scala", "args": ["{file}"] },
+    { "id": "swift", "kind": "interpreted", "program": "swift", "args": ["{file}"] },
+    { "id": "typescript", "kind": "interpreted", "program": "bun", "args": ["{file}"] }
+  ],
+  "manual": ["logisim", "python"]
+}
