@@ -180,7 +180,14 @@ end
 args[#args + 1] = "-tty"
 args[#args + 1] = "table"
 args[#args + 1] = request.filePath
-local output = app.run_command(program, args, "")
+local started, output = pcall(app.run_command, program, args, "")
+if not started then
+  app.result({
+    error = "Logisim could not be started or timed out.",
+    text = tostring(output),
+  })
+  return
+end
 if output.code ~= 0 then
   return handleBadExitLogisim(output.code, output.stderr, circuit)
 end
@@ -204,7 +211,7 @@ end
 local wanted_headers, wanted = parse_table(expected)
 if #wanted == 0 then
   app.result({
-    score = 0,
+    error = "The key has no truth-table rows.",
     comment = "The key has no truth-table rows.",
     rationale = "Fill every output cell in the key table before grading.",
     text = output.stdout or "",

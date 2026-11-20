@@ -3,7 +3,7 @@ local context = request.context or {}
 local values = context.values or {}
 local expected = values.expected or context.expected or ""
 local max_points = tonumber(context.maxPoints) or 0
-local version = settings.pythonVersion or "3.12"
+local version = settings.pythonVersion or "3.13"
 -- The app downloads the Python runtime and any packages from the settings,
 -- then hands the adapter the prepared interpreter. The adapter never needs
 -- network access or runs pip itself.
@@ -20,19 +20,43 @@ local function normalise(text)
   return table.concat(lines, "\n"):match("^%s*(.-)%s*$")
 end
 
+-- A failed run or timeout leaves the question unmarked. It must never return
+-- score = 0: that would silently record a wrong answer.
+local function fail(message, detail, text)
+  local rationale = message
+  if detail and detail ~= "" then rationale = message .. "\n\n" .. detail end
+  app.result({
+    error = rationale,
+    comment = message,
+    rationale = rationale,
+    text = text or "",
+  })
+end
+
 local question = context.questionValues or {}
 local input_file = (question.inputFile or ""):match("^%s*(.-)%s*$")
 local args = { request.filePath }
 if input_file ~= "" then args[#args + 1] = input_file end
 
-local output
+local started, output
 if runner and runner ~= "" then
-  output = app.run_command(runner, args, "")
+  started, output = pcall(app.run_command, runner, args, "")
 else
-  output = app.run_runtime("python", runtime.version or version, "python", args, "")
+  started, output = pcall(
+    app.run_runtime,
+    "python",
+    runtime.version or version,
+    "python",
+    args,
+    ""
+  )
+end
+if not started then
+  fail("Python could not be started or timed out.", tostring(output), "")
+  return
 end
 if output.code ~= 0 then
-  app.result({ score = 0, comment = "The program stopped with an error.\n\n" .. (output.stderr or ""), rationale = "Python exited with an error.", text = output.stdout or "" })
+  fail("The program stopped with an error.", output.stderr, output.stdout)
   return
 end
 if request.mode == "preview" then
@@ -40,7 +64,7 @@ if request.mode == "preview" then
   return
 end
 if normalise(expected) == "" then
-  app.result({ score = 0, comment = "The key has no expected output to compare with.", rationale = "No expected output.", text = output.stdout or "" })
+  fail("The key has no expected output to compare with.", nil, output.stdout)
   return
 end
 local same = normalise(output.stdout) == normalise(expected)

@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "php",
   "name": "PHP",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "description": "Runs a PHP program.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -45,10 +45,12 @@
     {
       "key": "runtimeVersion",
       "label": "Runtime version",
-      "type": "text",
+      "type": "select",
       "default": "latest",
-      "placeholder": "latest",
-      "help": "The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use."
+      "help": "The runtime to install with mise. latest installs the newest supported release on first use.",
+      "options": [
+        "latest"
+      ]
     }
   ],
   "bootstrap": {

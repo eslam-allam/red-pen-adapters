@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "r",
   "name": "R",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "description": "Runs an R script.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -15,7 +15,7 @@
     "question"
   ],
   "language": "r",
-  "miseTool": "r",
+  "miseTool": "conda:r-base",
   "output": {
     "kinds": [
       "diff"
@@ -27,9 +27,9 @@
   ],
   "runtimes": [
     {
-      "tool": "r",
+      "tool": "conda:r-base",
       "setting": "runtimeVersion",
-      "version": "latest"
+      "version": "4.6.2"
     }
   ],
   "keyInput": [
@@ -45,10 +45,12 @@
     {
       "key": "runtimeVersion",
       "label": "Runtime version",
-      "type": "text",
-      "default": "latest",
-      "placeholder": "latest",
-      "help": "The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use."
+      "type": "select",
+      "default": "4.6.2",
+      "help": "R 4.6.2 is installed with the app conda backend on first use.",
+      "options": [
+        "4.6.2"
+      ]
     }
   ],
   "bootstrap": {

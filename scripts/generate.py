@@ -31,29 +31,92 @@ def args_literal(args: list[str]) -> str:
     return "{ " + ", ".join(rendered) + " }"
 
 
-def run_block(entry: dict) -> str:
-    if entry["kind"] == "compiled":
-        return "\n".join(
+def compiled_block(entry: dict) -> str:
+    lines = [
+        'local binary = app.temp_dir() .. "/program"',
+        'if request.os and request.os.family == "windows" then binary = binary .. ".exe" end',
+        "local build_args = { file, \"-o\", binary }",
+    ]
+    if entry.get("staticOnWindows"):
+        lines.extend(
             [
-                'local binary = app.temp_dir() .. "/program"',
-                'if app.temp_dir():match("\\\\$") then binary = binary .. ".exe" end',
-                f'local build = run({lua_string(entry["compiler"])}, {{ file, "-o", binary }})',
-                "if build.code ~= 0 then",
-                '  fail("The program did not compile.\\n\\n" .. (build.stderr or ""), build.stdout)',
-                "  return",
+                'if request.os and request.os.family == "windows" then',
+                '  build_args[#build_args + 1] = "-static"',
                 "end",
-                "local args = {}",
-                'if input_file ~= "" then args[#args + 1] = input_file end',
-                'local output = app.run_command(binary, args, "")',
             ]
         )
+    lines.extend(
+        [
+            f"local started, build = pcall(run, {lua_string(entry['compiler'])}, build_args)",
+            "if not started then",
+            '  fail("The compiler could not be started or timed out.", tostring(build), "")',
+            "  return",
+            "end",
+            "if build.code ~= 0 then",
+            '  fail("The program did not compile.", build.stderr, build.stdout)',
+            "  return",
+            "end",
+            "local args = {}",
+            'if input_file ~= "" then args[#args + 1] = input_file end',
+            "local ran, output = pcall(app.run_command, binary, args, \"\")",
+            "if not ran then",
+            '  fail("The compiled program could not be started or timed out.", tostring(output), "")',
+            "  return",
+            "end",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def system_block(entry: dict) -> str:
+    lines = [
+        f"local args = {args_literal(entry['args'])}",
+        'if input_file ~= "" then args[#args + 1] = input_file end',
+        f"local started, output = pcall(app.run_command, {lua_string(entry['program'])}, args, \"\")",
+        "if not started then",
+        '  local message = "The program could not be started or timed out."',
+    ]
+    if entry.get("windowsHelp"):
+        lines.extend(
+            [
+                '  if request.os and request.os.family == "windows" then',
+                f"    message = {lua_string(entry['windowsHelp'])}",
+                "  end",
+            ]
+        )
+    lines.extend(
+        [
+            "  fail(message, tostring(output), \"\")",
+            "  return",
+            "end",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def interpreted_block(entry: dict) -> str:
     return "\n".join(
         [
             f"local args = {args_literal(entry['args'])}",
             'if input_file ~= "" then args[#args + 1] = input_file end',
-            f"local output = run({lua_string(entry['program'])}, args)",
+            f"local started, output = pcall(run, {lua_string(entry['program'])}, args)",
+            "if not started then",
+            '  fail("The program could not be started or timed out.", tostring(output), "")',
+            "  return",
+            "end",
         ]
     )
+
+
+def run_block(entry: dict) -> str:
+    kind = entry["kind"]
+    if kind == "compiled":
+        return compiled_block(entry)
+    if kind == "system":
+        return system_block(entry)
+    if kind == "interpreted":
+        return interpreted_block(entry)
+    raise SystemExit(f"{entry['id']}: unknown adapter kind {kind!r}")
 
 
 def render(template: str, entry: dict) -> str:

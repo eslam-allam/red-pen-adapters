@@ -1,18 +1,22 @@
 # Bash
 
-Runs a Bash script.
+Runs a Bash script with the `bash` already installed on the system.
 
-- **Version:** 2.4.1
+- **Version:** 2.5.0
 - **Works on:** files, questions
 - **File extensions:** .sh, .bash
 - **Permissions:** subprocess
 
 ## How it works
 
-Runs the submitted Bash code through the requested runtime version. Printed output is compared with the **Expected output** key field.
+The adapter starts the system `bash` through `app.run_command`; it does not download or manage a Bash runtime. Printed output is compared with the **Expected output** key field.
 
-Runtime versions are managed by the app through mise; the adapter does not download or expose a mise path.
+The version is whatever `bash` the operating system provides. macOS ships Bash 3.2 from 2007; install a newer Bash (for example Homebrew Bash) and put it on `PATH` to use Bash 4.x features. On Linux, the distribution's Bash is normally recent. On Windows it is the Bash that ships with Git Bash or WSL.
+
+## Windows
+
+Bash is not bundled on Windows. Install Git Bash (so that `bash` is on `PATH`) or enable WSL, then try again. If `bash` cannot be started, the adapter returns an error without a score; it never downloads a managed Bash as a fallback.
 
 ## Settings
 
-- **Runtime version:** The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use. Default: `latest`.
+This adapter has no settings.

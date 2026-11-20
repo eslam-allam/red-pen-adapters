@@ -3,8 +3,9 @@
 
 The JSON Schemas catch structural mistakes. The checks below catch mistakes
 that a schema cannot express: a registry entry pointing at a missing folder, a
-version mismatch, a runtime setting that does not exist, or a table formula
-that refers to an unknown column section.
+version mismatch, a runtime setting that does not exist, an unsupported mise
+tool or backend, a missing adapter.lua, or a table formula that refers to an
+unknown column section.
 """
 
 from __future__ import annotations
@@ -12,6 +13,8 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -22,6 +25,46 @@ IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 FORMULA_NUMBER = re.compile(r"^[0-9]+(?:\.[0-9]+)?$")
 VERSION_LINE = re.compile(r"^-\s+\*\*Version:\*\*\s+(\S+)\s*$", re.MULTILINE)
 README_BASE = "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main"
+
+# mise tools the registry may name without a backend. Keep this list small:
+# an unknown tool must be added here (and tested) rather than fail at run time.
+KNOWN_TOOLS = {
+    "bun",
+    "dart",
+    "dotnet",
+    "elixir",
+    "erlang",
+    "gcc",
+    "ghc",
+    "go",
+    "gxx",
+    "java",
+    "julia",
+    "kotlin",
+    "lua",
+    "node",
+    "perl",
+    "php",
+    "powershell",
+    "python",
+    "r-base",
+    "ruby",
+    "rust",
+    "scala",
+    "swift",
+}
+# Only the conda backend is allowed. asdf:/vfox: and other prefixes are
+# rejected because the app does not pin or verify their plugins.
+ALLOWED_BACKENDS = {"conda"}
+CONDA_TOOLS = {"gcc", "gxx", "r-base"}
+RUNTIME_VERSION = re.compile(
+    r"^(?:latest|[0-9]+(?:\.[0-9]+){0,2}(?:[-+][0-9A-Za-z.]+)?)$"
+)
+CONDA_VERSION = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
+# The registry must not offer a Python version that Red Pen has not tested.
+# Extend this set together with the Python manifest when a new release ships.
+PYTHON_SUPPORTED = {f"3.{minor}" for minor in range(8, 16)}
+
 # Fields the registry entry mirrors from the manifest. The entry has no place
 # for output, keyInput, questionInput, directories, directoryPicker or
 # bootstrap, so those are not compared here.
@@ -131,6 +174,172 @@ def mirrored_field_errors(entry: dict, manifest: dict, label: str) -> list[str]:
     return errors
 
 
+def runtime_errors(runtime: dict, settings: dict[str, dict], label: str) -> list[str]:
+    errors = []
+    tool = runtime.get("tool", "")
+    version = runtime.get("version", "")
+    if not tool:
+        return [f"{label}: runtime needs a tool"]
+
+    if ":" in tool:
+        backend, _, name = tool.partition(":")
+        if backend not in ALLOWED_BACKENDS:
+            errors.append(
+                f"{label}: runtime backend {backend!r} is not allowed; use conda: "
+                f"(asdf: and vfox: are rejected)"
+            )
+        elif name not in CONDA_TOOLS:
+            errors.append(
+                f"{label}: unknown conda tool {name!r}; known conda tools: "
+                f"{', '.join(sorted(CONDA_TOOLS))}"
+            )
+        if not CONDA_VERSION.match(version):
+            errors.append(
+                f"{label}: conda runtime {tool!r} needs a pinned version such as "
+                f"16.2.0, not {version!r}"
+            )
+    elif tool not in KNOWN_TOOLS:
+        errors.append(
+            f"{label}: unknown mise tool {tool!r}; add it to KNOWN_TOOLS after "
+            f"testing it"
+        )
+
+    if not RUNTIME_VERSION.match(version):
+        errors.append(f"{label}: runtime version {version!r} is not a valid version")
+
+    setting_key = runtime.get("setting")
+    if not setting_key:
+        return errors
+    setting = settings.get(setting_key)
+    if setting is None:
+        return errors + [
+            f"{label}: runtime setting {setting_key!r} is not a settings field"
+        ]
+    default = setting.get("default")
+    if not isinstance(default, str) or not default:
+        errors.append(f"{label}: runtime setting {setting_key!r} needs a default")
+        return errors
+    if setting.get("type") != "select":
+        errors.append(
+            f"{label}: runtime setting {setting_key!r} must be a select field"
+        )
+    options = setting.get("options") or []
+    if default not in options:
+        errors.append(
+            f"{label}: runtime setting {setting_key!r} default {default!r} is not "
+            f"in its options"
+        )
+    if version != default:
+        errors.append(
+            f"{label}: runtime version {version!r} does not match setting "
+            f"{setting_key!r} default {default!r}"
+        )
+    return errors
+
+
+def bootstrap_errors(manifest: dict, label: str) -> list[str]:
+    runtimes = manifest.get("runtimes") or []
+    bootstrap = manifest.get("bootstrap") or {}
+    errors = []
+    if runtimes and not (
+        isinstance(bootstrap.get("mise"), str) and bootstrap["mise"].strip()
+    ):
+        errors.append(f"{label}: managed runtimes need a non-empty bootstrap.mise")
+    if not runtimes and bootstrap:
+        errors.append(
+            f"{label}: bootstrap is declared without a managed runtime"
+        )
+    return errors
+
+
+def generated_tool_errors(
+    manifest: dict, generated_ids: set[str], label: str
+) -> list[str]:
+    """The adapter's effective mise tool must match the declared runtime tool.
+
+    Generated adapters call ``app.run_runtime(manifest.miseTool or
+    manifest.language, ...)``. A mismatch would run a different tool from the
+    one the registry installs and gates on, so it must fail validation.
+    """
+    if manifest.get("id") not in generated_ids:
+        return []
+    runtimes = manifest.get("runtimes") or []
+    if not runtimes:
+        return []
+    declared = runtimes[0].get("tool")
+    used = manifest.get("miseTool") or manifest.get("language")
+    if not used:
+        return [
+            f"{label}: generated adapter needs miseTool or language to match "
+            f"runtime tool {declared!r}"
+        ]
+    if used != declared:
+        return [
+            f"{label}: generated adapter uses {used!r} but its runtime declares "
+            f"tool {declared!r}"
+        ]
+    return []
+
+
+def python_runtime_errors(
+    manifest: dict, settings: dict[str, dict], label: str
+) -> list[str]:
+    """Keep the Python option list inside the versions Phase 0 supports."""
+    if manifest.get("id") != "python":
+        return []
+    field = settings.get("pythonVersion")
+    if field is None:
+        return []
+    options = field.get("options") or []
+    unsupported = sorted({option for option in options if option not in PYTHON_SUPPORTED})
+    if unsupported:
+        return [
+            f"{label}: Python options {', '.join(unsupported)} are outside the "
+            f"supported set {', '.join(sorted(PYTHON_SUPPORTED, key=lambda v: int(v.split('.')[1])))}"
+        ]
+    return []
+
+
+def smoke_errors(
+    languages: dict, entries: list[dict]
+) -> list[str]:
+    errors = []
+    by_id = {entry.get("id"): entry for entry in entries}
+    declared_smoke = dict(languages.get("smoke") or {})
+    for entry in languages["generated"]:
+        declared_smoke[entry["id"]] = entry.get("smoke")
+    for adapter_id, smoke in sorted(declared_smoke.items()):
+        label = f"scripts/languages.json: smoke for {adapter_id!r}"
+        if adapter_id not in by_id:
+            errors.append(f"{label}: adapter is not in registry.json")
+            continue
+        if not isinstance(smoke, dict):
+            errors.append(f"{label}: needs a source and expected output")
+            continue
+        for key in ("source", "expected"):
+            value = smoke.get(key)
+            if not isinstance(value, str) or not value.strip():
+                errors.append(f"{label}: needs a non-empty {key!r}")
+    for entry in entries:
+        adapter_id = entry.get("id")
+        if adapter_id in declared_smoke:
+            continue
+        if entry.get("runtimes"):
+            errors.append(
+                f"scripts/languages.json: runnable adapter {adapter_id!r} has no "
+                f"smoke metadata"
+            )
+    return errors
+
+
+def find_luac() -> str | None:
+    for name in ("luac", "luac5.4", "luac5.3", "luac5.2", "luac5.1"):
+        found = shutil.which(name)
+        if found:
+            return found
+    return None
+
+
 def main() -> int:
     errors: list[str] = []
     registry_schema = load(ROOT / "schemas" / "registry.schema.json")
@@ -159,7 +368,22 @@ def main() -> int:
                 f"scripts/languages.json: generated adapter {adapter_id!r} is "
                 f"not in registry.json"
             )
+    for adapter_id in sorted(set(languages["manual"]) - set(ids)):
+        errors.append(
+            f"scripts/languages.json: manual adapter {adapter_id!r} is not in "
+            f"registry.json"
+        )
+    for folder in sorted(ROOT.iterdir()):
+        if not folder.is_dir() or not (folder / "manifest.json").is_file():
+            continue
+        if folder.name not in ids:
+            errors.append(
+                f"adapter folder {folder.name!r} has a manifest.json but is not "
+                f"listed in registry.json"
+            )
+    errors.extend(smoke_errors(languages, entries))
 
+    adapter_lua_paths: list[Path] = []
     for entry in entries:
         folder = ROOT / entry["folder"]
         label = f"registry entry {entry['id']}"
@@ -173,6 +397,7 @@ def main() -> int:
         manifest = load(manifest_path)
         errors.extend(validate(manifest, manifest_schema, f"{label}/manifest.json"))
         errors.extend(mirrored_field_errors(entry, manifest, label))
+        errors.extend(bootstrap_errors(manifest, label))
         if manifest.get("id") != entry["id"]:
             errors.append(
                 f"{label}: manifest id {manifest.get('id')!r} does not match"
@@ -182,6 +407,18 @@ def main() -> int:
                 f"{label}: manifest version {manifest.get('version')!r} does not "
                 f"match registry version {entry.get('version')!r}"
             )
+
+        adapter_path = folder / "adapter.lua"
+        adapter_lua_paths.append(adapter_path)
+        if not adapter_path.is_file():
+            errors.append(f"{label}: missing adapter.lua")
+        declared_files = {
+            declared["path"] if isinstance(declared, dict) else declared
+            for declared in entry.get("files", [])
+        }
+        if "adapter.lua" not in declared_files:
+            errors.append(f"{label}: adapter.lua is not listed in files")
+
         for declared in entry.get("files", []):
             name = declared["path"] if isinstance(declared, dict) else declared
             path = folder / name
@@ -200,18 +437,18 @@ def main() -> int:
                     f"{label}: file {name!r} does not match its sha256 checksum "
                     f"(run python scripts/update_checksums.py)"
                 )
-        settings_keys = {field["key"] for field in manifest.get("settings", [])}
+
+        settings = {field["key"]: field for field in manifest.get("settings", [])}
+        errors.extend(generated_tool_errors(manifest, generated, label))
+        errors.extend(python_runtime_errors(manifest, settings, label))
         for runtime in manifest.get("runtimes", []):
-            setting = runtime.get("setting")
-            if setting and setting not in settings_keys:
-                errors.append(
-                    f"{label}: runtime setting {setting!r} is not a settings field"
-                )
+            errors.extend(runtime_errors(runtime, settings, label))
             packages = runtime.get("packages") or {}
-            if packages.get("setting") and packages["setting"] not in settings_keys:
+            if packages.get("setting") and packages["setting"] not in settings:
                 errors.append(
                     f"{label}: package setting {packages['setting']!r} is not a settings field"
                 )
+
         errors.extend(unique_keys(manifest.get("keyInput", []), f"{label} keyInput"))
         errors.extend(unique_keys(manifest.get("settings", []), f"{label} settings"))
         for field in manifest.get("keyInput", []) + manifest.get("settings", []):
@@ -231,12 +468,36 @@ def main() -> int:
                     f"manifest says {manifest.get('version')!r}"
                 )
 
+    luac = find_luac()
+    if luac:
+        for path in adapter_lua_paths:
+            if not path.is_file():
+                continue
+            result = subprocess.run(
+                [luac, "-p", str(path)],
+                capture_output=True,
+                text=True,
+            )
+            if result.returncode != 0:
+                detail = (result.stderr or result.stdout).strip()
+                errors.append(f"{path.relative_to(ROOT)}: luac -p failed: {detail}")
+    else:
+        print(
+            "warning: luac was not found; skipped the adapter.lua syntax check. "
+            "Install Lua 5.x (for example the lua5.4 package) to enable it.",
+            file=sys.stderr,
+        )
+
     if errors:
         for error in errors:
             print(error, file=sys.stderr)
         print(f"\n{len(errors)} validation error(s).", file=sys.stderr)
         return 1
-    print(f"Validated {len(entries)} adapters and registry.json against their schemas.")
+    syntax = "luac -p passed" if luac else "luac -p skipped (luac not installed)"
+    print(
+        f"Validated {len(entries)} adapters and registry.json against their schemas; "
+        f"{syntax}."
+    )
     return 0
 
 
