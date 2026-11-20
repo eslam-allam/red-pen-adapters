@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/schemas/registry.config.schema.json",
+  "title": "Red Pen registry configuration",
+  "description": "Repository-local configuration. It is not part of the signed registry, but it names the signing environment, public key, and pinned signer commit used by CI.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "registryId",
+    "tier",
+    "repository",
+    "readmeBaseUrl",
+    "publisher",
+    "requireSignature",
+    "signing"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "schema": {
+      "const": 1
+    },
+    "registryId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$",
+      "description": "Lowercase slug, no slashes. Official must be red-pen-official; community must be red-pen-community."
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "official",
+        "community",
+        "third-party"
+      ],
+      "description": "Official requires registryId red-pen-official; community requires red-pen-community; third-party chooses its own slug."
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    },
+    "readmeBaseUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^[^\\s]+[^/]$"
+    },
+    "publisher": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\u0000-\\u001F\\u007F]+$",
+      "description": "Publisher display name copied into registry.json."
+    },
+    "requireSignature": {
+      "type": "boolean",
+      "description": "Official and community registries must set true. The template starts false until its first signing run."
+    },
+    "signing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "environment",
+        "keyFile",
+        "expiresInDays",
+        "signerRepository",
+        "signerCommit"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "environment": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "keyFile": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^keys/[A-Za-z0-9._-]+\\.pub$"
+        },
+        "expiresInDays": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 366
+        },
+        "signerRepository": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+        },
+        "signerCommit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "Full SHA reachable from the signer repository main; CI check-pin enforces this when signing is enabled. Bump after merging a signer change."
+        },
+        "requiredReviewers": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Documentation of the protected environment's reviewer count; enforced in GitHub settings."
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "tier": {
+            "enum": [
+              "official",
+              "community"
+            ]
+          }
+        },
+        "required": [
+          "tier"
+        ]
+      },
+      "then": {
+        "properties": {
+          "requireSignature": {
+            "const": true
+          },
+          "signing": {
+            "properties": {
+              "enabled": {
+                "const": true
+              },
+              "environment": {
+                "type": "string"
+              },
+              "keyFile": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "signing": {
+            "properties": {
+              "enabled": {
+                "const": true
+              }
+            },
+            "required": [
+              "enabled"
+            ]
+          }
+        },
+        "required": [
+          "signing"
+        ]
+      },
+      "then": {
+        "properties": {
+          "signing": {
+            "properties": {
+              "environment": {
+                "type": "string"
+              },
+              "keyFile": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "environment",
+              "keyFile"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

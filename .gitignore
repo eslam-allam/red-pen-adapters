@@ -1,2 +1,32 @@
 logisim.zip
+
+# Secrets and keys: never commit
+*.key
+*.password
+*.pem
+*.p12
+.minisign/
+signing/
+
+# Python
 __pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+
+# Build and test output
+/dist/
+/build/
+/release/
+*.tmp
+*.log
+
+# Editor and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

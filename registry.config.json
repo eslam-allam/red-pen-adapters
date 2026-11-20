@@ -1,0 +1,19 @@
+{
+  "$schema": "./schemas/registry.config.schema.json",
+  "publisher": "Red Pen",
+  "readmeBaseUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main",
+  "registryId": "red-pen-official",
+  "repository": "eslam-allam/red-pen-adapters",
+  "requireSignature": true,
+  "schema": 1,
+  "signing": {
+    "enabled": true,
+    "environment": "registry-signing-official",
+    "expiresInDays": 180,
+    "keyFile": "keys/official-2026.pub",
+    "requiredReviewers": 1,
+    "signerCommit": "4802c7f07abaa2b6b2ccda946cac8ec288b3f5b3",
+    "signerRepository": "eslam-allam/red-pen-registry-signing"
+  },
+  "tier": "official"
+}

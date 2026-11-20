@@ -1,29 +1,185 @@
-name: Validate adapter schemas
+name: Validate registry
 
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          python-version: "3.12"
+          persist-credentials: false
+
+      - name: Install Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.13"
+
       - name: Install schema validator and Lua compiler
         run: |
-          python -m pip install jsonschema
+          python -m pip install --disable-pip-version-check jsonschema==4.26.0
           sudo apt-get update
           sudo apt-get install -y lua5.4
-      - name: Check generated language adapters
-        run: python scripts/generate.py --check
+
+      - name: Read and enforce signing configuration
+        id: config
+        env:
+          ALLOWED_SIGNERS: ${{ vars.SIGNER_REPOSITORY_ALLOWLIST }}
+        run: |
+          set -euo pipefail
+          config=registry.config.json
+          registry_id=$(jq -er '.registryId' "$config")
+          tier=$(jq -er '.tier' "$config")
+          source_repo=$(jq -er '.repository' "$config")
+          enabled=$(jq -r '.signing.enabled // false' "$config")
+          environment=$(jq -r '.signing.environment // ""' "$config")
+          signer_repo=$(jq -r '.signing.signerRepository // ""' "$config")
+          signer_commit=$(jq -r '.signing.signerCommit // ""' "$config")
+          key_file=$(jq -r '.signing.keyFile // ""' "$config")
+          printf '%s' "$registry_id" | grep -Eq '^[a-z0-9][a-z0-9._-]{0,127}$' || {
+            echo "invalid registryId" >&2; exit 1; }
+          if [ -n "$signer_repo" ]; then
+            printf '%s' "$signer_repo" | grep -Eq '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$' || {
+              echo "invalid signer repository" >&2; exit 1; }
+          fi
+          if [ -n "$key_file" ]; then
+            printf '%s' "$key_file" | grep -Eq '^keys/[A-Za-z0-9._-]+\.pub$' || {
+              echo "invalid signing.keyFile path" >&2; exit 1; }
+          fi
+          if [ -n "$environment" ]; then
+            printf '%s' "$environment" | grep -Eq '^[A-Za-z0-9][A-Za-z0-9._-]*$' || {
+              echo "invalid signing.environment" >&2; exit 1; }
+          fi
+          case "$tier" in
+            official)
+              expected_id=red-pen-official
+              expected_signer=eslam-allam/red-pen-registry-signing
+              expected_environment=registry-signing-official
+              ;;
+            community)
+              expected_id=red-pen-community
+              expected_signer=eslam-allam/red-pen-registry-signing
+              expected_environment=registry-signing-community
+              ;;
+            third-party)
+              expected_id=
+              expected_signer=
+              expected_environment=
+              ;;
+            *) echo "unknown trust tier: $tier" >&2; exit 1 ;;
+          esac
+          if [ -n "$expected_id" ] && [ "$registry_id" != "$expected_id" ]; then
+            echo "registryId $registry_id does not match tier $tier" >&2
+            exit 1
+          fi
+          if [ "$signer_repo" = "$source_repo" ]; then
+            echo "signerRepository must not be the registry repository itself" >&2
+            exit 1
+          fi
+          if [ "$enabled" = "true" ]; then
+            [ -n "$signer_repo" ] && [ -n "$signer_commit" ] && [ -n "$key_file" ] || {
+              echo "signing.enabled requires signer repository, commit, and keyFile" >&2
+              exit 1
+            }
+            if [ -n "$expected_signer" ]; then
+              [ "$signer_repo" = "$expected_signer" ] || {
+                echo "$tier registries must use $expected_signer" >&2
+                exit 1
+              }
+              [ "$environment" = "$expected_environment" ] || {
+                echo "$tier registries must use environment $expected_environment" >&2
+                exit 1
+              }
+            else
+              case ",${ALLOWED_SIGNERS:-}," in
+                *",$signer_repo,"*) ;;
+                *) echo "signer repository is not in SIGNER_REPOSITORY_ALLOWLIST" >&2; exit 1 ;;
+              esac
+            fi
+            printf '%s' "$signer_commit" | grep -Eq '^[0-9a-f]{40}$' || {
+              echo "signerCommit must be a full lowercase SHA" >&2
+              exit 1
+            }
+            [ -f "$key_file" ] || {
+              echo "signing.keyFile is missing: $key_file" >&2
+              exit 1
+            }
+          fi
+          {
+            echo "enabled=$enabled"
+            echo "tier=$tier"
+            echo "environment=$environment"
+            echo "registry_id=$registry_id"
+            echo "key_file=$key_file"
+            echo "signer_repository=$signer_repo"
+            echo "signer_commit=$signer_commit"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Checkout pinned signer for pin validation
+        if: steps.config.outputs.enabled == 'true'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: ${{ steps.config.outputs.signer_repository }}
+          ref: ${{ steps.config.outputs.signer_commit }}
+          path: signer
+          persist-credentials: false
+
+      - name: Require the pinned signer commit on signer main
+        if: steps.config.outputs.enabled == 'true'
+        env:
+          PYTHONPATH: ${{ github.workspace }}/signer
+          PYTHONSAFEPATH: "1"
+          SIGNER_COMMIT: ${{ steps.config.outputs.signer_commit }}
+          SIGNER_REPOSITORY: ${{ steps.config.outputs.signer_repository }}
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE/signer"
+          python -P -m redpen_signing.cli check-pin \
+            --repo-dir "$GITHUB_WORKSPACE/signer" \
+            --commit "$SIGNER_COMMIT" \
+            --expected-repository "$SIGNER_REPOSITORY"
+
+      - name: Install pinned minisign
+        uses: ./.github/actions/install-minisign
+
       - name: Run validator unit tests
         run: python scripts/tests/test_validate.py
-      - name: Validate registry and manifests
-        run: python scripts/validate.py
+
+      - name: Check generated language adapters
+        run: python scripts/generate.py --check
+
+      - name: Check deterministic JSON
+        run: python scripts/registry.py format --check registry.json registry.config.json
+
+      - name: Check registry.json is generated
+        run: python scripts/update.py --check
+
+      - name: Validate schema, manifests, and hashes (pre-signing)
+        run: python scripts/validate.py --skip-signature --skip-release --luac
+
+      - name: Validate the tree with the pinned signer
+        if: steps.config.outputs.enabled == 'true'
+        env:
+          PYTHONPATH: ${{ github.workspace }}/signer
+          PYTHONSAFEPATH: "1"
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE/signer"
+          python -P -m redpen_signing.cli validate \
+            --root "$GITHUB_WORKSPACE" \
+            --registry "$GITHUB_WORKSPACE/registry.json" \
+            --config "$GITHUB_WORKSPACE/registry.config.json" \
+            --skip-release
