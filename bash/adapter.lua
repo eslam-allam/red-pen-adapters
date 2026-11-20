@@ -19,8 +19,12 @@ local function normalise(text)
   return table.concat(lines, "\n"):match("^%s*(.-)%s*$")
 end
 
-local function fail(message, text)
-  app.result({ score = 0, comment = message, rationale = message, text = text or "" })
+-- A failed run, missing key or timeout leaves the question unmarked. It must
+-- never return score = 0: that would silently record a wrong answer.
+local function fail(message, detail, text)
+  local rationale = message
+  if detail and detail ~= "" then rationale = message .. "\n\n" .. detail end
+  app.result({ comment = message, rationale = rationale, text = text or "" })
 end
 
 local function run(program, args)
@@ -32,10 +36,18 @@ local input_file = (question.inputFile or ""):match("^%s*(.-)%s*$")
 
 local args = { file }
 if input_file ~= "" then args[#args + 1] = input_file end
-local output = run("bash", args)
+local started, output = pcall(app.run_command, "bash", args, "")
+if not started then
+  local message = "The program could not be started or timed out."
+  if request.os and request.os.family == "windows" then
+    message = "Bash is not available on Windows. Install Git Bash (so bash is on PATH) or enable WSL, then try again."
+  end
+  fail(message, tostring(output), "")
+  return
+end
 
 if output.code ~= 0 then
-  fail("The program stopped with an error.\n\n" .. (output.stderr or ""), output.stdout)
+  fail("The program stopped with an error.", output.stderr, output.stdout)
   return
 end
 if request.mode == "preview" then
@@ -43,7 +55,7 @@ if request.mode == "preview" then
   return
 end
 if normalise(expected) == "" then
-  fail("The key has no expected output to compare with.", output.stdout)
+  fail("The key has no expected output to compare with.", nil, output.stdout)
   return
 end
 local same = normalise(output.stdout) == normalise(expected)

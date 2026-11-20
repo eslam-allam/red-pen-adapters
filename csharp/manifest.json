@@ -3,8 +3,8 @@
   "schema": 4,
   "id": "csharp",
   "name": "C#",
-  "version": "2.4.1",
-  "description": "Runs a C# script with dotnet-script.",
+  "version": "2.5.0",
+  "description": "Runs a C# file with dotnet run --file.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
   "extensions": [
@@ -29,7 +29,7 @@
     {
       "tool": "dotnet",
       "setting": "runtimeVersion",
-      "version": "latest"
+      "version": "10.0"
     }
   ],
   "keyInput": [
@@ -45,10 +45,13 @@
     {
       "key": "runtimeVersion",
       "label": "Runtime version",
-      "type": "text",
-      "default": "latest",
-      "placeholder": "latest",
-      "help": "The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use."
+      "type": "select",
+      "default": "10.0",
+      "help": "The .NET SDK line to install with mise. 10.0 resolves to the 10.0.4xx SDK (10.0.404 at the time of writing); 11.0 is offered for testing.",
+      "options": [
+        "10.0",
+        "11.0"
+      ]
     }
   ],
   "bootstrap": {

@@ -2,7 +2,7 @@
 
 Runs TypeScript and TSX with Bun.
 
-- **Version:** 2.4.1
+- **Version:** 2.5.0
 - **Works on:** files, questions
 - **File extensions:** .ts, .tsx, .mts, .cts
 - **Permissions:** subprocess
@@ -15,4 +15,4 @@ Runtime versions are managed by the app through mise; the adapter does not downl
 
 ## Settings
 
-- **Runtime version:** The Bun version to install with mise, for example 1.4.4. It is downloaded on first use. Default: `latest`.
+- **Runtime version:** The Bun version to install with mise. `latest` installs the newest supported release on first use. Default: `latest`.

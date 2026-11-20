@@ -3,7 +3,7 @@
   "schema": 4,
   "id": "c",
   "name": "C",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "description": "Compiles and runs a C program.",
   "author": "Red Pen",
   "homepage": "https://github.com/eslam-allam/red-pen-adapters",
@@ -15,7 +15,7 @@
     "question"
   ],
   "language": "c",
-  "miseTool": "gcc",
+  "miseTool": "conda:gcc",
   "output": {
     "kinds": [
       "diff"
@@ -27,9 +27,9 @@
   ],
   "runtimes": [
     {
-      "tool": "gcc",
+      "tool": "conda:gcc",
       "setting": "runtimeVersion",
-      "version": "latest"
+      "version": "16.2.0"
     }
   ],
   "keyInput": [
@@ -45,10 +45,12 @@
     {
       "key": "runtimeVersion",
       "label": "Runtime version",
-      "type": "text",
-      "default": "latest",
-      "placeholder": "latest",
-      "help": "The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use."
+      "type": "select",
+      "default": "16.2.0",
+      "help": "GCC 16.2.0 is installed with the app conda backend on first use.",
+      "options": [
+        "16.2.0"
+      ]
     }
   ],
   "bootstrap": {

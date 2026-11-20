@@ -2,17 +2,21 @@
 
 Runs an R script.
 
-- **Version:** 2.4.1
+- **Version:** 2.5.0
 - **Works on:** files, questions
 - **File extensions:** .r
 - **Permissions:** subprocess
 
 ## How it works
 
-Runs the submitted R code through the requested runtime version. Printed output is compared with the **Expected output** key field.
+The app installs R through mise's conda backend as `conda:r-base@4.6.2` on first use. The adapter runs the submission with that runtime's `Rscript` through `app.run_runtime`. Printed output is compared with the **Expected output** key field.
 
-Runtime versions are managed by the app through mise; the adapter does not download or expose a mise path.
+The equivalent manual command is:
+
+```sh
+mise x conda:r-base@4.6.2 -- Rscript program.r
+```
 
 ## Settings
 
-- **Runtime version:** The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use. Default: `latest`.
+- **Runtime version:** R 4.6.2, installed with the app's conda backend on first use. Default: `4.6.2`.

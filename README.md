@@ -5,8 +5,8 @@ The official registry for Red Pen adapters. Every adapter is a folder with a
 at those folders, in the same spirit as the Noctalia plugin registry.
 
 The app downloads the listed files from the folder and runs them directly; no
-ZIP packaging is needed. Language runtimes are installed by the app, not by
-the adapter.
+ZIP packaging is needed. Managed language runtimes are installed by the app,
+not by the adapter; the Bash adapter uses the system `bash` instead.
 
 ## Registry format
 
@@ -28,7 +28,7 @@ the adapter.
         {
           "tool": "python",
           "setting": "pythonVersion",
-          "version": "3.12",
+          "version": "3.13",
           "packages": { "setting": "packages", "installer": "pip" }
         }
       ],
@@ -158,15 +158,22 @@ mise using its own network access. The adapter therefore does not declare
 
 ```json
 "runtimes": [
-  { "tool": "python", "setting": "pythonVersion", "version": "3.12" }
+  { "tool": "python", "setting": "pythonVersion", "version": "3.13" }
 ]
 ```
 
-- `tool` is the mise tool (`python`, `node`, `gcc`, `go`, `java`, …).
-- `setting` names a settings field that selects the version. When it is empty,
-  `version` is used. Changing the setting makes the app install the new
-  version before the next run; no `network` permission is involved.
-- `version` is the version used when the setting is empty.
+- `tool` is a supported mise tool (`python`, `node`, `gcc`, `go`, `java`, …).
+  Managed toolchains may use mise's conda backend, for example
+  `conda:gcc@16.2.0`, `conda:gxx@16.2.0` or `conda:r-base@4.6.2`. Only the
+  `conda:` prefix is accepted; `asdf:` and `vfox:` are rejected.
+- `setting` names a `select` settings field that chooses the version. The
+  runtime `version` must equal the setting's `default`, and that default must be
+  one of the field's `options`. Changing the setting makes the app install the
+  new version before the next run; no `network` permission is involved.
+- `version` is the concrete version for that default (or the exact conda
+  package version). It is not `latest` for conda tools.
+- An adapter with a managed runtime also declares `bootstrap.mise`; the Bash
+  adapter has no managed runtime, no bootstrap and no version setting.
 
 For a runtime with packages, the app creates a managed environment (a Python
 venv for `pip`) and installs the packages named in the settings:
@@ -216,7 +223,8 @@ and highlights every row or cell that differs from the key.
 The language adapters run a submitted file or a question answer with the
 language's runtime and compare the printed output with the `expected` key
 field. They declare their supported extensions and work on both files and
-questions.
+questions. A run that cannot start, times out or has a missing key returns no
+score; it never records 0.
 
 Each language question also offers an optional **Input file** path. When set,
 the app makes that file readable to the adapter sandbox and the adapter passes
@@ -227,9 +235,12 @@ Included: JavaScript, TypeScript, Ruby, PHP, Go, Rust, C, C++, Java, Kotlin,
 C#, F#, Swift, Lua, R, Julia, Haskell, Elixir, Erlang, Dart, Scala, Perl,
 Bash, PowerShell, and Python.
 
-Every language adapter declares its mise runtime in `runtimes`; the app
-downloads it. No adapter declares `network`. TypeScript runs through Bun's
-built-in TypeScript/TSX support, so it does not download `tsx` at run time.
+Every language adapter except Bash declares its managed mise runtime in
+`runtimes`; the app downloads it. Bash starts the system `bash` through
+`app.run_command` (on Windows, install Git Bash or WSL). C, C++ and R use
+mise's conda backend; C# uses `dotnet@10.0` and `dotnet run --file`. No adapter
+declares `network`. TypeScript runs through Bun's built-in TypeScript/TSX
+support, so it does not download `tsx` at run time.
 
 The language adapters are generated from
 `scripts/templates/language_adapter.lua` using the command data in
@@ -282,15 +293,19 @@ Run local validation before publishing:
 
 ```sh
 python -m pip install jsonschema
+# luac is optional but CI installs it (for example apt-get install lua5.4)
 python scripts/generate.py --check
 python scripts/validate.py
 ```
 
 `generate.py --check` fails if a committed language `adapter.lua` differs from
 the template. The validator checks both schemas and cross-file consistency:
-folder contents, manifest/registry id, version, permissions, runtimes, registry
-keys and description agreement, README version lines, runtime settings, formula
-variables, and each declared file's SHA-256 checksum. After changing a manifest
-or script, run `python scripts/update_checksums.py` and commit the updated
-`registry.json`. The same checks run in GitHub Actions on pushes and pull
-requests.
+folder contents, `adapter.lua` presence, manifest/registry id, version,
+permissions, runtimes, known mise tools and backends, runtime default/options,
+registry keys and description agreement, README version lines, formula
+variables, smoke metadata in `scripts/languages.json`, and each declared file's
+SHA-256 checksum. It also runs `luac -p` on every `adapter.lua` when `luac` is
+installed; otherwise it prints a warning and skips that syntax check. After
+changing a manifest or script, run `python scripts/update_checksums.py` and
+commit the updated `registry.json`. The same checks run in GitHub Actions on
+pushes and pull requests.

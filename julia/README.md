@@ -2,7 +2,7 @@
 
 Runs a Julia program.
 
-- **Version:** 2.4.1
+- **Version:** 2.5.0
 - **Works on:** files, questions
 - **File extensions:** .jl
 - **Permissions:** subprocess
@@ -15,4 +15,4 @@ Runtime versions are managed by the app through mise; the adapter does not downl
 
 ## Settings
 
-- **Runtime version:** The language version to install with mise, for example 22.11.0 or 3.3. It is downloaded on first use. Default: `latest`.
+- **Runtime version:** The runtime to install with mise. `latest` installs the newest supported release on first use. Default: `latest`.
