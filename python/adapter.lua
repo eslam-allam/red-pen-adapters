@@ -25,7 +25,12 @@ end
 local function fail(message, detail, text)
   local rationale = message
   if detail and detail ~= "" then rationale = message .. "\n\n" .. detail end
-  app.result({ comment = message, rationale = rationale, text = text or "" })
+  app.result({
+    error = rationale,
+    comment = message,
+    rationale = rationale,
+    text = text or "",
+  })
 end
 
 local question = context.questionValues or {}

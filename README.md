@@ -18,7 +18,7 @@ not by the adapter; the Bash adapter uses the system `bash` instead.
     {
       "id": "python",
       "name": "Python",
-      "version": "2.4.0",
+      "version": "2.5.0",
       "description": "Runs Python code from a submitted .py file or from the answer text, and compares what it prints with the key answer.",
       "author": "Red Pen",
       "appliesTo": ["file", "question"],
@@ -302,10 +302,11 @@ python scripts/validate.py
 the template. The validator checks both schemas and cross-file consistency:
 folder contents, `adapter.lua` presence, manifest/registry id, version,
 permissions, runtimes, known mise tools and backends, runtime default/options,
-registry keys and description agreement, README version lines, formula
-variables, smoke metadata in `scripts/languages.json`, and each declared file's
-SHA-256 checksum. It also runs `luac -p` on every `adapter.lua` when `luac` is
-installed; otherwise it prints a warning and skips that syntax check. After
-changing a manifest or script, run `python scripts/update_checksums.py` and
-commit the updated `registry.json`. The same checks run in GitHub Actions on
-pushes and pull requests.
+generated adapter tool hints, the Python 3.8-3.15 ceiling, registry keys and
+description agreement, README version lines, formula variables, smoke metadata
+in `scripts/languages.json`, and each declared file's SHA-256 checksum. It also
+runs `luac -p` on every `adapter.lua` when `luac` is installed; otherwise it
+prints a warning and skips that syntax check. After changing a manifest or
+script, run `python scripts/update_checksums.py` and commit the updated
+`registry.json`. The same checks run in GitHub Actions on pushes and pull
+requests.

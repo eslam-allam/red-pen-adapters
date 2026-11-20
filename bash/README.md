@@ -11,7 +11,7 @@ Runs a Bash script with the `bash` already installed on the system.
 
 The adapter starts the system `bash` through `app.run_command`; it does not download or manage a Bash runtime. Printed output is compared with the **Expected output** key field.
 
-The version is whatever `bash` the operating system provides. On Linux and macOS that is normally a recent Bash; on Windows it is the Bash that ships with Git Bash or WSL.
+The version is whatever `bash` the operating system provides. macOS ships Bash 3.2 from 2007; install a newer Bash (for example Homebrew Bash) and put it on `PATH` to use Bash 4.x features. On Linux, the distribution's Bash is normally recent. On Windows it is the Bash that ships with Git Bash or WSL.
 
 ## Windows
 

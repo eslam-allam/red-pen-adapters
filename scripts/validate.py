@@ -61,6 +61,9 @@ RUNTIME_VERSION = re.compile(
     r"^(?:latest|[0-9]+(?:\.[0-9]+){0,2}(?:[-+][0-9A-Za-z.]+)?)$"
 )
 CONDA_VERSION = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
+# The registry must not offer a Python version that Red Pen has not tested.
+# Extend this set together with the Python manifest when a new release ships.
+PYTHON_SUPPORTED = {f"3.{minor}" for minor in range(8, 16)}
 
 # Fields the registry entry mirrors from the manifest. The entry has no place
 # for output, keyInput, questionInput, directories, directoryPicker or
@@ -249,6 +252,54 @@ def bootstrap_errors(manifest: dict, label: str) -> list[str]:
     return errors
 
 
+def generated_tool_errors(
+    manifest: dict, generated_ids: set[str], label: str
+) -> list[str]:
+    """The adapter's effective mise tool must match the declared runtime tool.
+
+    Generated adapters call ``app.run_runtime(manifest.miseTool or
+    manifest.language, ...)``. A mismatch would run a different tool from the
+    one the registry installs and gates on, so it must fail validation.
+    """
+    if manifest.get("id") not in generated_ids:
+        return []
+    runtimes = manifest.get("runtimes") or []
+    if not runtimes:
+        return []
+    declared = runtimes[0].get("tool")
+    used = manifest.get("miseTool") or manifest.get("language")
+    if not used:
+        return [
+            f"{label}: generated adapter needs miseTool or language to match "
+            f"runtime tool {declared!r}"
+        ]
+    if used != declared:
+        return [
+            f"{label}: generated adapter uses {used!r} but its runtime declares "
+            f"tool {declared!r}"
+        ]
+    return []
+
+
+def python_runtime_errors(
+    manifest: dict, settings: dict[str, dict], label: str
+) -> list[str]:
+    """Keep the Python option list inside the versions Phase 0 supports."""
+    if manifest.get("id") != "python":
+        return []
+    field = settings.get("pythonVersion")
+    if field is None:
+        return []
+    options = field.get("options") or []
+    unsupported = sorted({option for option in options if option not in PYTHON_SUPPORTED})
+    if unsupported:
+        return [
+            f"{label}: Python options {', '.join(unsupported)} are outside the "
+            f"supported set {', '.join(sorted(PYTHON_SUPPORTED, key=lambda v: int(v.split('.')[1])))}"
+        ]
+    return []
+
+
 def smoke_errors(
     languages: dict, entries: list[dict]
 ) -> list[str]:
@@ -388,6 +439,8 @@ def main() -> int:
                 )
 
         settings = {field["key"]: field for field in manifest.get("settings", [])}
+        errors.extend(generated_tool_errors(manifest, generated, label))
+        errors.extend(python_runtime_errors(manifest, settings, label))
         for runtime in manifest.get("runtimes", []):
             errors.extend(runtime_errors(runtime, settings, label))
             packages = runtime.get("packages") or {}

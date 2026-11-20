@@ -211,6 +211,7 @@ end
 local wanted_headers, wanted = parse_table(expected)
 if #wanted == 0 then
   app.result({
+    error = "The key has no truth-table rows.",
     comment = "The key has no truth-table rows.",
     rationale = "Fill every output cell in the key table before grading.",
     text = output.stdout or "",

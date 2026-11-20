@@ -29,7 +29,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "c6ac85c2cb78207958bdbb278feb0effb728016fbd15c0db942cb57a3f69b98e"
+          "sha256": "56fd7d06f39966981ae7ff37979bdc8957b63c5c544e4323ebd0aeb3a87aea88"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/bash/README.md"
@@ -59,7 +59,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "53f6a05c5a0548eda74fd63272a525c4a7ab37bfff8240e268744cd95d63ce2b"
+          "sha256": "1d757848518f7cd49f960c5db7be6f320cf7753a3a2795c3f05ebc2ded4cf267"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/c/README.md",
@@ -98,7 +98,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "018c1edcfa2c2f21880510eb2f369f30a2741a0e36f059cdb0838ff21114b623"
+          "sha256": "5e3cc9bb4d65358702c7bac1940337de37c9fc93409ced436896c4509dc6e27c"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/cpp/README.md",
@@ -135,7 +135,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "7f7bcb59a836cd417451b6ba05fe7425d3d33b4e966d9fa745aed5784175be87"
+          "sha256": "3377b6bdbe8dc2460c1aa55acb7bfe544991196d0916dc34a9a3582e0bcb1e2f"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/csharp/README.md",
@@ -172,7 +172,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "53670cc7df551200a2bc22e9e4ca016406c79a08d2a6f99e022c00edcfd9fb32"
+          "sha256": "34d58835f70ccfa65e362fde7755bb76ff0daf9060156d28d92a40aa1b97935c"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/dart/README.md",
@@ -210,7 +210,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "065443cc4ee13a09360852571ddadf785267c8710f78e862fb44eeb6e7da7b47"
+          "sha256": "2932a90242f2c03c92f10290258c114d0e10ff21535801e340f21dccdd7b4511"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/elixir/README.md",
@@ -247,7 +247,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "42bb88903b96f367706a4d790c2d9ec1379aced0fdd5662093ec218623987464"
+          "sha256": "27e3ba2055943bd3c9402a81ef4ed37777accbc776ee20b84e514bd2b88d5a80"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/erlang/README.md",
@@ -285,7 +285,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "54d184c8e584c33fa72214cc76b0d9376b1e1a00812884128618b7e15b409334"
+          "sha256": "cae1881c3dbcb9d768571ff3a56828e702c326d4cc000ef8f4deb7477cc1c3d2"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/fsharp/README.md",
@@ -322,7 +322,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "615dc54b6747142cd13daf3d7f32169279d6a71443964aaf82775f167ddf86dc"
+          "sha256": "c3dc605a54367e639da05ea52e130f918770c3a20705d63982cf31853e1255ea"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/go/README.md",
@@ -359,7 +359,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "82b6ffe9a11fa66afbac0eb74934013fac65cc136b5f39f671ca968586a9278d"
+          "sha256": "661fb013a6fbc1d0e11e31c837fc70dcdc9ae0eee6cbced7e09e47c15017cb67"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/haskell/README.md",
@@ -396,7 +396,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "78315e9ccbc7f6cc2c6e6593b63bcea31364bdceeefa4ab6001247c060ae55fb"
+          "sha256": "5f58496a80a39f18cc00bbccb552656091518da753eddb8e2d8a4042977fc1a6"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/java/README.md",
@@ -435,7 +435,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "7e213620c1be5e79c22fbd3a725d086a4cb9111c6debef3de799023ca4f879c9"
+          "sha256": "64ee693064000dcb5d94119c0430e17dc41faa21480a8f15f9d6ebd432d43bfc"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/javascript/README.md",
@@ -472,7 +472,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "ba27d764f084a98a672bf45abbaa8c6f95330648eb74ed590fe61f9f67a37dda"
+          "sha256": "b7166699570a4c53e17e25460e57157a1db2a4f5e085b50492e19f62e0f5f651"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/julia/README.md",
@@ -510,7 +510,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "9638f4a9d00ede54fae60fd4e9a383d7fcf386d2dfc994234e0d9bb80f8e8dc3"
+          "sha256": "2d9f7c2539b134d91e9b8d0dbc7a573ea4f90662769e9d4e7e7c867d7040d01e"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/kotlin/README.md",
@@ -552,7 +552,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "8ec94046130e0e4c6a8d390bb8016b6fbf946dbe7c94263343f5aca3df4f5f73"
+          "sha256": "8dd4a983c5abad2fc37d6bafb33e21788cf12761cc7e007757e1679789200764"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/logisim/README.md"
@@ -582,7 +582,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "f561fe237199e7bc65f3743f220109337fda046c7835dff4f6dbdc05f5d9dcab"
+          "sha256": "a2c88f899065521c1bd49a1e9c8d5f29017cea06d89a240acd717e383a8dde01"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/lua/README.md",
@@ -619,7 +619,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "d11df85c5968cd70fbb9826b3cf005b646bd1e123e891786187ff0ee052ebcd6"
+          "sha256": "1c3a86f9755b3d7a20f97fe372bc34b97213ec3dec10288e7e7521d7ac5ab8d0"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/perl/README.md",
@@ -656,7 +656,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "80d699d0472e2343d752d40bc9cb1c9eea2f8e4a574e4d15a1fec67bf3ed0fdb"
+          "sha256": "5b68a1e0bdaf29adf129c32d89a85632d0b55d342d4665be172f6def7cd2362b"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/php/README.md",
@@ -693,7 +693,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "34131598f7bc3fbe4d307dfbb59be9b33e5038d03588a0e324edbc82d715fff9"
+          "sha256": "e7dbc6393a4e2232051760216a768e74f16472af047da8e3cdf2483a2c76dc27"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/powershell/README.md",
@@ -730,7 +730,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "59b77f27dd21d692e3813511e9b9863d0c403897265f6848ab05e44eb49bb526"
+          "sha256": "b46f0589cc3d1a6cd5467d3cdc24e5a8b96c18ea7023bab7ca8fa08c0f8d8b31"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/python/README.md",
@@ -771,7 +771,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "fd3e855756657e9227ec8b9c468c823828ae182c6f0f42f8773755fce2805680"
+          "sha256": "b188821fa03f7283a39e153374d7396e6f23556b30e3e6f75a00bea6b3b7dbba"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/r/README.md",
@@ -808,7 +808,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "7a7f1c16cc1128efda7a24773dac1a47d72d3bdc10f3be27b34c030280cd344a"
+          "sha256": "4192ddd32a2d2357292bc739fbaaef74e0f0765b145fe1ef053aa89ec6ef35af"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/ruby/README.md",
@@ -845,7 +845,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "ccab9d6c927b3157159789dae9cb847dbefced4243f6a6e0cde0f391b0033b44"
+          "sha256": "39d3f8c07bc82a0d300bf6556ba95b4bb32a8e6b925a7dbc1d2a21e392316dea"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/rust/README.md",
@@ -882,7 +882,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "225e2d5cf1eecbf8db0c611ddc1761c2a9921000ea98665ed742e3ea00eba3d3"
+          "sha256": "aa1cbc24c9d006f7ed01544164a8d158a194d9097fd99456f0a736048cdd81aa"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/scala/README.md",
@@ -919,7 +919,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "339516c8dac0aae8d5101847a5ee37a4ec630c839e752a88c28e77005fcaec2f"
+          "sha256": "f34c371c6afe7b3047335661bf101752a40735581f3916ba2b971a528052adc8"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/swift/README.md",
@@ -959,7 +959,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "b0043c899d029efa32996f545656cc35d5d26e2764999ea041dbdd8384109ef8"
+          "sha256": "8e40ffeaaf2875432b8272b44fdc99cad40581896dd2662f3c6e6fa3a3729070"
         }
       ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/typescript/README.md",

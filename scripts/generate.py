@@ -34,7 +34,7 @@ def args_literal(args: list[str]) -> str:
 def compiled_block(entry: dict) -> str:
     lines = [
         'local binary = app.temp_dir() .. "/program"',
-        'if app.temp_dir():match("\\\\$") then binary = binary .. ".exe" end',
+        'if request.os and request.os.family == "windows" then binary = binary .. ".exe" end',
         "local build_args = { file, \"-o\", binary }",
     ]
     if entry.get("staticOnWindows"):

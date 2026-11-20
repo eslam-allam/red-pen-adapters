@@ -24,7 +24,12 @@ end
 local function fail(message, detail, text)
   local rationale = message
   if detail and detail ~= "" then rationale = message .. "\n\n" .. detail end
-  app.result({ comment = message, rationale = rationale, text = text or "" })
+  app.result({
+    error = rationale,
+    comment = message,
+    rationale = rationale,
+    text = text or "",
+  })
 end
 
 local function run(program, args)
@@ -35,7 +40,7 @@ local question = context.questionValues or {}
 local input_file = (question.inputFile or ""):match("^%s*(.-)%s*$")
 
 local binary = app.temp_dir() .. "/program"
-if app.temp_dir():match("\\$") then binary = binary .. ".exe" end
+if request.os and request.os.family == "windows" then binary = binary .. ".exe" end
 local build_args = { file, "-o", binary }
 if request.os and request.os.family == "windows" then
   build_args[#build_args + 1] = "-static"
