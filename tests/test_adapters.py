@@ -26,6 +26,15 @@ def registry_adapters() -> list[dict]:
     return registry["adapters"]
 
 
+def compiled_adapters() -> list[str]:
+    config = json.loads(
+        (ROOT / "scripts" / "languages.json").read_text(encoding="utf-8")
+    )
+    return [
+        entry["id"] for entry in config["generated"] if entry["kind"] == "compiled"
+    ]
+
+
 @unittest.skipUnless(LUA, "lua is not installed")
 class AdapterOutcomeTests(unittest.TestCase):
     """Every published adapter must use the typed outcome protocol."""
@@ -63,3 +72,10 @@ class AdapterOutcomeTests(unittest.TestCase):
         for adapter_id in generated:
             with self.subTest(adapter=adapter_id):
                 self.assertTrue((ROOT / adapter_id / "adapter.lua").is_file())
+
+    def test_compiled_adapters_report_a_run_stage_timeout(self) -> None:
+        compiled = compiled_adapters()
+        self.assertEqual(len(compiled), 3)
+        for adapter_id in compiled:
+            with self.subTest(adapter=adapter_id):
+                self.run_adapter(adapter_id, "language", "timeout-run")

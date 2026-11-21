@@ -167,7 +167,7 @@ without a status are no longer accepted.
 
 | Status | When | Fields |
 | --- | --- | --- |
-| `graded` | The adapter compared the submission with the key. | `score`, `comment`, `rationale`; optional `text`, `output`, `outputPath` |
+| `graded` | The adapter compared the submission with the key. | `score`, `comment`; optional `rationale`, `text`, `output`, `outputPath` |
 | `previewed` | The app asked for a preview (`request.mode == "preview"`). | `text`; optional `output`, `outputPath` |
 | `declined` | The adapter cannot run because the key or an input is missing. | `code` (`missing-key` or `missing-input`), `message`; optional `detail` |
 | `failed` | The adapter or a program it started failed. | `code` (for example `program-error`), `message`; optional `detail` |

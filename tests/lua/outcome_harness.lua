@@ -94,6 +94,8 @@ elseif scenario == "missing-key" then
   queue = {}
 elseif scenario == "timeout" then
   queue = { process_result(-1, "", "timed out") }
+elseif scenario == "timeout-run" then
+  queue = { process_result(0, stdout), process_result(-1, "", "timed out") }
 elseif scenario == "failed-exit" then
   queue = { process_result(1, "", "boom") }
 elseif scenario == "launch-failure" then
@@ -170,6 +172,7 @@ local expected_status = ({
   ["missing-key"] = "declined",
   ["missing-input"] = "declined",
   timeout = "timeout",
+  ["timeout-run"] = "timeout",
   ["failed-exit"] = "failed",
   ["launch-failure"] = "failed",
   ["read-error"] = "failed",
@@ -210,7 +213,7 @@ elseif scenario == "missing-input" then
   if result.code ~= "missing-input" then
     fail("expected code missing-input, got " .. tostring(result.code))
   end
-elseif scenario == "timeout" then
+elseif scenario == "timeout" or scenario == "timeout-run" then
   if result.stage ~= "runtime" then
     fail("expected stage runtime, got " .. tostring(result.stage))
   end
