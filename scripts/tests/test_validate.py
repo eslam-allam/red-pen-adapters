@@ -7,6 +7,7 @@ Run from the repository root:
 
 from __future__ import annotations
 
+import json
 import sys
 import unittest
 from pathlib import Path
@@ -15,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from scripts.validate import (  # noqa: E402
+    bootstrap_errors,
     generated_tool_errors,
     python_runtime_errors,
 )
@@ -68,6 +70,66 @@ class GeneratedToolTests(unittest.TestCase):
         self.assertEqual(
             generated_tool_errors(manifest, {"bash"}, "registry entry bash"), []
         )
+
+
+class BootstrapTests(unittest.TestCase):
+    def test_managed_runtime_requires_mise(self) -> None:
+        manifest = {"runtimes": [{"tool": "conda:gcc"}]}
+        errors = bootstrap_errors(manifest, "registry entry c")
+        self.assertEqual(len(errors), 1)
+        self.assertIn("non-empty bootstrap.mise", errors[0])
+        manifest["bootstrap"] = {"uv": "0.5.11"}
+        errors = bootstrap_errors(manifest, "registry entry c")
+        self.assertEqual(len(errors), 1)
+        manifest["bootstrap"] = {"mise": "latest"}
+        self.assertEqual(bootstrap_errors(manifest, "registry entry c"), [])
+
+    def test_bootstrap_without_runtime_is_rejected(self) -> None:
+        manifest = {"bootstrap": {"mise": "latest"}}
+        errors = bootstrap_errors(manifest, "registry entry example")
+        self.assertEqual(len(errors), 1)
+        self.assertIn("without a managed runtime", errors[0])
+
+    def test_both_bootstrap_tools_allowed_with_runtime(self) -> None:
+        manifest = {
+            "runtimes": [{"tool": "conda:gcc"}],
+            "bootstrap": {"mise": "latest", "uv": "0.5.11"},
+        }
+        self.assertEqual(bootstrap_errors(manifest, "registry entry c"), [])
+
+
+class BootstrapSchemaTests(unittest.TestCase):
+    def test_bootstrap_semver_shapes(self) -> None:
+        from jsonschema import Draft202012Validator
+
+        root_schema = json.loads(
+            (ROOT / "schemas" / "registry.schema.json").read_text(encoding="utf-8")
+        )
+        schema = {"$ref": "#/$defs/bootstrap", "$defs": root_schema["$defs"]}
+        validator = Draft202012Validator(schema)
+        for value in (
+            {"mise": "latest"},
+            {"mise": "1.2.3"},
+            {"mise": "v1.2.3"},
+            {"mise": "1.2.3-rc.1+build.1"},
+            {"mise": "v1.2.3-rc.1+build.1"},
+            {"mise": "latest", "uv": "0.5.11"},
+            {"mise": None},
+        ):
+            with self.subTest(value=value):
+                self.assertTrue(validator.is_valid(value), value)
+        for value in (
+            {"mise": "any-version"},
+            {"mise": "01.2.3"},
+            {"mise": "1.2"},
+            {"mise": "1.2.3-01"},
+            {"mise": "1.2.3-rc_1"},
+            {"uv": True},
+            {},
+            {"mise": "latest", "extra": "1.2.3"},
+        ):
+            with self.subTest(value=value):
+                self.assertFalse(validator.is_valid(value), value)
 
 
 class PythonCeilingTests(unittest.TestCase):

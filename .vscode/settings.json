@@ -5,6 +5,10 @@
       "url": "./schemas/registry.schema.json"
     },
     {
+      "fileMatch": ["registry.config.json"],
+      "url": "./schemas/registry.config.schema.json"
+    },
+    {
       "fileMatch": ["*/manifest.json"],
       "url": "./schemas/manifest.schema.json"
     }

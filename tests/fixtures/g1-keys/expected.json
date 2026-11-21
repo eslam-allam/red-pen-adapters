@@ -1,0 +1,18 @@
+{
+  "community-2026.pub": {
+    "keyId": "743C219E03A4F152",
+    "fingerprint": "7a8c5f319caf0d0e7539558c56524e2a6c9385f615a8b242fb044c14ffffbedb"
+  },
+  "community-2027.pub": {
+    "keyId": "BD8F6E2251F05236",
+    "fingerprint": "88b0b3a071b797c9aae3d62e149afbc8e0529873126b831b16e83fd423df996b"
+  },
+  "official-2026.pub": {
+    "keyId": "E7A93C572FF84DB5",
+    "fingerprint": "bd34ac56e04f8fa42de1fb7b48b4e6c9a68bf160447263f563ebf294f8815dde"
+  },
+  "official-2027.pub": {
+    "keyId": "56E82864FB3E9BB7",
+    "fingerprint": "f1b222ffba451616232bdb5cede9f7d2ca065932d80a030f0e16dae6e7d46f52"
+  }
+}

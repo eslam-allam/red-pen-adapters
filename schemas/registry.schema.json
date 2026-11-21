@@ -2,12 +2,18 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/schemas/registry.schema.json",
   "title": "Red Pen adapter registry",
-  "description": "The master registry.json that indexes every adapter folder.",
+  "description": "Schema 6: a signed registry index for kind red-pen-adapters. The exact bytes of registry.json are signed with minisign; every adapter file is authenticated by a SHA-256 entry in this index.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema",
+    "kind",
+    "registryId",
     "name",
+    "publisher",
+    "sequence",
+    "issuedAt",
+    "expiresAt",
     "adapters"
   ],
   "properties": {
@@ -16,19 +22,60 @@
       "format": "uri-reference"
     },
     "schema": {
-      "type": "integer",
-      "minimum": 1
+      "const": 6
+    },
+    "kind": {
+      "const": "red-pen-adapters"
+    },
+    "registryId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$",
+      "description": "Lowercase slug, no slashes. Official is red-pen-official; community is red-pen-community. Do not use a repository path. It must match registry.config.json and the trusted comment.",
+      "examples": [
+        "red-pen-official",
+        "red-pen-community"
+      ]
     },
     "name": {
       "type": "string",
       "minLength": 1
     },
+    "description": {
+      "type": "string"
+    },
+    "homepage": {
+      "type": "string",
+      "format": "uri"
+    },
+    "publisher": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\u0000-\\u001F\\u007F]+$",
+      "description": "Publisher display name. The app parses this as a string, never an object."
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647,
+      "description": "Strictly increasing signing sequence. The workflow tags registry-v<sequence>."
+    },
+    "issuedAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "RFC 3339 UTC timestamp, seconds precision."
+    },
+    "expiresAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "RFC 3339 UTC timestamp; verification refuses an expired registry."
+    },
     "adapters": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "$ref": "#/$defs/entry"
-      },
-      "minItems": 1
+      }
     }
   },
   "$defs": {
@@ -98,6 +145,9 @@
           },
           "uniqueItems": true
         },
+        "bootstrap": {
+          "$ref": "#/$defs/bootstrap"
+        },
         "extensions": {
           "type": "array",
           "items": {
@@ -112,35 +162,31 @@
         "files": {
           "type": "array",
           "minItems": 1,
+          "description": "Every file the app downloads. The signed index authenticates each file by SHA-256; bare strings are not accepted in schema 6.",
           "items": {
-            "oneOf": [
-              {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "properties": {
+              "path": {
                 "type": "string",
-                "minLength": 1
+                "minLength": 1,
+                "pattern": "^[^/\\\\:\\u0000-\\u001F\\u007F][^\\\\:\\u0000-\\u001F\\u007F]*$",
+                "description": "Relative POSIX path inside the adapter folder."
               },
-              {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "path"
-                ],
-                "properties": {
-                  "path": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "sha256": {
-                    "type": "string",
-                    "pattern": "^[a-fA-F0-9]{64}$"
-                  }
-                }
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
               }
-            ]
+            }
           }
         },
         "readmeUrl": {
           "type": "string",
-          "format": "uri-reference"
+          "format": "uri"
         },
         "runtimes": {
           "type": "array",
@@ -205,6 +251,35 @@
           }
         }
       }
+    },
+    "bootstrap": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "description": "Bootstrap tool pins mirrored from manifest.json. Managed runtimes require mise; only latest or a SemVer 2.0.0 pin is allowed.",
+      "properties": {
+        "uv": {
+          "$ref": "#/$defs/bootstrapPin"
+        },
+        "mise": {
+          "$ref": "#/$defs/bootstrapPin"
+        }
+      }
+    },
+    "bootstrapPin": {
+      "description": "'latest', null, or a full SemVer 2.0.0 pin with optional v prefix, prerelease, and build metadata.",
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "const": "latest"
+        },
+        {
+          "type": "string",
+          "pattern": "^v?(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+        }
+      ]
     }
   }
 }

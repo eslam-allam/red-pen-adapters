@@ -1,0 +1,11 @@
+# Default owner for the official registry.
+* @eslam-allam
+
+# Security-sensitive files require an explicit review.
+/schemas/ @eslam-allam
+/scripts/ @eslam-allam
+/keys/ @eslam-allam
+/.github/ @eslam-allam
+/registry.config.json @eslam-allam
+/registry.json @eslam-allam
+/SECURITY.md @eslam-allam

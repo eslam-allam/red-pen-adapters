@@ -8,12 +8,22 @@ The app downloads the listed files from the folder and runs them directly; no
 ZIP packaging is needed. Managed language runtimes are installed by the app,
 not by the adapter; the Bash adapter uses the system `bash` instead.
 
+`registry.json` is schema 6. Its exact bytes are signed with minisign, and the
+signed index authenticates every adapter file by SHA-256. See
+[docs/signing.md](docs/signing.md).
+
 ## Registry format
 
 ```json
 {
-  "schema": 5,
+  "schema": 6,
+  "kind": "red-pen-adapters",
+  "registryId": "red-pen-official",
   "name": "Red Pen official adapter registry",
+  "publisher": "Red Pen",
+  "sequence": 1,
+  "issuedAt": "2026-11-20T23:43:23Z",
+  "expiresAt": "2027-05-19T23:43:23Z",
   "adapters": [
     {
       "id": "python",
@@ -32,8 +42,12 @@ not by the adapter; the Bash adapter uses the system `bash` instead.
           "packages": { "setting": "packages", "installer": "pip" }
         }
       ],
+      "bootstrap": { "mise": "latest" },
       "folder": "python",
-      "files": ["manifest.json", "adapter.lua"],
+      "files": [
+        { "path": "manifest.json", "sha256": "..." },
+        { "path": "adapter.lua", "sha256": "..." }
+      ],
       "readmeUrl": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/python/README.md"
     }
   ]
@@ -41,18 +55,40 @@ not by the adapter; the Bash adapter uses the system `bash` instead.
 ```
 
 Each folder contains `manifest.json` and the adapter's Lua script. The registry
-entry lists both files, and the app resolves them relative to `registry.json`.
+entry lists both files with their SHA-256 checksums, and the app resolves them
+relative to `registry.json`.
 
 A folder may also include `README.md` and an `assets/` folder for its images.
 README images must use relative links such as `![Screenshot](assets/shot.png)`;
 the app fetches them from the same adapter folder for the marketplace.
 
-The entry mirrors the install-gating parts of the manifest: permissions,
-runtimes, and Windows registry keys. The app refuses an install whose manifest
-asks for one of them that the entry did not list, so keep the two files in
-step. Fields the entry has no place for (`output`, `keyInput`,
-`questionInput`, `directories`, `directoryPicker`, and `bootstrap`) live only
-in the manifest.
+The entry mirrors the install-gating parts of the manifest: name, description,
+author, icon, homepage, permissions, runtimes, `bootstrap`, and Windows registry
+keys. The app refuses an install whose manifest asks for one of them that the
+entry did not list, so keep the two files in step. Fields the entry has no
+place for (`output`, `keyInput`, `questionInput`, `directories`, and
+`directoryPicker`) live only in the manifest. Run `python scripts/update.py`
+after changing a manifest; it refreshes the mirrored fields (including
+`bootstrap`) and file checksums.
+
+## Signing
+
+`registry.config.json` declares the official trust tier (`red-pen-official`),
+the `registry-signing-official` GitHub environment, the committed public key
+`keys/official-2026.pub`, and the pinned signer commit in
+`eslam-allam/red-pen-registry-signing`.
+
+- Pull requests never receive signing secrets. CI validates the tree and runs
+  a throwaway test-key dry run.
+- After merge, the `Sign registry` workflow runs from `main` in the protected
+  environment, waits for reviewer approval, bumps the sequence, signs the exact
+  bytes, verifies the signature, commits `registry.json.minisig`, tags
+  `registry-v<sequence>`, and publishes the release artifacts.
+- Never edit `sequence`, `issuedAt`, `expiresAt`, or the signature by hand, and
+  never commit a private key or password. Only public keys belong in `keys/`.
+
+See [docs/signing.md](docs/signing.md), [docs/publishing.md](docs/publishing.md),
+and [docs/key-rotation.md](docs/key-rotation.md).
 
 ## Adapter scripts
 
@@ -266,9 +302,12 @@ libraries that would bypass the sandbox are not present.
 
 ## JSON schemas
 
-Two JSON Schemas describe the registry and adapter manifests:
+Three JSON Schemas describe the registry, its configuration, and adapter
+manifests:
 
-- `schemas/registry.schema.json` — the root `registry.json`
+- `schemas/registry.schema.json` — the signed root `registry.json`
+- `schemas/registry.config.schema.json` — `registry.config.json` identity and
+  signing settings
 - `schemas/manifest.schema.json` — each adapter folder's `manifest.json`
 
 Every JSON file includes a `$schema` reference, so editors with JSON language
@@ -288,6 +327,7 @@ The schemas document:
 - per-section `fill: "binary"` or `fill: "none"` to choose whether the table
   editor prefills that section, and optional `names` for fixed headings
 - registry file entries and their SHA-256 checksums
+- the mirrored `bootstrap` pins and runtime backends the signed index gates
 
 Run local validation before publishing:
 
@@ -295,18 +335,23 @@ Run local validation before publishing:
 python -m pip install jsonschema
 # luac is optional but CI installs it (for example apt-get install lua5.4)
 python scripts/generate.py --check
-python scripts/validate.py
+python scripts/registry.py format --check registry.json registry.config.json
+python scripts/update.py --check
+python scripts/validate.py --skip-signature --skip-release
 ```
 
 `generate.py --check` fails if a committed language `adapter.lua` differs from
-the template. The validator checks both schemas and cross-file consistency:
+the template. `registry.py format --check` enforces sorted keys, two-space
+indent, LF, and one trailing newline. `update.py --check` fails when mirrored
+manifest fields (including `bootstrap`) or file checksums in `registry.json`
+are stale. The validator checks both schemas and cross-file consistency:
 folder contents, `adapter.lua` presence, manifest/registry id, version,
 permissions, runtimes, known mise tools and backends, runtime default/options,
 generated adapter tool hints, the Python 3.8-3.15 ceiling, registry keys and
 description agreement, README version lines, formula variables, smoke metadata
 in `scripts/languages.json`, and each declared file's SHA-256 checksum. It also
-runs `luac -p` on every `adapter.lua` when `luac` is installed; otherwise it
-prints a warning and skips that syntax check. After changing a manifest or
-script, run `python scripts/update_checksums.py` and commit the updated
-`registry.json`. The same checks run in GitHub Actions on pushes and pull
-requests.
+runs `luac -p` on every `adapter.lua` when `--luac` is passed and `luac` is
+available. After changing a manifest or script, run `python scripts/update.py`
+and commit the updated `registry.json`. The same checks run in GitHub Actions
+on pushes and pull requests (`Validate registry` and `Sign dry run`).
+Production signing runs only after merge from `main`.

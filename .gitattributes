@@ -1,0 +1,13 @@
+# Normalize text files; signed JSON must have LF bytes.
+* text=auto eol=lf
+*.json text eol=lf
+*.lua text eol=lf
+*.md text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.pub text eol=lf
+*.minisig text eol=lf
+*.sha256 text eol=lf
+*.key -text
+*.password -text

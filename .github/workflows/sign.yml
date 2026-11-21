@@ -1,0 +1,500 @@
+name: Sign registry
+
+# Production signing. This workflow never runs for pull requests. The signing
+# job is bound to a protected environment (registry-signing-official or
+# registry-signing-community), which requires reviewer approval and owns the
+# minisign key secrets.
+#
+# Isolation rule: after the first MINISIGN_* secret is present, this job runs
+# only pinned signer code, the pinned minisign binary, and trusted runner tools.
+# It never executes scripts or local actions from the registry checkout.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "registry.json"
+      - "registry.config.json"
+      - "**/manifest.json"
+      - "**/adapter.lua"
+      - "keys/**"
+      - "scripts/**"
+      - ".github/workflows/sign.yml"
+      - ".github/actions/install-minisign/**"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Use a throwaway test key; never read production secrets or push
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: registry-signing-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    name: Validate before signing
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      enabled: ${{ steps.config.outputs.enabled }}
+      tier: ${{ steps.config.outputs.tier }}
+      environment: ${{ steps.config.outputs.environment }}
+      registry_id: ${{ steps.config.outputs.registry_id }}
+      key_file: ${{ steps.config.outputs.key_file }}
+      signer_repository: ${{ steps.config.outputs.signer_repository }}
+      signer_commit: ${{ steps.config.outputs.signer_commit }}
+      require_signature: ${{ steps.config.outputs.require_signature }}
+      skip: ${{ steps.detect.outputs.skip }}
+    steps:
+      - name: Checkout registry
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.13"
+
+      # Trusted selection: read registry.config.json with jq, not with code from
+      # the registry checkout. Enforce fixed official/community signer repos or
+      # a repository-variable allowlist for third-party registries.
+      - name: Read and enforce signing configuration
+        id: config
+        env:
+          ALLOWED_SIGNERS: ${{ vars.SIGNER_REPOSITORY_ALLOWLIST }}
+        run: |
+          set -euo pipefail
+          config=registry.config.json
+          registry_id=$(jq -er '.registryId' "$config")
+          tier=$(jq -er '.tier' "$config")
+          source_repo=$(jq -er '.repository' "$config")
+          enabled=$(jq -r '.signing.enabled // false' "$config")
+          environment=$(jq -r '.signing.environment // ""' "$config")
+          signer_repo=$(jq -r '.signing.signerRepository // ""' "$config")
+          signer_commit=$(jq -r '.signing.signerCommit // ""' "$config")
+          key_file=$(jq -r '.signing.keyFile // ""' "$config")
+          require_signature=$(jq -r '.requireSignature // false' "$config")
+          printf '%s' "$registry_id" | grep -Eq '^[a-z0-9][a-z0-9._-]{0,127}$' || {
+            echo "invalid registryId" >&2; exit 1; }
+          if [ -n "$signer_repo" ]; then
+            printf '%s' "$signer_repo" | grep -Eq '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$' || {
+              echo "invalid signer repository" >&2; exit 1; }
+          fi
+          if [ -n "$key_file" ]; then
+            printf '%s' "$key_file" | grep -Eq '^keys/[A-Za-z0-9._-]+\.pub$' || {
+              echo "invalid signing.keyFile path" >&2; exit 1; }
+          fi
+          if [ -n "$environment" ]; then
+            printf '%s' "$environment" | grep -Eq '^[A-Za-z0-9][A-Za-z0-9._-]*$' || {
+              echo "invalid signing.environment" >&2; exit 1; }
+          fi
+          case "$tier" in
+            official)
+              expected_id=red-pen-official
+              expected_signer=eslam-allam/red-pen-registry-signing
+              expected_environment=registry-signing-official
+              ;;
+            community)
+              expected_id=red-pen-community
+              expected_signer=eslam-allam/red-pen-registry-signing
+              expected_environment=registry-signing-community
+              ;;
+            third-party)
+              expected_id=
+              expected_signer=
+              expected_environment=
+              ;;
+            *) echo "unknown trust tier: $tier" >&2; exit 1 ;;
+          esac
+          if [ -n "$expected_id" ] && [ "$registry_id" != "$expected_id" ]; then
+            echo "registryId $registry_id does not match tier $tier" >&2
+            exit 1
+          fi
+          if [ "$signer_repo" = "$source_repo" ]; then
+            echo "signerRepository must not be the registry repository itself" >&2
+            exit 1
+          fi
+          if [ "$enabled" = "true" ]; then
+            [ -n "$signer_repo" ] && [ -n "$signer_commit" ] && [ -n "$key_file" ] || {
+              echo "signing.enabled requires signer repository, commit, and keyFile" >&2
+              exit 1
+            }
+            if [ -n "$expected_signer" ]; then
+              [ "$signer_repo" = "$expected_signer" ] || {
+                echo "$tier registries must use $expected_signer" >&2
+                exit 1
+              }
+              [ "$environment" = "$expected_environment" ] || {
+                echo "$tier registries must use environment $expected_environment" >&2
+                exit 1
+              }
+            else
+              case ",${ALLOWED_SIGNERS:-}," in
+                *",$signer_repo,"*) ;;
+                *) echo "signer repository is not in SIGNER_REPOSITORY_ALLOWLIST" >&2; exit 1 ;;
+              esac
+            fi
+            printf '%s' "$signer_commit" | grep -Eq '^[0-9a-f]{40}$' || {
+              echo "signerCommit must be a full lowercase SHA" >&2
+              exit 1
+            }
+            [ -f "$key_file" ] || {
+              echo "signing.keyFile is missing: $key_file" >&2
+              exit 1
+            }
+          fi
+          {
+            echo "enabled=$enabled"
+            echo "tier=$tier"
+            echo "environment=$environment"
+            echo "registry_id=$registry_id"
+            echo "key_file=$key_file"
+            echo "signer_repository=$signer_repo"
+            echo "signer_commit=$signer_commit"
+            echo "require_signature=$require_signature"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Checkout pinned signer by SHA
+        if: steps.config.outputs.enabled == 'true'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: ${{ steps.config.outputs.signer_repository }}
+          ref: ${{ steps.config.outputs.signer_commit }}
+          path: signer
+          persist-credentials: false
+
+      - name: Install pinned signer validation dependency
+        if: steps.config.outputs.enabled == 'true'
+        run: python -m pip install --disable-pip-version-check jsonschema==4.26.0
+
+      - name: Require the pinned signer commit on signer main
+        if: steps.config.outputs.enabled == 'true'
+        env:
+          PYTHONPATH: ${{ github.workspace }}/signer
+          PYTHONSAFEPATH: "1"
+          SIGNER_COMMIT: ${{ steps.config.outputs.signer_commit }}
+          SIGNER_REPOSITORY: ${{ steps.config.outputs.signer_repository }}
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE/signer"
+          python -P -m redpen_signing.cli check-pin \
+            --repo-dir "$GITHUB_WORKSPACE/signer" \
+            --commit "$SIGNER_COMMIT" \
+            --expected-repository "$SIGNER_REPOSITORY"
+
+      - name: Validate registry with the pinned signer
+        if: steps.config.outputs.enabled == 'true'
+        env:
+          PYTHONPATH: ${{ github.workspace }}/signer
+          PYTHONSAFEPATH: "1"
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE/signer"
+          python -P -m redpen_signing.cli validate \
+            --root "$GITHUB_WORKSPACE" \
+            --registry "$GITHUB_WORKSPACE/registry.json" \
+            --config "$GITHUB_WORKSPACE/registry.config.json" \
+            --skip-release
+
+      - name: Detect a commit produced by this workflow
+        id: detect
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          set -euo pipefail
+          skip=false
+          if [ "$EVENT_NAME" = "push" ]; then
+            case "$COMMIT_MESSAGE" in
+              "chore(registry): sign sequence"*) skip=true ;;
+            esac
+          fi
+          echo "skip=${skip}" >> "$GITHUB_OUTPUT"
+
+  sign:
+    name: Sign in protected environment
+    needs: preflight
+    if: |
+      needs.preflight.outputs.enabled == 'true' &&
+      needs.preflight.outputs.skip != 'true' &&
+      (github.event_name != 'workflow_dispatch' || inputs.dry_run != true)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: ${{ needs.preflight.outputs.environment }}
+    concurrency:
+      group: registry-signing-${{ needs.preflight.outputs.tier }}
+      cancel-in-progress: false
+    permissions:
+      contents: write
+    env:
+      PYTHONPATH: ${{ github.workspace }}/signer
+      PYTHONSAFEPATH: "1"
+      SIGNER_DIR: ${{ github.workspace }}/signer
+      REGISTRY_DIR: ${{ github.workspace }}
+    steps:
+      - name: Mint minimal GitHub App token
+        id: app
+        uses: actions/create-github-app-token@a8d616148505b5069dccd32f177bb87d7f39123b # v2.1.1
+        with:
+          # Environment-scoped: set SIGNING_APP_ID as an environment variable
+          # and SIGNING_APP_PRIVATE_KEY as an environment secret in each tier's
+          # protected environment. The App needs contents: write on this repo.
+          app-id: ${{ vars.SIGNING_APP_ID }}
+          private-key: ${{ secrets.SIGNING_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+
+      - name: Checkout registry
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+          token: ${{ steps.app.outputs.token }}
+
+      - name: Re-read signing configuration after checkout
+        id: config
+        run: |
+          set -euo pipefail
+          config=registry.config.json
+          registry_id=$(jq -er '.registryId' "$config")
+          tier=$(jq -er '.tier' "$config")
+          source_repo=$(jq -er '.repository' "$config")
+          environment=$(jq -r '.signing.environment // ""' "$config")
+          signer_repo=$(jq -r '.signing.signerRepository // ""' "$config")
+          signer_commit=$(jq -r '.signing.signerCommit // ""' "$config")
+          key_file=$(jq -r '.signing.keyFile // ""' "$config")
+          enabled=$(jq -r '.signing.enabled // false' "$config")
+          [ "$enabled" = "true" ] || {
+            echo "signing was disabled after preflight" >&2; exit 1; }
+          [ "$registry_id" = "${{ needs.preflight.outputs.registry_id }}" ] || {
+            echo "registryId changed after preflight" >&2; exit 1; }
+          [ "$tier" = "${{ needs.preflight.outputs.tier }}" ] || {
+            echo "tier changed after preflight" >&2; exit 1; }
+          [ "$environment" = "${{ needs.preflight.outputs.environment }}" ] || {
+            echo "signing environment changed after preflight" >&2; exit 1; }
+          [ "$signer_repo" = "${{ needs.preflight.outputs.signer_repository }}" ] || {
+            echo "signer repository changed after preflight" >&2; exit 1; }
+          [ "$signer_commit" = "${{ needs.preflight.outputs.signer_commit }}" ] || {
+            echo "signer commit changed after preflight" >&2; exit 1; }
+          [ "$key_file" = "${{ needs.preflight.outputs.key_file }}" ] || {
+            echo "key file changed after preflight" >&2; exit 1; }
+          [ "$signer_repo" != "$source_repo" ] || {
+            echo "signerRepository must not be the registry repository itself" >&2; exit 1; }
+          [ -f "$key_file" ] || {
+            echo "signing.keyFile is missing: $key_file" >&2; exit 1; }
+          {
+            echo "registry_id=$registry_id"
+            echo "tier=$tier"
+            echo "environment=$environment"
+            echo "signer_repository=$signer_repo"
+            echo "signer_commit=$signer_commit"
+            echo "key_file=$key_file"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Checkout pinned signer by SHA
+        # The signer repository is public and contains no secrets. It is
+        # pinned by commit SHA; no cross-repository token is required.
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: ${{ steps.config.outputs.signer_repository }}
+          ref: ${{ steps.config.outputs.signer_commit }}
+          path: signer
+          persist-credentials: false
+
+      - name: Install Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.13"
+
+      - name: Install pinned signer validation dependency
+        run: python -m pip install --disable-pip-version-check jsonschema==4.26.0
+
+      - name: Install pinned minisign from the signer
+        # Signer-owned, SHA-pinned action. The registry checkout cannot replace
+        # minisign before any key material is introduced.
+        uses: ./signer/.github/actions/install-minisign
+
+      - name: Require the pinned signer commit on signer main
+        env:
+          SIGNER_COMMIT: ${{ steps.config.outputs.signer_commit }}
+          SIGNER_REPOSITORY: ${{ steps.config.outputs.signer_repository }}
+        run: |
+          set -euo pipefail
+          cd "$SIGNER_DIR"
+          python -P -m redpen_signing.cli check-pin \
+            --repo-dir "$SIGNER_DIR" \
+            --commit "$SIGNER_COMMIT" \
+            --expected-repository "$SIGNER_REPOSITORY"
+
+      - name: Configure authenticated git without persisting credentials
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          set -euo pipefail
+          cd "$SIGNER_DIR"
+          python -P -m redpen_signing.cli write-askpass \
+            --out "$RUNNER_TEMP/git-askpass.sh" \
+            --env GH_TOKEN
+          {
+            echo "GIT_ASKPASS=$RUNNER_TEMP/git-askpass.sh"
+            echo "GIT_TERMINAL_PROMPT=0"
+          } >> "$GITHUB_ENV"
+
+      - name: Refresh tags before allocating a sequence
+        run: |
+          set -euo pipefail
+          git -C "$REGISTRY_DIR" fetch --tags --force
+          latest="$(git -C "$REGISTRY_DIR" tag --list 'registry-v*' | sed -n 's/^registry-v\([0-9][0-9]*\)$/\1/p' | sort -n | tail -n 1)"
+          echo "LATEST_SEQUENCE=${latest:-0}" >> "$GITHUB_ENV"
+
+      - name: Install encrypted secret key
+        env:
+          MINISIGN_SECRET_KEY_B64: ${{ secrets.MINISIGN_SECRET_KEY_B64 }}
+        run: |
+          set -euo pipefail
+          cd "$SIGNER_DIR"
+          python -P -m redpen_signing.cli install-secret-key \
+            --env MINISIGN_SECRET_KEY_B64 \
+            --out "$RUNNER_TEMP/minisign.key"
+
+      - name: Prepare next sequence and timestamps
+        run: |
+          set -euo pipefail
+          cd "$SIGNER_DIR"
+          python -P -m redpen_signing.cli prepare \
+            --registry "$REGISTRY_DIR/registry.json" \
+            --config "$REGISTRY_DIR/registry.config.json" \
+            --out "$REGISTRY_DIR/registry.json" \
+            --base-sequence "${LATEST_SEQUENCE:-0}"
+          sequence="$(python -P -m redpen_signing.cli sequence --registry "$REGISTRY_DIR/registry.json")"
+          if [ "$sequence" -le "${LATEST_SEQUENCE:-0}" ]; then
+            echo "prepared sequence ${sequence} is not above latest tag ${LATEST_SEQUENCE}" >&2
+            exit 1
+          fi
+          if git -C "$REGISTRY_DIR" rev-parse --verify --quiet "refs/tags/registry-v${sequence}" >/dev/null; then
+            echo "tag registry-v${sequence} already exists" >&2
+            exit 1
+          fi
+          echo "SEQUENCE=${sequence}" >> "$GITHUB_ENV"
+
+      - name: Validate prepared registry with the pinned signer
+        run: |
+          set -euo pipefail
+          cd "$SIGNER_DIR"
+          python -P -m redpen_signing.cli validate \
+            --root "$REGISTRY_DIR" \
+            --registry "$REGISTRY_DIR/registry.json" \
+            --config "$REGISTRY_DIR/registry.config.json" \
+            --skip-release
+
+      - name: Sign exact registry bytes
+        env:
+          MINISIGN_PASSWORD: ${{ secrets.MINISIGN_PASSWORD }}
+          KEY_FILE: ${{ steps.config.outputs.key_file }}
+        run: |
+          set -euo pipefail
+          cd "$SIGNER_DIR"
+          python -P -m redpen_signing.cli sign \
+            --registry "$REGISTRY_DIR/registry.json" \
+            --sig "$REGISTRY_DIR/registry.json.minisig" \
+            --secret-key "$RUNNER_TEMP/minisign.key" \
+            --public-key "$REGISTRY_DIR/$KEY_FILE" \
+            --config "$REGISTRY_DIR/registry.config.json"
+
+      - name: Verify signature and trusted comment
+        env:
+          KEY_FILE: ${{ steps.config.outputs.key_file }}
+        run: |
+          set -euo pipefail
+          cd "$SIGNER_DIR"
+          python -P -m redpen_signing.cli verify \
+            --registry "$REGISTRY_DIR/registry.json" \
+            --sig "$REGISTRY_DIR/registry.json.minisig" \
+            --public-key "$REGISTRY_DIR/$KEY_FILE" \
+            --config "$REGISTRY_DIR/registry.config.json"
+
+      - name: Write release metadata and checksum
+        env:
+          KEY_FILE: ${{ steps.config.outputs.key_file }}
+          SIGNER_COMMIT: ${{ steps.config.outputs.signer_commit }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          cd "$SIGNER_DIR"
+          python -P -m redpen_signing.cli release \
+            --registry "$REGISTRY_DIR/registry.json" \
+            --sig "$REGISTRY_DIR/registry.json.minisig" \
+            --public-key "$REGISTRY_DIR/$KEY_FILE" \
+            --config "$REGISTRY_DIR/registry.config.json" \
+            --out "$REGISTRY_DIR/release.json" \
+            --signer-commit "$SIGNER_COMMIT" \
+            --run-url "$RUN_URL"
+          (cd "$REGISTRY_DIR" && sha256sum registry.json > registry.sha256)
+
+      - name: Upload signed release artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: registry-v${{ env.SEQUENCE }}
+          path: |
+            ${{ github.workspace }}/registry.json
+            ${{ github.workspace }}/registry.json.minisig
+            ${{ github.workspace }}/registry.sha256
+            ${{ github.workspace }}/release.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Commit, tag, and push with the app token
+        env:
+          SEQUENCE: ${{ env.SEQUENCE }}
+        run: |
+          set -euo pipefail
+          git -C "$REGISTRY_DIR" config user.name "red-pen-registry-signer[bot]"
+          git -C "$REGISTRY_DIR" config user.email "red-pen-registry-signer@users.noreply.github.com"
+          git -C "$REGISTRY_DIR" add registry.json registry.json.minisig registry.sha256 release.json
+          git -C "$REGISTRY_DIR" commit -m "chore(registry): sign sequence ${SEQUENCE}"
+          git -C "$REGISTRY_DIR" tag "registry-v${SEQUENCE}"
+          git -C "$REGISTRY_DIR" remote set-url origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git -C "$REGISTRY_DIR" push origin "HEAD:main"
+          git -C "$REGISTRY_DIR" push origin "registry-v${SEQUENCE}"
+
+      - name: Remove temporary secret key and askpass
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/minisign.key" "$RUNNER_TEMP/git-askpass.sh"
+
+  dry-run:
+    name: Test-key dry run
+    if: github.event_name == 'workflow_dispatch' && inputs.dry_run
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Install Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.13"
+
+      - name: Install pinned minisign
+        uses: ./.github/actions/install-minisign
+
+      - name: Prepare, sign, verify, and tamper-check with a test key
+        run: python scripts/sign.py --test-key
