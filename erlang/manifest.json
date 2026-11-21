@@ -1,21 +1,31 @@
 {
   "$schema": "../schemas/manifest.schema.json",
-  "schema": 4,
-  "id": "erlang",
-  "name": "Erlang",
-  "version": "2.5.0",
-  "description": "Runs an Erlang script with escript.",
-  "author": "Red Pen",
-  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
-  "extensions": [
-    "erl"
-  ],
+  "apiVersion": 2,
   "appliesTo": [
     "file",
     "question"
   ],
-  "language": "erlang",
-  "miseTool": "erlang",
+  "author": "Red Pen",
+  "bootstrap": {
+    "mise": "latest"
+  },
+  "description": "Runs an Erlang script with escript.",
+  "extensions": [
+    "erl"
+  ],
+  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQTkwNTMzIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RXJsYW5nPC90aXRsZT48cGF0aCBkPSJNOC44NTkgNy44ODljLjE1NC0xLjg2MyAxLjYyMy0zLjExNSAzLjM0NC0zLjExOSAxLjczNC4wMDQgMi45ODYgMS4yNTYgMy4wMjkgMy4xMTl6bTEyLjExIDExLjcwN2MuODAyLS44NiAxLjUyLTEuODcyIDIuMTcyLTMuMDNsLTMuNjE2LTEuODA3Yy0xLjI3IDIuMDY0LTMuMTI3IDMuOTY1LTUuNjk0IDMuOTc3LTMuNzM4LS4wMTItNS4yMDYtMy4yMDgtNS4xOTgtNy4zMjJoMTMuOTY2Yy4wMTktLjQ2NC4wMTktLjY4IDAtLjkwNC4wOTEtMi40NDctLjU1OC00LjUwNC0xLjczNy02LjEwNmwtLjAwNy4wMDVIMjR2MTUuMTg2aC0zLjAzOXptLTE3LjIwNi0uMDAxQzEuOTAxIDE3LjYyLjgxMSAxNC44OTQuODEzIDExLjY0Yy0uMDAyLTIuODc3LjkwMi01LjM1IDIuNDU2LTcuMjMySDB2MTUuMTg3aDMuNzYxWiIvPjwvc3ZnPg==",
+  "id": "erlang",
+  "keyInput": [
+    {
+      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored.",
+      "key": "expected",
+      "label": "Expected output",
+      "required": true,
+      "type": "textarea"
+    }
+  ],
+  "name": "Erlang",
   "output": {
     "kinds": [
       "diff"
@@ -25,45 +35,34 @@
   "permissions": [
     "subprocess"
   ],
+  "questionInput": [
+    {
+      "help": "An optional file to pass to the program as its first argument.",
+      "key": "inputFile",
+      "label": "Input file",
+      "required": false,
+      "type": "path"
+    }
+  ],
   "runtimes": [
     {
-      "tool": "erlang",
       "setting": "runtimeVersion",
+      "tool": "erlang",
       "version": "latest"
     }
   ],
-  "keyInput": [
-    {
-      "key": "expected",
-      "label": "Expected output",
-      "type": "textarea",
-      "required": true,
-      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored."
-    }
-  ],
+  "schema": 5,
   "settings": [
     {
-      "key": "runtimeVersion",
-      "label": "Runtime version",
-      "type": "select",
       "default": "latest",
       "help": "The runtime to install with mise. latest installs the newest supported release on first use.",
+      "key": "runtimeVersion",
+      "label": "Runtime version",
       "options": [
         "latest"
-      ]
+      ],
+      "type": "select"
     }
   ],
-  "bootstrap": {
-    "mise": "latest"
-  },
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQTkwNTMzIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RXJsYW5nPC90aXRsZT48cGF0aCBkPSJNOC44NTkgNy44ODljLjE1NC0xLjg2MyAxLjYyMy0zLjExNSAzLjM0NC0zLjExOSAxLjczNC4wMDQgMi45ODYgMS4yNTYgMy4wMjkgMy4xMTl6bTEyLjExIDExLjcwN2MuODAyLS44NiAxLjUyLTEuODcyIDIuMTcyLTMuMDNsLTMuNjE2LTEuODA3Yy0xLjI3IDIuMDY0LTMuMTI3IDMuOTY1LTUuNjk0IDMuOTc3LTMuNzM4LS4wMTItNS4yMDYtMy4yMDgtNS4xOTgtNy4zMjJoMTMuOTY2Yy4wMTktLjQ2NC4wMTktLjY4IDAtLjkwNC4wOTEtMi40NDctLjU1OC00LjUwNC0xLjczNy02LjEwNmwtLjAwNy4wMDVIMjR2MTUuMTg2aC0zLjAzOXptLTE3LjIwNi0uMDAxQzEuOTAxIDE3LjYyLjgxMSAxNC44OTQuODEzIDExLjY0Yy0uMDAyLTIuODc3LjkwMi01LjM1IDIuNDU2LTcuMjMySDB2MTUuMTg3aDMuNzYxWiIvPjwvc3ZnPg==",
-  "questionInput": [
-    {
-      "key": "inputFile",
-      "label": "Input file",
-      "type": "path",
-      "required": false,
-      "help": "An optional file to pass to the program as its first argument."
-    }
-  ]
+  "version": "2.5.0"
 }

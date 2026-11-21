@@ -1,1469 +1,111 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/eslam-allam/red-pen-adapters/main/schemas/manifest.schema.json",
-  "title": "Red Pen adapter manifest",
-  "description": "One adapter folder's manifest.json, as read by the Red Pen app.",
-  "type": "object",
-  "additionalProperties": false,
-  "required": [
-    "schema",
-    "id",
-    "name",
-    "version",
-    "extensions",
-    "appliesTo",
-    "output",
-    "permissions",
-    "keyInput",
-    "settings"
-  ],
-  "properties": {
-    "$schema": {
-      "type": "string",
-      "format": "uri-reference"
-    },
-    "schema": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "id": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9_-]*$"
-    },
-    "name": {
-      "type": "string",
-      "minLength": 1
-    },
-    "version": {
-      "type": "string",
-      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
-    },
-    "description": {
-      "type": "string"
-    },
-    "author": {
-      "type": "string"
-    },
-    "icon": {
-      "type": "string",
-      "description": "A data URI or HTTPS URL."
-    },
-    "homepage": {
-      "type": "string",
-      "format": "uri-reference"
-    },
-    "extensions": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "pattern": "^[A-Za-z0-9][A-Za-z0-9+.-]*$"
-      }
-    },
-    "appliesTo": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "file",
-          "question"
-        ]
+  "$defs": {
+    "adapterId": {
+      "description": "Lowercase adapter id and folder name, 1-80 characters of a-z, 0-9, dot, underscore and hyphen. It may not start or end with a dot and may not be a Windows reserved device name, even with an extension.",
+      "maxLength": 80,
+      "minLength": 1,
+      "not": {
+        "pattern": "[\\u0000-\\u001F\\u007F]"
       },
-      "minItems": 1,
-      "uniqueItems": true
+      "pattern": "^(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\.|$))[a-z0-9](?:[a-z0-9._-]{0,78}[a-z0-9_-])?$",
+      "type": "string"
     },
-    "output": {
-      "type": "object",
+    "apiVersion": {
+      "const": 2,
+      "description": "The adapter API version."
+    },
+    "bootstrap": {
       "additionalProperties": false,
-      "required": [
-        "kinds"
-      ],
+      "minProperties": 1,
       "properties": {
-        "kinds": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string",
-            "enum": [
-              "none",
-              "text",
-              "table",
-              "tableDiff",
-              "diff",
-              "image",
-              "json"
-            ]
-          }
+        "mise": {
+          "$ref": "#/$defs/bootstrapMisePin"
+        },
+        "uv": {
+          "$ref": "#/$defs/bootstrapUvPin"
+        }
+      },
+      "type": "object"
+    },
+    "bootstrapMisePin": {
+      "description": "The pinned mise bootstrap version, or the latest alias.",
+      "enum": [
+        "latest",
+        "2026.11.11"
+      ]
+    },
+    "bootstrapUvPin": {
+      "description": "The pinned uv bootstrap version, or the latest alias.",
+      "enum": [
+        "latest",
+        "0.13.9"
+      ]
+    },
+    "directoryPicker": {
+      "additionalProperties": false,
+      "properties": {
+        "help": {
+          "type": "string"
         },
         "label": {
           "type": "string"
-        }
-      }
-    },
-    "permissions": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "network",
-          "subprocess",
-          "environment",
-          "files:read",
-          "files:write",
-          "directories"
-        ]
-      },
-      "uniqueItems": true
-    },
-    "directories": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "registry": {
-      "type": "array",
-      "description": "Per-user registry keys the adapter needs on Windows, for example HKCU\\Software\\JavaSoft\\Prefs.",
-      "items": {
-        "type": "string",
-        "pattern": "^(HKCU|HKEY_CURRENT_USER|HKLM|HKEY_LOCAL_MACHINE)\\\\.+$"
-      },
-      "uniqueItems": true
-    },
-    "directoryPicker": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "mode"
-      ],
-      "properties": {
+        },
         "mode": {
-          "type": "string",
           "enum": [
             "r",
             "rw"
-          ]
-        },
-        "label": {
-          "type": "string"
-        },
-        "help": {
-          "type": "string"
-        }
-      }
-    },
-    "runtimes": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "tool"
-        ],
-        "properties": {
-          "tool": {
-            "type": "string",
-            "minLength": 1
-          },
-          "setting": {
-            "type": "string"
-          },
-          "version": {
-            "type": "string"
-          },
-          "packages": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "setting",
-              "installer"
-            ],
-            "properties": {
-              "setting": {
-                "type": "string"
-              },
-              "installer": {
-                "type": "string",
-                "enum": [
-                  "pip"
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "bootstrap": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "uv": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "mise": {
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      }
-    },
-    "keyInput": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "key",
-          "label",
-          "type"
-        ],
-        "properties": {
-          "key": {
-            "type": "string",
-            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-          },
-          "label": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "text",
-              "textarea",
-              "number",
-              "boolean",
-              "select",
-              "multiselect",
-              "path",
-              "directory",
-              "table"
-            ]
-          },
-          "required": {
-            "type": "boolean"
-          },
-          "placeholder": {
-            "type": "string"
-          },
-          "help": {
-            "type": "string"
-          },
-          "options": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "columns": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "table": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "columns": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "key"
-                  ],
-                  "properties": {
-                    "key": {
-                      "type": "string",
-                      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-                    },
-                    "label": {
-                      "type": "string"
-                    },
-                    "role": {
-                      "type": "string",
-                      "enum": [
-                        "input",
-                        "output"
-                      ]
-                    },
-                    "binary": {
-                      "type": "boolean"
-                    },
-                    "fill": {
-                      "type": "string",
-                      "enum": [
-                        "binary",
-                        "none"
-                      ]
-                    },
-                    "names": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "min": {
-                      "oneOf": [
-                        {
-                          "type": "number"
-                        },
-                        {
-                          "type": "string",
-                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                        }
-                      ]
-                    },
-                    "max": {
-                      "oneOf": [
-                        {
-                          "type": "number"
-                        },
-                        {
-                          "type": "string",
-                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                        }
-                      ]
-                    },
-                    "default": {
-                      "oneOf": [
-                        {
-                          "type": "number"
-                        },
-                        {
-                          "type": "string",
-                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                        }
-                      ]
-                    }
-                  }
-                }
-              },
-              "rowSections": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "key"
-                  ],
-                  "properties": {
-                    "key": {
-                      "type": "string",
-                      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-                    },
-                    "label": {
-                      "type": "string"
-                    },
-                    "role": {
-                      "type": "string",
-                      "enum": [
-                        "input",
-                        "output"
-                      ]
-                    },
-                    "binary": {
-                      "type": "boolean"
-                    },
-                    "fill": {
-                      "type": "string",
-                      "enum": [
-                        "binary",
-                        "none"
-                      ]
-                    },
-                    "names": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "min": {
-                      "oneOf": [
-                        {
-                          "type": "number"
-                        },
-                        {
-                          "type": "string",
-                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                        }
-                      ]
-                    },
-                    "max": {
-                      "oneOf": [
-                        {
-                          "type": "number"
-                        },
-                        {
-                          "type": "string",
-                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                        }
-                      ]
-                    },
-                    "default": {
-                      "oneOf": [
-                        {
-                          "type": "number"
-                        },
-                        {
-                          "type": "string",
-                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                        }
-                      ]
-                    }
-                  }
-                }
-              },
-              "rows": {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {
-                  "min": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  },
-                  "max": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  },
-                  "count": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  },
-                  "default": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  }
-                }
-              },
-              "inputs": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "outputs": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "minInputs": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "minOutputs": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "inputLabel": {
-                "type": "string"
-              },
-              "outputLabel": {
-                "type": "string"
-              }
-            }
-          },
-          "default": {
-            "type": "string"
-          }
-        },
-        "allOf": [
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "select",
-                    "multiselect"
-                  ]
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "required": [
-                "options"
-              ],
-              "properties": {
-                "options": {
-                  "minItems": 1
-                }
-              }
-            }
-          }
-        ]
-      }
-    },
-    "questionInput": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/field"
-      }
-    },
-    "settings": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "key",
-          "label",
-          "type"
-        ],
-        "properties": {
-          "key": {
-            "type": "string",
-            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-          },
-          "label": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "text",
-              "textarea",
-              "number",
-              "boolean",
-              "select",
-              "multiselect",
-              "path",
-              "directory",
-              "table"
-            ]
-          },
-          "required": {
-            "type": "boolean"
-          },
-          "placeholder": {
-            "type": "string"
-          },
-          "help": {
-            "type": "string"
-          },
-          "options": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "columns": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "table": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "columns": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "key"
-                  ],
-                  "properties": {
-                    "key": {
-                      "type": "string",
-                      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-                    },
-                    "label": {
-                      "type": "string"
-                    },
-                    "role": {
-                      "type": "string",
-                      "enum": [
-                        "input",
-                        "output"
-                      ]
-                    },
-                    "binary": {
-                      "type": "boolean"
-                    },
-                    "fill": {
-                      "type": "string",
-                      "enum": [
-                        "binary",
-                        "none"
-                      ]
-                    },
-                    "names": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "min": {
-                      "oneOf": [
-                        {
-                          "type": "number"
-                        },
-                        {
-                          "type": "string",
-                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                        }
-                      ]
-                    },
-                    "max": {
-                      "oneOf": [
-                        {
-                          "type": "number"
-                        },
-                        {
-                          "type": "string",
-                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                        }
-                      ]
-                    },
-                    "default": {
-                      "oneOf": [
-                        {
-                          "type": "number"
-                        },
-                        {
-                          "type": "string",
-                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                        }
-                      ]
-                    }
-                  }
-                }
-              },
-              "rowSections": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "key"
-                  ],
-                  "properties": {
-                    "key": {
-                      "type": "string",
-                      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-                    },
-                    "label": {
-                      "type": "string"
-                    },
-                    "role": {
-                      "type": "string",
-                      "enum": [
-                        "input",
-                        "output"
-                      ]
-                    },
-                    "binary": {
-                      "type": "boolean"
-                    },
-                    "fill": {
-                      "type": "string",
-                      "enum": [
-                        "binary",
-                        "none"
-                      ]
-                    },
-                    "names": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "min": {
-                      "oneOf": [
-                        {
-                          "type": "number"
-                        },
-                        {
-                          "type": "string",
-                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                        }
-                      ]
-                    },
-                    "max": {
-                      "oneOf": [
-                        {
-                          "type": "number"
-                        },
-                        {
-                          "type": "string",
-                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                        }
-                      ]
-                    },
-                    "default": {
-                      "oneOf": [
-                        {
-                          "type": "number"
-                        },
-                        {
-                          "type": "string",
-                          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                        }
-                      ]
-                    }
-                  }
-                }
-              },
-              "rows": {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {
-                  "min": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  },
-                  "max": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  },
-                  "count": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  },
-                  "default": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  }
-                }
-              },
-              "inputs": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "outputs": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "minInputs": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "minOutputs": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "inputLabel": {
-                "type": "string"
-              },
-              "outputLabel": {
-                "type": "string"
-              }
-            }
-          },
-          "default": {
-            "type": "string"
-          }
-        },
-        "allOf": [
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "enum": [
-                    "select",
-                    "multiselect"
-                  ]
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "required": [
-                "options"
-              ],
-              "properties": {
-                "options": {
-                  "minItems": 1
-                }
-              }
-            }
-          }
-        ]
-      }
-    },
-    "language": {
-      "type": "string",
-      "description": "Adapter-defined language hint."
-    },
-    "miseTool": {
-      "type": "string",
-      "description": "Legacy mise tool hint."
-    }
-  },
-  "$defs": {
-    "formula": {
-      "oneOf": [
-        {
-          "type": "number"
-        },
-        {
-          "type": "string",
-          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-        }
-      ]
-    },
-    "section": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "key"
-      ],
-      "properties": {
-        "key": {
-          "type": "string",
-          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-        },
-        "label": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string",
-          "enum": [
-            "input",
-            "output"
-          ]
-        },
-        "binary": {
-          "type": "boolean"
-        },
-        "fill": {
-          "type": "string",
-          "enum": [
-            "binary",
-            "none"
-          ]
-        },
-        "names": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "min": {
-          "oneOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "string",
-              "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-            }
-          ]
-        },
-        "max": {
-          "oneOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "string",
-              "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-            }
-          ]
-        },
-        "default": {
-          "oneOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "string",
-              "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-            }
-          ]
-        }
-      }
-    },
-    "table": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "columns": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "key"
-            ],
-            "properties": {
-              "key": {
-                "type": "string",
-                "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-              },
-              "label": {
-                "type": "string"
-              },
-              "role": {
-                "type": "string",
-                "enum": [
-                  "input",
-                  "output"
-                ]
-              },
-              "binary": {
-                "type": "boolean"
-              },
-              "fill": {
-                "type": "string",
-                "enum": [
-                  "binary",
-                  "none"
-                ]
-              },
-              "names": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "min": {
-                "oneOf": [
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "string",
-                    "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                  }
-                ]
-              },
-              "max": {
-                "oneOf": [
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "string",
-                    "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                  }
-                ]
-              },
-              "default": {
-                "oneOf": [
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "string",
-                    "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "rowSections": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "key"
-            ],
-            "properties": {
-              "key": {
-                "type": "string",
-                "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-              },
-              "label": {
-                "type": "string"
-              },
-              "role": {
-                "type": "string",
-                "enum": [
-                  "input",
-                  "output"
-                ]
-              },
-              "binary": {
-                "type": "boolean"
-              },
-              "fill": {
-                "type": "string",
-                "enum": [
-                  "binary",
-                  "none"
-                ]
-              },
-              "names": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "min": {
-                "oneOf": [
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "string",
-                    "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                  }
-                ]
-              },
-              "max": {
-                "oneOf": [
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "string",
-                    "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                  }
-                ]
-              },
-              "default": {
-                "oneOf": [
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "string",
-                    "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "rows": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "min": {
-              "oneOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "string",
-                  "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                }
-              ]
-            },
-            "max": {
-              "oneOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "string",
-                  "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                }
-              ]
-            },
-            "count": {
-              "oneOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "string",
-                  "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                }
-              ]
-            },
-            "default": {
-              "oneOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "string",
-                  "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                }
-              ]
-            }
-          }
-        },
-        "inputs": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "outputs": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "minInputs": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "minOutputs": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "inputLabel": {
-          "type": "string"
-        },
-        "outputLabel": {
-          "type": "string"
-        }
-      }
-    },
-    "field": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "key",
-        "label",
-        "type"
-      ],
-      "properties": {
-        "key": {
-          "type": "string",
-          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-        },
-        "label": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string",
-          "enum": [
-            "text",
-            "textarea",
-            "number",
-            "boolean",
-            "select",
-            "multiselect",
-            "path",
-            "directory",
-            "table"
-          ]
-        },
-        "required": {
-          "type": "boolean"
-        },
-        "placeholder": {
-          "type": "string"
-        },
-        "help": {
-          "type": "string"
-        },
-        "options": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "columns": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "table": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "columns": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "key"
-                ],
-                "properties": {
-                  "key": {
-                    "type": "string",
-                    "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-                  },
-                  "label": {
-                    "type": "string"
-                  },
-                  "role": {
-                    "type": "string",
-                    "enum": [
-                      "input",
-                      "output"
-                    ]
-                  },
-                  "binary": {
-                    "type": "boolean"
-                  },
-                  "fill": {
-                    "type": "string",
-                    "enum": [
-                      "binary",
-                      "none"
-                    ]
-                  },
-                  "names": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "min": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  },
-                  "max": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  },
-                  "default": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  }
-                }
-              }
-            },
-            "rowSections": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "key"
-                ],
-                "properties": {
-                  "key": {
-                    "type": "string",
-                    "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-                  },
-                  "label": {
-                    "type": "string"
-                  },
-                  "role": {
-                    "type": "string",
-                    "enum": [
-                      "input",
-                      "output"
-                    ]
-                  },
-                  "binary": {
-                    "type": "boolean"
-                  },
-                  "fill": {
-                    "type": "string",
-                    "enum": [
-                      "binary",
-                      "none"
-                    ]
-                  },
-                  "names": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "min": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  },
-                  "max": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  },
-                  "default": {
-                    "oneOf": [
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                      }
-                    ]
-                  }
-                }
-              }
-            },
-            "rows": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "min": {
-                  "oneOf": [
-                    {
-                      "type": "number"
-                    },
-                    {
-                      "type": "string",
-                      "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                    }
-                  ]
-                },
-                "max": {
-                  "oneOf": [
-                    {
-                      "type": "number"
-                    },
-                    {
-                      "type": "string",
-                      "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                    }
-                  ]
-                },
-                "count": {
-                  "oneOf": [
-                    {
-                      "type": "number"
-                    },
-                    {
-                      "type": "string",
-                      "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                    }
-                  ]
-                },
-                "default": {
-                  "oneOf": [
-                    {
-                      "type": "number"
-                    },
-                    {
-                      "type": "string",
-                      "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$"
-                    }
-                  ]
-                }
-              }
-            },
-            "inputs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "outputs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "minInputs": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "minOutputs": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "inputLabel": {
-              "type": "string"
-            },
-            "outputLabel": {
-              "type": "string"
-            }
-          }
-        },
-        "default": {
+          ],
           "type": "string"
         }
       },
+      "required": [
+        "mode"
+      ],
+      "type": "object"
+    },
+    "entryFile": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "description": "A relative POSIX path inside the adapter folder, with no . or .. component.",
+          "maxLength": 1024,
+          "minLength": 1,
+          "not": {
+            "anyOf": [
+              {
+                "pattern": "(?:^|/)(?:\\.|\\.\\.)(?:/|$)"
+              },
+              {
+                "pattern": "[\\u0000-\\u001F\\u007F]"
+              }
+            ]
+          },
+          "pattern": "^[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$",
+          "type": "string"
+        },
+        "sha256": {
+          "description": "Required by the official and community validators; optional at the schema level for unsigned third-party registries.",
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "extension": {
+      "description": "A bare file extension without a dot, 1-16 characters, starting with a letter or digit and otherwise letters, digits, plus and hyphen. The app normalizes it to lowercase.",
+      "maxLength": 16,
+      "minLength": 1,
+      "not": {
+        "pattern": "[\\u0000-\\u001F\\u007F]"
+      },
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9+-]{0,15}$",
+      "type": "string"
+    },
+    "field": {
+      "additionalProperties": false,
       "allOf": [
         {
           "if": {
@@ -1480,91 +122,457 @@
             ]
           },
           "then": {
-            "required": [
-              "options"
-            ],
             "properties": {
               "options": {
                 "minItems": 1
               }
-            }
+            },
+            "required": [
+              "options"
+            ]
           }
+        }
+      ],
+      "properties": {
+        "columns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "default": {
+          "type": "string"
+        },
+        "help": {
+          "type": "string"
+        },
+        "key": {
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "table": {
+          "$ref": "#/$defs/table"
+        },
+        "type": {
+          "$ref": "#/$defs/fieldType"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "type"
+      ],
+      "type": "object"
+    },
+    "fieldType": {
+      "enum": [
+        "text",
+        "textarea",
+        "number",
+        "boolean",
+        "select",
+        "multiselect",
+        "path",
+        "directory",
+        "table"
+      ],
+      "type": "string"
+    },
+    "formula": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^[0-9A-Za-z_+\\-*/%^() .]+$",
+          "type": "string"
         }
       ]
     },
-    "runtime": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "tool"
+    "manifestSchema": {
+      "const": 5,
+      "description": "The manifest schema version."
+    },
+    "outputKind": {
+      "enum": [
+        "none",
+        "text",
+        "table",
+        "tableDiff",
+        "diff",
+        "image",
+        "json"
       ],
+      "type": "string"
+    },
+    "outputManifest": {
+      "additionalProperties": false,
       "properties": {
-        "tool": {
-          "type": "string",
-          "minLength": 1
+        "kinds": {
+          "items": {
+            "$ref": "#/$defs/outputKind"
+          },
+          "minItems": 1,
+          "type": "array"
         },
-        "setting": {
+        "label": {
           "type": "string"
-        },
-        "version": {
-          "type": "string"
-        },
+        }
+      },
+      "required": [
+        "kinds"
+      ],
+      "type": "object"
+    },
+    "permission": {
+      "enum": [
+        "network",
+        "subprocess"
+      ],
+      "type": "string"
+    },
+    "registryId": {
+      "description": "A stable lowercase registry slug, not a repository path.",
+      "not": {
+        "pattern": "[\\u0000-\\u001F\\u007F]"
+      },
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$",
+      "type": "string"
+    },
+    "registryKey": {
+      "description": "A per-user or machine registry key the adapter needs on Windows, for example HKCU\\\\Software\\\\JavaSoft\\\\Prefs. Matching is case-insensitive, as it is in the app.",
+      "maxLength": 512,
+      "pattern": "^(?:[Hh][Kk][Cc][Uu]|[Hh][Kk][Ll][Mm]|[Hh][Kk][Ee][Yy]_[Cc][Uu][Rr][Rr][Ee][Nn][Tt]_[Uu][Ss][Ee][Rr]|[Hh][Kk][Ee][Yy]_[Ll][Oo][Cc][Aa][Ll]_[Mm][Aa][Cc][Hh][Ii][Nn][Ee])\\\\.+$",
+      "type": "string"
+    },
+    "registryKind": {
+      "const": "red-pen-adapters",
+      "description": "The signed registry document kind."
+    },
+    "registrySchema": {
+      "const": 7,
+      "description": "The registry schema version."
+    },
+    "runtime": {
+      "additionalProperties": false,
+      "properties": {
         "packages": {
-          "type": "object",
           "additionalProperties": false,
+          "properties": {
+            "installer": {
+              "enum": [
+                "pip"
+              ],
+              "type": "string"
+            },
+            "setting": {
+              "type": "string"
+            }
+          },
           "required": [
             "setting",
             "installer"
           ],
-          "properties": {
-            "setting": {
-              "type": "string"
-            },
-            "installer": {
-              "type": "string",
-              "enum": [
-                "pip"
-              ]
-            }
-          }
+          "type": "object"
+        },
+        "setting": {
+          "type": "string"
+        },
+        "tool": {
+          "minLength": 1,
+          "not": {
+            "pattern": "[\\u0000-\\u001F\\u007F]"
+          },
+          "pattern": "^(?:conda:)?[A-Za-z0-9][A-Za-z0-9._-]{0,63}$",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 32,
+          "not": {
+            "pattern": "[\\u0000-\\u001F\\u007F]"
+          },
+          "pattern": "^(?:latest|(?:0|[1-9][0-9]{0,4})(?:\\.(?:0|[1-9][0-9]{0,4})){0,3}(?:-[0-9A-Za-z.+-]{1,24})?)$",
+          "type": "string"
         }
-      }
+      },
+      "required": [
+        "tool"
+      ],
+      "type": "object"
     },
-    "permission": {
-      "type": "string",
-      "enum": [
-        "network",
-        "subprocess",
-        "environment",
-        "files:read",
-        "files:write",
-        "directories"
-      ]
+    "section": {
+      "additionalProperties": false,
+      "properties": {
+        "binary": {
+          "type": "boolean"
+        },
+        "default": {
+          "$ref": "#/$defs/formula"
+        },
+        "fill": {
+          "enum": [
+            "binary",
+            "none"
+          ],
+          "type": "string"
+        },
+        "key": {
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "max": {
+          "$ref": "#/$defs/formula"
+        },
+        "min": {
+          "$ref": "#/$defs/formula"
+        },
+        "names": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "role": {
+          "enum": [
+            "input",
+            "output"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "type": "object"
+    },
+    "semver": {
+      "description": "A SemVer 2.0.0 version: MAJOR.MINOR.PATCH with optional prerelease and build metadata.",
+      "not": {
+        "pattern": "[\\u0000-\\u001F\\u007F]"
+      },
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$",
+      "type": "string"
+    },
+    "table": {
+      "additionalProperties": false,
+      "properties": {
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/section"
+          },
+          "type": "array"
+        },
+        "inputLabel": {
+          "type": "string"
+        },
+        "inputs": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "minInputs": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "minOutputs": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "outputLabel": {
+          "type": "string"
+        },
+        "outputs": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "rowSections": {
+          "items": {
+            "$ref": "#/$defs/section"
+          },
+          "type": "array"
+        },
+        "rows": {
+          "$ref": "#/$defs/tableRows"
+        }
+      },
+      "type": "object"
+    },
+    "tableRows": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "$ref": "#/$defs/formula"
+        },
+        "default": {
+          "$ref": "#/$defs/formula"
+        },
+        "max": {
+          "$ref": "#/$defs/formula"
+        },
+        "min": {
+          "$ref": "#/$defs/formula"
+        }
+      },
+      "type": "object"
     },
     "target": {
-      "type": "string",
       "enum": [
         "file",
         "question"
-      ]
+      ],
+      "type": "string"
+    },
+    "timestamp": {
+      "description": "An RFC 3339 UTC timestamp with seconds precision.",
+      "not": {
+        "pattern": "[\\u0000-\\u001F\\u007F]"
+      },
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "type": "string"
+    }
+  },
+  "$id": "https://raw.githubusercontent.com/eslam-allam/red-pen/main/schemas/manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One adapter folder's manifest.json, as read by the Red Pen app.",
+  "properties": {
+    "$schema": {
+      "format": "uri-reference",
+      "type": "string"
+    },
+    "apiVersion": {
+      "$ref": "#/$defs/apiVersion"
+    },
+    "appliesTo": {
+      "items": {
+        "$ref": "#/$defs/target"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "author": {
+      "type": "string"
     },
     "bootstrap": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "uv": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "mise": {
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      }
+      "$ref": "#/$defs/bootstrap"
+    },
+    "description": {
+      "type": "string"
+    },
+    "directories": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "directoryPicker": {
+      "$ref": "#/$defs/directoryPicker"
+    },
+    "extensions": {
+      "items": {
+        "$ref": "#/$defs/extension"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "homepage": {
+      "format": "uri-reference",
+      "type": "string"
+    },
+    "icon": {
+      "description": "A data URI or an HTTPS URL.",
+      "type": "string"
+    },
+    "id": {
+      "$ref": "#/$defs/adapterId"
+    },
+    "keyInput": {
+      "items": {
+        "$ref": "#/$defs/field"
+      },
+      "type": "array"
+    },
+    "name": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "output": {
+      "$ref": "#/$defs/outputManifest"
+    },
+    "permissions": {
+      "items": {
+        "$ref": "#/$defs/permission"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "questionInput": {
+      "items": {
+        "$ref": "#/$defs/field"
+      },
+      "type": "array"
+    },
+    "registry": {
+      "items": {
+        "$ref": "#/$defs/registryKey"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "runtimes": {
+      "items": {
+        "$ref": "#/$defs/runtime"
+      },
+      "type": "array"
+    },
+    "schema": {
+      "$ref": "#/$defs/manifestSchema"
+    },
+    "settings": {
+      "items": {
+        "$ref": "#/$defs/field"
+      },
+      "type": "array"
+    },
+    "version": {
+      "$ref": "#/$defs/semver"
     }
-  }
+  },
+  "required": [
+    "apiVersion",
+    "schema",
+    "id",
+    "name",
+    "version",
+    "extensions",
+    "appliesTo",
+    "output",
+    "permissions",
+    "keyInput",
+    "settings"
+  ],
+  "title": "Red Pen adapter manifest (schema 5, API 2)",
+  "type": "object"
 }

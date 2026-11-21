@@ -23,8 +23,16 @@ from pathlib import Path
 from typing import Any, Iterable, Optional, Union
 
 ROOT = Path(__file__).resolve().parent.parent
-SCHEMA = 6
+SCHEMA = 7
+MANIFEST_SCHEMA = 5
+API_VERSION = 2
 KIND = "red-pen-adapters"
+CONTRACT_FILES = (
+    "schemas/manifest.schema.json",
+    "schemas/registry.schema.json",
+    "schemas/mirror-fields.json",
+    "lua/red-pen-api.lua",
+)
 REGISTRY_ID = re.compile(r"^[a-z0-9][a-z0-9._-]{0,127}$")
 TIER_REGISTRY_IDS = {"official": "red-pen-official", "community": "red-pen-community"}
 RESERVED_REGISTRY_IDS = frozenset(TIER_REGISTRY_IDS.values())
@@ -108,6 +116,80 @@ def load_json(path: Union[str, Path]) -> Any:
 
 def load_canonical(path: Union[str, Path]) -> Any:
     return check_canonical_bytes(Path(path).read_bytes(), str(path))
+
+
+def load_mirrored_fields(root: Union[str, Path] = ROOT) -> tuple[str, ...]:
+    """Load the manifest fields a schema 7 registry entry must mirror."""
+
+    path = Path(root) / "schemas" / "mirror-fields.json"
+    if not path.is_file():
+        raise RegistryToolError(
+            f"{path}: missing mirror-fields.json; copy it from the app contract"
+        )
+    try:
+        value = load_json(path)
+    except RegistryToolError as exc:
+        raise RegistryToolError(f"{path}: {exc}") from exc
+    fields = value.get("fields") if isinstance(value, dict) else None
+    if not isinstance(fields, list) or not fields:
+        raise RegistryToolError(f"{path}: fields must be a non-empty array")
+    if any(not isinstance(field, str) or not field for field in fields):
+        raise RegistryToolError(f"{path}: every mirrored field must be a non-empty string")
+    if len(fields) != len(set(fields)):
+        raise RegistryToolError(f"{path}: duplicate mirrored field")
+    return tuple(fields)
+
+
+def load_contract_source(root: Union[str, Path] = ROOT) -> dict[str, Any]:
+    path = Path(root) / "schemas" / "source.json"
+    if not path.is_file():
+        raise RegistryToolError(
+            f"{path}: missing source.json; copy it with the generated contract files"
+        )
+    try:
+        value = load_json(path)
+    except RegistryToolError as exc:
+        raise RegistryToolError(f"{path}: {exc}") from exc
+    if not isinstance(value, dict):
+        raise RegistryToolError(f"{path}: must be an object")
+    return value
+
+
+def contract_source_errors(root: Union[str, Path] = ROOT) -> list[str]:
+    """Check the copied contract files still match schemas/source.json."""
+
+    try:
+        source = load_contract_source(root)
+    except RegistryToolError as exc:
+        return [str(exc)]
+    errors: list[str] = []
+    commit = source.get("appCommit")
+    if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
+        errors.append("schemas/source.json: appCommit must be a full lowercase SHA")
+    files = source.get("files")
+    if not isinstance(files, dict) or not files:
+        errors.append("schemas/source.json: files must be a non-empty object")
+    else:
+        for relative in CONTRACT_FILES:
+            if relative not in files:
+                errors.append(f"schemas/source.json: files must include {relative!r}")
+        for relative, digest in sorted(files.items()):
+            if not isinstance(relative, str) or not safe_relative_path(relative):
+                errors.append(f"schemas/source.json: unsafe file path {relative!r}")
+                continue
+            if not isinstance(digest, str) or not re.fullmatch(r"[a-f0-9]{64}", digest):
+                errors.append(
+                    f"schemas/source.json: {relative!r} needs a lowercase SHA-256"
+                )
+                continue
+            path = Path(root) / relative
+            if not path.is_file():
+                errors.append(f"schemas/source.json: copied file {relative!r} is missing")
+            elif sha256_file(path) != digest:
+                errors.append(
+                    f"schemas/source.json: {relative!r} does not match its SHA-256"
+                )
+    return errors
 
 
 def sha256_bytes(data: bytes) -> str:
