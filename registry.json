@@ -2054,11 +2054,11 @@
       "version": "2.5.0"
     }
   ],
-  "expiresAt": "2027-05-20T08:37:02Z",
-  "issuedAt": "2026-11-21T08:37:02Z",
+  "expiresAt": "2027-05-20T14:49:37Z",
+  "issuedAt": "2026-11-21T14:49:37Z",
   "kind": "red-pen-adapters",
   "publisher": "Red Pen",
   "registryId": "red-pen-official",
   "schema": 7,
-  "sequence": 2
+  "sequence": 3
 }
