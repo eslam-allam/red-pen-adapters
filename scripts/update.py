@@ -26,29 +26,30 @@ import registry as registry_lib  # noqa: E402
 
 PUBLISHED_FILES = ("manifest.json", "adapter.lua")
 
-MIRRORED_FIELDS = (
-    "name",
-    "description",
-    "author",
-    "icon",
-    "homepage",
-    "extensions",
-    "appliesTo",
-    "permissions",
-    "registry",
-    "runtimes",
-    "bootstrap",
-)
-
-
-def build_entry(folder: Path, manifest: dict, readme_base: str) -> dict[str, Any]:
+def build_entry(
+    folder: Path,
+    manifest: dict,
+    readme_base: str,
+    mirrored_fields: tuple[str, ...],
+) -> dict[str, Any]:
     adapter_id = manifest.get("id")
     if adapter_id != folder.name:
         raise registry_lib.RegistryToolError(
             f"{folder}: manifest id {adapter_id!r} must equal the folder name"
         )
-    entry: dict[str, Any] = {"id": adapter_id}
-    for field in MIRRORED_FIELDS:
+    if manifest.get("schema") != registry_lib.MANIFEST_SCHEMA:
+        raise registry_lib.RegistryToolError(
+            f"{folder}: manifest.schema must be {registry_lib.MANIFEST_SCHEMA} "
+            f"(got {manifest.get('schema')!r})"
+        )
+    api_version = manifest.get("apiVersion")
+    if api_version != registry_lib.API_VERSION:
+        raise registry_lib.RegistryToolError(
+            f"{folder}: manifest.apiVersion must be {registry_lib.API_VERSION} "
+            f"(got {api_version!r})"
+        )
+    entry: dict[str, Any] = {"id": adapter_id, "apiVersion": api_version}
+    for field in mirrored_fields:
         if field in manifest:
             entry[field] = manifest[field]
     entry["version"] = manifest.get("version")
@@ -85,6 +86,11 @@ def build_registry(
     existing: Optional[dict[str, Any]] = None,
 ) -> dict[str, Any]:
     base = existing or {}
+    if "name" in base:
+        raise registry_lib.RegistryToolError(
+            "registry.json: the root name is not allowed in schema 7; use publisher"
+        )
+    mirrored_fields = registry_lib.load_mirrored_fields(root)
     registry_id = config.get("registryId")
     if not isinstance(registry_id, str) or not registry_lib.REGISTRY_ID.fullmatch(
         registry_id
@@ -111,7 +117,9 @@ def build_registry(
             raise registry_lib.RegistryToolError(
                 f"{folder / 'manifest.json'}: manifest must be an object"
             )
-        adapters.append(build_entry(folder, manifest, readme_base))
+        adapters.append(
+            build_entry(folder, manifest, readme_base, mirrored_fields)
+        )
     adapters.sort(key=lambda item: item["id"])
     ids = [item["id"] for item in adapters]
     if len(ids) != len(set(ids)):
@@ -139,16 +147,12 @@ def build_registry(
         "schema": registry_lib.SCHEMA,
         "kind": registry_lib.KIND,
         "registryId": registry_id,
-        "name": base.get("name") or "Red Pen adapter registry",
         "publisher": publisher,
         "sequence": sequence,
         "issuedAt": issued_at,
         "expiresAt": expires_at,
         "adapters": adapters,
     }
-    for optional in ("description", "homepage"):
-        if base.get(optional):
-            result[optional] = base[optional]
     return result
 
 

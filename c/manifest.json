@@ -1,21 +1,31 @@
 {
   "$schema": "../schemas/manifest.schema.json",
-  "schema": 4,
-  "id": "c",
-  "name": "C",
-  "version": "2.5.0",
-  "description": "Compiles and runs a C program.",
-  "author": "Red Pen",
-  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
-  "extensions": [
-    "c"
-  ],
+  "apiVersion": 2,
   "appliesTo": [
     "file",
     "question"
   ],
-  "language": "c",
-  "miseTool": "conda:gcc",
+  "author": "Red Pen",
+  "bootstrap": {
+    "mise": "latest"
+  },
+  "description": "Compiles and runs a C program.",
+  "extensions": [
+    "c"
+  ],
+  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQThCOUNDIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+QzwvdGl0bGU+PHBhdGggZD0iTTE2LjU5MjEgOS4xOTYycy0uMzU0LTMuMjk4LTMuNjI3LTMuMzljLTMuMjc0MS0uMDktNC45NTUyIDIuNDc0LTQuOTU1MiA2LjE0IDAgMy42NjUxIDEuODU4IDYuNTk3MiA1LjA0NTEgNi41OTcyIDMuMTg0IDAgMy41MzgxLTMuNjY1IDMuNTM4MS0zLjY2NWw2LjEwNDEuMzY1cy4zNiAzLjMxLTIuMTk2IDUuODM2Yy0yLjU1MiAyLjUyNDEtNS42OTAxIDIuOTM3MS03Ljg3NjIgMi45MjAxLTIuMTktLjAxNy01LjIyNjEuMDM0LTguMTYwMi0yLjk3LTIuOTM4LTMuMDEwMS0zLjQzNi01LjkzMDItMy40MzYtOC44MDAyIDAtMi44NzAxLjU1Ni02LjY3MDIgNC4wNDctOS41NTAyQzcuNDQ0LjcyIDkuODQ5IDAgMTIuMjU0IDBjMTAuMDQyMiAwIDEwLjcxNzIgOS4yNjAyIDEwLjcxNzIgOS4yNjAyeiIvPjwvc3ZnPg==",
+  "id": "c",
+  "keyInput": [
+    {
+      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored.",
+      "key": "expected",
+      "label": "Expected output",
+      "required": true,
+      "type": "textarea"
+    }
+  ],
+  "name": "C",
   "output": {
     "kinds": [
       "diff"
@@ -25,45 +35,34 @@
   "permissions": [
     "subprocess"
   ],
+  "questionInput": [
+    {
+      "help": "An optional file to pass to the program as its first argument.",
+      "key": "inputFile",
+      "label": "Input file",
+      "required": false,
+      "type": "path"
+    }
+  ],
   "runtimes": [
     {
-      "tool": "conda:gcc",
       "setting": "runtimeVersion",
+      "tool": "conda:gcc",
       "version": "16.2.0"
     }
   ],
-  "keyInput": [
-    {
-      "key": "expected",
-      "label": "Expected output",
-      "type": "textarea",
-      "required": true,
-      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored."
-    }
-  ],
+  "schema": 5,
   "settings": [
     {
-      "key": "runtimeVersion",
-      "label": "Runtime version",
-      "type": "select",
       "default": "16.2.0",
       "help": "GCC 16.2.0 is installed with the app conda backend on first use.",
+      "key": "runtimeVersion",
+      "label": "Runtime version",
       "options": [
         "16.2.0"
-      ]
+      ],
+      "type": "select"
     }
   ],
-  "bootstrap": {
-    "mise": "latest"
-  },
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQThCOUNDIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+QzwvdGl0bGU+PHBhdGggZD0iTTE2LjU5MjEgOS4xOTYycy0uMzU0LTMuMjk4LTMuNjI3LTMuMzljLTMuMjc0MS0uMDktNC45NTUyIDIuNDc0LTQuOTU1MiA2LjE0IDAgMy42NjUxIDEuODU4IDYuNTk3MiA1LjA0NTEgNi41OTcyIDMuMTg0IDAgMy41MzgxLTMuNjY1IDMuNTM4MS0zLjY2NWw2LjEwNDEuMzY1cy4zNiAzLjMxLTIuMTk2IDUuODM2Yy0yLjU1MiAyLjUyNDEtNS42OTAxIDIuOTM3MS03Ljg3NjIgMi45MjAxLTIuMTktLjAxNy01LjIyNjEuMDM0LTguMTYwMi0yLjk3LTIuOTM4LTMuMDEwMS0zLjQzNi01LjkzMDItMy40MzYtOC44MDAyIDAtMi44NzAxLjU1Ni02LjY3MDIgNC4wNDctOS41NTAyQzcuNDQ0LjcyIDkuODQ5IDAgMTIuMjU0IDBjMTAuMDQyMiAwIDEwLjcxNzIgOS4yNjAyIDEwLjcxNzIgOS4yNjAyeiIvPjwvc3ZnPg==",
-  "questionInput": [
-    {
-      "key": "inputFile",
-      "label": "Input file",
-      "type": "path",
-      "required": false,
-      "help": "An optional file to pass to the program as its first argument."
-    }
-  ]
+  "version": "2.5.0"
 }

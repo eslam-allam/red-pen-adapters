@@ -1,21 +1,31 @@
 {
   "$schema": "../schemas/manifest.schema.json",
-  "schema": 4,
-  "id": "haskell",
-  "name": "Haskell",
-  "version": "2.5.0",
-  "description": "Runs a Haskell program with runghc.",
-  "author": "Red Pen",
-  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
-  "extensions": [
-    "hs"
-  ],
+  "apiVersion": 2,
   "appliesTo": [
     "file",
     "question"
   ],
-  "language": "haskell",
-  "miseTool": "ghc",
+  "author": "Red Pen",
+  "bootstrap": {
+    "mise": "latest"
+  },
+  "description": "Runs a Haskell program with runghc.",
+  "extensions": [
+    "hs"
+  ],
+  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjNUQ0Rjg1IiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+SGFza2VsbDwvdGl0bGU+PHBhdGggZD0iTTAgMy41MzVMNS42NDcgMTIgMCAyMC40NjVoNC4yMzVMOS44ODMgMTIgNC4yMzUgMy41MzV6bTUuNjQ3IDBMMTEuMjk0IDEybC01LjY0NyA4LjQ2NWg0LjIzNWwzLjUzLTUuMjkgMy41MyA1LjI5aDQuMjM0TDkuODgzIDMuNTM1em04Ljk0MSA0LjkzOGwxLjg4MyAyLjgyMkgyNFY4LjQ3M3ptMi44MjQgNC4yMzJsMS44ODIgMi44MjJIMjR2LTIuODIyeiIvPjwvc3ZnPg==",
+  "id": "haskell",
+  "keyInput": [
+    {
+      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored.",
+      "key": "expected",
+      "label": "Expected output",
+      "required": true,
+      "type": "textarea"
+    }
+  ],
+  "name": "Haskell",
   "output": {
     "kinds": [
       "diff"
@@ -25,45 +35,34 @@
   "permissions": [
     "subprocess"
   ],
+  "questionInput": [
+    {
+      "help": "An optional file to pass to the program as its first argument.",
+      "key": "inputFile",
+      "label": "Input file",
+      "required": false,
+      "type": "path"
+    }
+  ],
   "runtimes": [
     {
-      "tool": "ghc",
       "setting": "runtimeVersion",
+      "tool": "ghc",
       "version": "latest"
     }
   ],
-  "keyInput": [
-    {
-      "key": "expected",
-      "label": "Expected output",
-      "type": "textarea",
-      "required": true,
-      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored."
-    }
-  ],
+  "schema": 5,
   "settings": [
     {
-      "key": "runtimeVersion",
-      "label": "Runtime version",
-      "type": "select",
       "default": "latest",
       "help": "The runtime to install with mise. latest installs the newest supported release on first use.",
+      "key": "runtimeVersion",
+      "label": "Runtime version",
       "options": [
         "latest"
-      ]
+      ],
+      "type": "select"
     }
   ],
-  "bootstrap": {
-    "mise": "latest"
-  },
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjNUQ0Rjg1IiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+SGFza2VsbDwvdGl0bGU+PHBhdGggZD0iTTAgMy41MzVMNS42NDcgMTIgMCAyMC40NjVoNC4yMzVMOS44ODMgMTIgNC4yMzUgMy41MzV6bTUuNjQ3IDBMMTEuMjk0IDEybC01LjY0NyA4LjQ2NWg0LjIzNWwzLjUzLTUuMjkgMy41MyA1LjI5aDQuMjM0TDkuODgzIDMuNTM1em04Ljk0MSA0LjkzOGwxLjg4MyAyLjgyMkgyNFY4LjQ3M3ptMi44MjQgNC4yMzJsMS44ODIgMi44MjJIMjR2LTIuODIyeiIvPjwvc3ZnPg==",
-  "questionInput": [
-    {
-      "key": "inputFile",
-      "label": "Input file",
-      "type": "path",
-      "required": false,
-      "help": "An optional file to pass to the program as its first argument."
-    }
-  ]
+  "version": "2.5.0"
 }

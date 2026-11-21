@@ -57,14 +57,20 @@ Rules:
   slash.
 - Keep `signerRepository` separate from the registry repository.
 
-Then update `registry.json` identity fields (`name`, `publisher` as a string)
-and run the formatter:
+Then update the `registry.json` publisher (a string; schema 7 has no root
+`name`) and run the formatter:
 
 ```sh
 python scripts/registry.py format registry.json registry.config.json
 python scripts/update.py
 python scripts/validate.py
 ```
+
+Manifests must declare `schema: 5` and `apiVersion: 2`. Registry entries gain
+`apiVersion` and mirror the fields in `schemas/mirror-fields.json`; use
+`python scripts/update.py` instead of editing them by hand. The copied contract
+files are listed with their app commit in `schemas/source.json`; replace all of
+them together when the app contract changes.
 
 ## 3. Generate keys outside the repository
 

@@ -1,22 +1,32 @@
 {
   "$schema": "../schemas/manifest.schema.json",
-  "schema": 4,
-  "id": "fsharp",
-  "name": "F#",
-  "version": "2.5.0",
-  "description": "Runs an F# script with dotnet fsi.",
-  "author": "Red Pen",
-  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
-  "extensions": [
-    "fsx",
-    "fs"
-  ],
+  "apiVersion": 2,
   "appliesTo": [
     "file",
     "question"
   ],
-  "language": "fsharp",
-  "miseTool": "dotnet",
+  "author": "Red Pen",
+  "bootstrap": {
+    "mise": "latest"
+  },
+  "description": "Runs an F# script with dotnet fsi.",
+  "extensions": [
+    "fsx",
+    "fs"
+  ],
+  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMzc4QkJBIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RiM8L3RpdGxlPjxwYXRoIGQ9Ik0wIDEyIDExLjM5LjYxdjUuNjk1TDUuNjk1IDEybDUuNjk1IDUuNjk1djUuNjk1TDAgMTJ6bTcuMzIyIDAgNC4wNjgtNC4wNjh2OC4xMzZMNy4zMjIgMTJ6TTI0IDEyIDEyLjIwMy42MXY1LjY5NUwxNy44OTggMTJsLTUuNjk1IDUuNjk1djUuNjk1TDI0IDEyeiIvPjwvc3ZnPg==",
+  "id": "fsharp",
+  "keyInput": [
+    {
+      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored.",
+      "key": "expected",
+      "label": "Expected output",
+      "required": true,
+      "type": "textarea"
+    }
+  ],
+  "name": "F#",
   "output": {
     "kinds": [
       "diff"
@@ -26,45 +36,34 @@
   "permissions": [
     "subprocess"
   ],
+  "questionInput": [
+    {
+      "help": "An optional file to pass to the program as its first argument.",
+      "key": "inputFile",
+      "label": "Input file",
+      "required": false,
+      "type": "path"
+    }
+  ],
   "runtimes": [
     {
-      "tool": "dotnet",
       "setting": "runtimeVersion",
+      "tool": "dotnet",
       "version": "latest"
     }
   ],
-  "keyInput": [
-    {
-      "key": "expected",
-      "label": "Expected output",
-      "type": "textarea",
-      "required": true,
-      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored."
-    }
-  ],
+  "schema": 5,
   "settings": [
     {
-      "key": "runtimeVersion",
-      "label": "Runtime version",
-      "type": "select",
       "default": "latest",
       "help": "The runtime to install with mise. latest installs the newest supported release on first use.",
+      "key": "runtimeVersion",
+      "label": "Runtime version",
       "options": [
         "latest"
-      ]
+      ],
+      "type": "select"
     }
   ],
-  "bootstrap": {
-    "mise": "latest"
-  },
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMzc4QkJBIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RiM8L3RpdGxlPjxwYXRoIGQ9Ik0wIDEyIDExLjM5LjYxdjUuNjk1TDUuNjk1IDEybDUuNjk1IDUuNjk1djUuNjk1TDAgMTJ6bTcuMzIyIDAgNC4wNjgtNC4wNjh2OC4xMzZMNy4zMjIgMTJ6TTI0IDEyIDEyLjIwMy42MXY1LjY5NUwxNy44OTggMTJsLTUuNjk1IDUuNjk1djUuNjk1TDI0IDEyeiIvPjwvc3ZnPg==",
-  "questionInput": [
-    {
-      "key": "inputFile",
-      "label": "Input file",
-      "type": "path",
-      "required": false,
-      "help": "An optional file to pass to the program as its first argument."
-    }
-  ]
+  "version": "2.5.0"
 }

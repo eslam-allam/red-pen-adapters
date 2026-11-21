@@ -1,21 +1,31 @@
 {
   "$schema": "../schemas/manifest.schema.json",
-  "schema": 4,
-  "id": "ruby",
-  "name": "Ruby",
-  "version": "2.5.0",
-  "description": "Runs a Ruby program.",
-  "author": "Red Pen",
-  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
-  "extensions": [
-    "rb"
-  ],
+  "apiVersion": 2,
   "appliesTo": [
     "file",
     "question"
   ],
-  "language": "ruby",
-  "miseTool": "ruby",
+  "author": "Red Pen",
+  "bootstrap": {
+    "mise": "latest"
+  },
+  "description": "Runs a Ruby program.",
+  "extensions": [
+    "rb"
+  ],
+  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQ0MzNDJEIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+UnVieTwvdGl0bGU+PHBhdGggZD0iTTIwLjE1Ni4wODNjMy4wMzMuNTI1IDMuODkzIDIuNTk4IDMuODI5IDQuNzdMMjQgNC44MjIgMjIuNjM1IDIyLjcxIDQuODkgMjMuOTI2aC4wMTZDMy40MzMgMjMuODY0LjE1IDIzLjcyOSAwIDE5LjEzOWwxLjY0NS0zIDIuODE5IDYuNTg2LjUwMyAxLjE3MiAyLjgwNS05LjE0NC0uMDMuMDA3LjAxNi0uMDMgOS4yNTUgMi45NTYtMS4zOTYtNS40MzEtLjk5LTMuOSA4LjgyLS41NjktLjYxNS0uNTFMMTYuNSAyLjExNCAyMC4xNTkuMDczbC0uMDAzLjAxek0wIDE5LjA4OXpNNS4xMyA1LjA3M2MzLjU2MS0zLjUzMyA4LjE1Ny01LjYyMSA5LjkyMi0zLjg0IDEuNzYyIDEuNzc3LS4xMDUgNi4xMDUtMy42NzMgOS42MzYtMy41NjMgMy41MzItOC4xMDMgNS43MzQtOS44NjQgMy45NTctMS43NjYtMS43NzcuMDQ1LTYuMjE3IDMuNjEyLTkuNzVsLjAwMy0uMDAzeiIvPjwvc3ZnPg==",
+  "id": "ruby",
+  "keyInput": [
+    {
+      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored.",
+      "key": "expected",
+      "label": "Expected output",
+      "required": true,
+      "type": "textarea"
+    }
+  ],
+  "name": "Ruby",
   "output": {
     "kinds": [
       "diff"
@@ -25,45 +35,34 @@
   "permissions": [
     "subprocess"
   ],
+  "questionInput": [
+    {
+      "help": "An optional file to pass to the program as its first argument.",
+      "key": "inputFile",
+      "label": "Input file",
+      "required": false,
+      "type": "path"
+    }
+  ],
   "runtimes": [
     {
-      "tool": "ruby",
       "setting": "runtimeVersion",
+      "tool": "ruby",
       "version": "latest"
     }
   ],
-  "keyInput": [
-    {
-      "key": "expected",
-      "label": "Expected output",
-      "type": "textarea",
-      "required": true,
-      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored."
-    }
-  ],
+  "schema": 5,
   "settings": [
     {
-      "key": "runtimeVersion",
-      "label": "Runtime version",
-      "type": "select",
       "default": "latest",
       "help": "The runtime to install with mise. latest installs the newest supported release on first use.",
+      "key": "runtimeVersion",
+      "label": "Runtime version",
       "options": [
         "latest"
-      ]
+      ],
+      "type": "select"
     }
   ],
-  "bootstrap": {
-    "mise": "latest"
-  },
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQ0MzNDJEIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+UnVieTwvdGl0bGU+PHBhdGggZD0iTTIwLjE1Ni4wODNjMy4wMzMuNTI1IDMuODkzIDIuNTk4IDMuODI5IDQuNzdMMjQgNC44MjIgMjIuNjM1IDIyLjcxIDQuODkgMjMuOTI2aC4wMTZDMy40MzMgMjMuODY0LjE1IDIzLjcyOSAwIDE5LjEzOWwxLjY0NS0zIDIuODE5IDYuNTg2LjUwMyAxLjE3MiAyLjgwNS05LjE0NC0uMDMuMDA3LjAxNi0uMDMgOS4yNTUgMi45NTYtMS4zOTYtNS40MzEtLjk5LTMuOSA4LjgyLS41NjktLjYxNS0uNTFMMTYuNSAyLjExNCAyMC4xNTkuMDczbC0uMDAzLjAxek0wIDE5LjA4OXpNNS4xMyA1LjA3M2MzLjU2MS0zLjUzMyA4LjE1Ny01LjYyMSA5LjkyMi0zLjg0IDEuNzYyIDEuNzc3LS4xMDUgNi4xMDUtMy42NzMgOS42MzYtMy41NjMgMy41MzItOC4xMDMgNS43MzQtOS44NjQgMy45NTctMS43NjYtMS43NzcuMDQ1LTYuMjE3IDMuNjEyLTkuNzVsLjAwMy0uMDAzeiIvPjwvc3ZnPg==",
-  "questionInput": [
-    {
-      "key": "inputFile",
-      "label": "Input file",
-      "type": "path",
-      "required": false,
-      "help": "An optional file to pass to the program as its first argument."
-    }
-  ]
+  "version": "2.5.0"
 }

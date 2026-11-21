@@ -1,21 +1,31 @@
 {
   "$schema": "../schemas/manifest.schema.json",
-  "schema": 4,
-  "id": "csharp",
-  "name": "C#",
-  "version": "2.5.0",
-  "description": "Runs a C# file with dotnet run --file.",
-  "author": "Red Pen",
-  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
-  "extensions": [
-    "cs"
-  ],
+  "apiVersion": 2,
   "appliesTo": [
     "file",
     "question"
   ],
-  "language": "csharp",
-  "miseTool": "dotnet",
+  "author": "Red Pen",
+  "bootstrap": {
+    "mise": "latest"
+  },
+  "description": "Runs a C# file with dotnet run --file.",
+  "extensions": [
+    "cs"
+  ],
+  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjNTEyQkQ0IiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+Lk5FVDwvdGl0bGU+PHBhdGggZD0iTTI0IDguNzdoLTIuNDY4djcuNTY1aC0xLjQyNVY4Ljc3aC0yLjQ2MlY3LjUzSDI0em0tNi44NTIgNy41NjVoLTQuODIxVjcuNTNoNC42M3YxLjI0aC0zLjIwNXYyLjQ5NGgyLjk1M3YxLjIzNGgtMi45NTN2Mi42MDRoMy4zOTZ6bS02LjcwOCAwSDguODgyTDQuNzggOS44NjNhMi44OTYgMi44OTYgMCAwIDEtLjI1OC0uNTFoLS4wMzZjLjAzMi4xODkuMDQ4LjU5Mi4wNDggMS4yMXY1Ljc3MkgzLjE1N1Y3LjUzaDEuNjU5bDMuOTY1IDYuMzJjLjE2Ny4yNjEuMjc1LjQ0Mi4zMjMuNTRoLjAyNGMtLjA0LS4yMzMtLjA2LS42MjktLjA2LTEuMTg1VjcuNTI5aDEuMzcyem0tOC43MDMtLjY5M2EuODY4LjgyOSAwIDAgMS0uODY5LjgyOS44NjguODI5IDAgMCAxLS44NjgtLjgzLjg2OC44MjkgMCAwIDEgLjg2OC0uODI4Ljg2OC44MjkgMCAwIDEgLjg2OS44MjlaIi8+PC9zdmc+",
+  "id": "csharp",
+  "keyInput": [
+    {
+      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored.",
+      "key": "expected",
+      "label": "Expected output",
+      "required": true,
+      "type": "textarea"
+    }
+  ],
+  "name": "C#",
   "output": {
     "kinds": [
       "diff"
@@ -25,46 +35,35 @@
   "permissions": [
     "subprocess"
   ],
+  "questionInput": [
+    {
+      "help": "An optional file to pass to the program as its first argument.",
+      "key": "inputFile",
+      "label": "Input file",
+      "required": false,
+      "type": "path"
+    }
+  ],
   "runtimes": [
     {
-      "tool": "dotnet",
       "setting": "runtimeVersion",
+      "tool": "dotnet",
       "version": "10.0"
     }
   ],
-  "keyInput": [
-    {
-      "key": "expected",
-      "label": "Expected output",
-      "type": "textarea",
-      "required": true,
-      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored."
-    }
-  ],
+  "schema": 5,
   "settings": [
     {
-      "key": "runtimeVersion",
-      "label": "Runtime version",
-      "type": "select",
       "default": "10.0",
       "help": "The .NET SDK line to install with mise. 10.0 resolves to the 10.0.4xx SDK (10.0.404 at the time of writing); 11.0 is offered for testing.",
+      "key": "runtimeVersion",
+      "label": "Runtime version",
       "options": [
         "10.0",
         "11.0"
-      ]
+      ],
+      "type": "select"
     }
   ],
-  "bootstrap": {
-    "mise": "latest"
-  },
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjNTEyQkQ0IiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+Lk5FVDwvdGl0bGU+PHBhdGggZD0iTTI0IDguNzdoLTIuNDY4djcuNTY1aC0xLjQyNVY4Ljc3aC0yLjQ2MlY3LjUzSDI0em0tNi44NTIgNy41NjVoLTQuODIxVjcuNTNoNC42M3YxLjI0aC0zLjIwNXYyLjQ5NGgyLjk1M3YxLjIzNGgtMi45NTN2Mi42MDRoMy4zOTZ6bS02LjcwOCAwSDguODgyTDQuNzggOS44NjNhMi44OTYgMi44OTYgMCAwIDEtLjI1OC0uNTFoLS4wMzZjLjAzMi4xODkuMDQ4LjU5Mi4wNDggMS4yMXY1Ljc3MkgzLjE1N1Y3LjUzaDEuNjU5bDMuOTY1IDYuMzJjLjE2Ny4yNjEuMjc1LjQ0Mi4zMjMuNTRoLjAyNGMtLjA0LS4yMzMtLjA2LS42MjktLjA2LTEuMTg1VjcuNTI5aDEuMzcyem0tOC43MDMtLjY5M2EuODY4LjgyOSAwIDAgMS0uODY5LjgyOS44NjguODI5IDAgMCAxLS44NjgtLjgzLjg2OC44MjkgMCAwIDEgLjg2OC0uODI4Ljg2OC44MjkgMCAwIDEgLjg2OS44MjlaIi8+PC9zdmc+",
-  "questionInput": [
-    {
-      "key": "inputFile",
-      "label": "Input file",
-      "type": "path",
-      "required": false,
-      "help": "An optional file to pass to the program as its first argument."
-    }
-  ]
+  "version": "2.5.0"
 }

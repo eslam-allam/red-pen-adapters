@@ -5,9 +5,10 @@ local context = request.context or {}
 local values = context.values or {}
 local expected = values.expected or context.expected or ""
 local max_points = tonumber(context.maxPoints) or 0
-local version = (request.runtime and request.runtime.version) or settings.runtimeVersion or "latest"
+local runtime = (manifest.runtimes or {})[1] or {}
+local tool = runtime.tool or ""
+local version = (request.runtime and request.runtime.version) or runtime.version or "latest"
 local file = request.filePath
-local language = manifest.language or ""
 
 local function normalise(text)
   if not text then return "" end
@@ -33,7 +34,7 @@ local function fail(message, detail, text)
 end
 
 local function run(program, args)
-  return app.run_runtime(manifest.miseTool or language, version, program, args or {}, "")
+  return app.run_runtime(tool, version, program, args or {}, "")
 end
 
 local question = context.questionValues or {}

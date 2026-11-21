@@ -88,10 +88,10 @@ needed for checkout).
 - The public signer repository is pinned by SHA in `registry.config.json`; no
   cross-repository token is stored. CI requires the pin to be reachable from
   the signer's `main` before signing.
-- The signer validates the full schema 6 itself: publisher is a string, adapter
-  fields and files are checked, file paths reject `..`/colon/control, hashes
-  and manifests are verified, and third-party registries may not use reserved
-  official/community ids.
+- The signer validates the full schema 7 / manifest 5 / API 2 contract itself:
+  publisher is a string, adapter fields and files are checked, file paths
+  reject `..`/colon/control, hashes and manifests are verified, and
+  third-party registries may not use reserved official/community ids.
 - No signing code is loaded from the commit being signed.
 
 ## App verification expectations

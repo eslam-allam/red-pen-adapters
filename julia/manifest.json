@@ -1,21 +1,31 @@
 {
   "$schema": "../schemas/manifest.schema.json",
-  "schema": 4,
-  "id": "julia",
-  "name": "Julia",
-  "version": "2.5.0",
-  "description": "Runs a Julia program.",
-  "author": "Red Pen",
-  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
-  "extensions": [
-    "jl"
-  ],
+  "apiVersion": 2,
   "appliesTo": [
     "file",
     "question"
   ],
-  "language": "julia",
-  "miseTool": "julia",
+  "author": "Red Pen",
+  "bootstrap": {
+    "mise": "latest"
+  },
+  "description": "Runs a Julia program.",
+  "extensions": [
+    "jl"
+  ],
+  "homepage": "https://github.com/eslam-allam/red-pen-adapters",
+  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjOTU1OEIyIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+SnVsaWE8L3RpdGxlPjxwYXRoIGQ9Ik0xMS4xMzggMTcuNTY5YTUuNTY5IDUuNTY5IDAgMSAxLTExLjEzOCAwIDUuNTY5IDUuNTY5IDAgMSAxIDExLjEzOCAwem02LjQzMS0xMS4xMzhhNS41NjkgNS41NjkgMCAxIDEtMTEuMTM4IDAgNS41NjkgNS41NjkgMCAxIDEgMTEuMTM4IDB6TTI0IDE3LjU2OWE1LjU2OSA1LjU2OSAwIDEgMS0xMS4xMzggMCA1LjU2OSA1LjU2OSAwIDEgMSAxMS4xMzggMHoiLz48L3N2Zz4=",
+  "id": "julia",
+  "keyInput": [
+    {
+      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored.",
+      "key": "expected",
+      "label": "Expected output",
+      "required": true,
+      "type": "textarea"
+    }
+  ],
+  "name": "Julia",
   "output": {
     "kinds": [
       "diff"
@@ -25,45 +35,34 @@
   "permissions": [
     "subprocess"
   ],
+  "questionInput": [
+    {
+      "help": "An optional file to pass to the program as its first argument.",
+      "key": "inputFile",
+      "label": "Input file",
+      "required": false,
+      "type": "path"
+    }
+  ],
   "runtimes": [
     {
-      "tool": "julia",
       "setting": "runtimeVersion",
+      "tool": "julia",
       "version": "latest"
     }
   ],
-  "keyInput": [
-    {
-      "key": "expected",
-      "label": "Expected output",
-      "type": "textarea",
-      "required": true,
-      "help": "What the program should print. Outer whitespace and trailing blank lines are ignored."
-    }
-  ],
+  "schema": 5,
   "settings": [
     {
-      "key": "runtimeVersion",
-      "label": "Runtime version",
-      "type": "select",
       "default": "latest",
       "help": "The runtime to install with mise. latest installs the newest supported release on first use.",
+      "key": "runtimeVersion",
+      "label": "Runtime version",
       "options": [
         "latest"
-      ]
+      ],
+      "type": "select"
     }
   ],
-  "bootstrap": {
-    "mise": "latest"
-  },
-  "icon": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjOTU1OEIyIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+SnVsaWE8L3RpdGxlPjxwYXRoIGQ9Ik0xMS4xMzggMTcuNTY5YTUuNTY5IDUuNTY5IDAgMSAxLTExLjEzOCAwIDUuNTY5IDUuNTY5IDAgMSAxIDExLjEzOCAwem02LjQzMS0xMS4xMzhhNS41NjkgNS41NjkgMCAxIDEtMTEuMTM4IDAgNS41NjkgNS41NjkgMCAxIDEgMTEuMTM4IDB6TTI0IDE3LjU2OWE1LjU2OSA1LjU2OSAwIDEgMS0xMS4xMzggMCA1LjU2OSA1LjU2OSAwIDEgMSAxMS4xMzggMHoiLz48L3N2Zz4=",
-  "questionInput": [
-    {
-      "key": "inputFile",
-      "label": "Input file",
-      "type": "path",
-      "required": false,
-      "help": "An optional file to pass to the program as its first argument."
-    }
-  ]
+  "version": "2.5.0"
 }

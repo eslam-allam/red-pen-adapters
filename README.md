@@ -8,24 +8,24 @@ The app downloads the listed files from the folder and runs them directly; no
 ZIP packaging is needed. Managed language runtimes are installed by the app,
 not by the adapter; the Bash adapter uses the system `bash` instead.
 
-`registry.json` is schema 6. Its exact bytes are signed with minisign, and the
-signed index authenticates every adapter file by SHA-256. See
-[docs/signing.md](docs/signing.md).
+`registry.json` is schema 7 and targets manifest schema 5 / API 2. Its exact
+bytes are signed with minisign, and the signed index authenticates every
+adapter file by SHA-256. See [docs/signing.md](docs/signing.md).
 
 ## Registry format
 
 ```json
 {
-  "schema": 6,
+  "schema": 7,
   "kind": "red-pen-adapters",
   "registryId": "red-pen-official",
-  "name": "Red Pen official adapter registry",
   "publisher": "Red Pen",
-  "sequence": 1,
+  "sequence": 2,
   "issuedAt": "2026-11-20T23:43:23Z",
   "expiresAt": "2027-05-19T23:43:23Z",
   "adapters": [
     {
+      "apiVersion": 2,
       "id": "python",
       "name": "Python",
       "version": "2.5.0",
@@ -34,6 +34,22 @@ signed index authenticates every adapter file by SHA-256. See
       "appliesTo": ["file", "question"],
       "permissions": ["subprocess"],
       "extensions": ["py"],
+      "settings": [
+        {
+          "key": "pythonVersion",
+          "label": "Python version",
+          "type": "select",
+          "options": ["3.13"],
+          "default": "3.13"
+        }
+      ],
+      "keyInput": [
+        { "key": "expected", "label": "Expected output", "type": "textarea" }
+      ],
+      "questionInput": [
+        { "key": "inputFile", "label": "Input file", "type": "path" }
+      ],
+      "output": { "kinds": ["diff"], "label": "Program output" },
       "runtimes": [
         {
           "tool": "python",
@@ -62,14 +78,18 @@ A folder may also include `README.md` and an `assets/` folder for its images.
 README images must use relative links such as `![Screenshot](assets/shot.png)`;
 the app fetches them from the same adapter folder for the marketplace.
 
-The entry mirrors the install-gating parts of the manifest: name, description,
-author, icon, homepage, permissions, runtimes, `bootstrap`, and Windows registry
-keys. The app refuses an install whose manifest asks for one of them that the
-entry did not list, so keep the two files in step. Fields the entry has no
-place for (`output`, `keyInput`, `questionInput`, `directories`, and
-`directoryPicker`) live only in the manifest. Run `python scripts/update.py`
-after changing a manifest; it refreshes the mirrored fields (including
-`bootstrap`) and file checksums.
+The entry mirrors the manifest fields in `schemas/mirror-fields.json`: name,
+description, author, icon, homepage, extensions, appliesTo, permissions,
+registry, runtimes, bootstrap, settings, keyInput, questionInput, output,
+directories, and directoryPicker. The app refuses an install whose manifest
+asks for one of them that the entry did not list, so keep the two files in
+step. `apiVersion` is copied separately and must be 2. Run
+`python scripts/update.py` after changing a manifest; it refreshes the mirrored
+fields (including `bootstrap`) and file checksums.
+
+There is no root `name` in schema 7; use `publisher`. Bare-string file entries
+and legacy permissions are rejected, and each manifest must declare
+`schema: 5` and `apiVersion: 2`.
 
 ## Signing
 
@@ -220,11 +240,14 @@ venv for `pip`) and installs the packages named in the settings:
 
 `request.runtime.version` is the concrete installed version, not `latest`.
 Use it when calling `run_runtime`; the sandbox has no network for mise to
-resolve `latest`:
+resolve `latest`. The primary runtime tool is `manifest.runtimes[0].tool`; the
+legacy `manifest.language` and `manifest.miseTool` hints no longer exist:
 
 ```lua
+local runtime = (manifest.runtimes or {})[1] or {}
+local tool = runtime.tool or ""
 local version = (request.runtime and request.runtime.version)
-  or settings.runtimeVersion
+  or runtime.version
   or "latest"
 ```
 
@@ -280,8 +303,10 @@ support, so it does not download `tsx` at run time.
 
 The language adapters are generated from
 `scripts/templates/language_adapter.lua` using the command data in
-`scripts/languages.json`; `python` and `logisim` are hand-written. Edit the
-template or the data, then run `python scripts/generate.py`.
+`scripts/languages.json`; `python` and `logisim` are hand-written. Each
+generated adapter derives its sandbox tool from `manifest.runtimes[0].tool`
+(empty when the adapter declares no runtime). Edit the template or the data,
+then run `python scripts/generate.py`.
 
 ## Lua editor support
 
@@ -305,10 +330,16 @@ libraries that would bypass the sandbox are not present.
 Three JSON Schemas describe the registry, its configuration, and adapter
 manifests:
 
-- `schemas/registry.schema.json` — the signed root `registry.json`
+- `schemas/registry.schema.json` — the signed root `registry.json` (schema 7)
 - `schemas/registry.config.schema.json` — `registry.config.json` identity and
   signing settings
 - `schemas/manifest.schema.json` — each adapter folder's `manifest.json`
+  (schema 5, API 2)
+
+`schemas/mirror-fields.json` lists the manifest fields an entry must mirror, and
+`schemas/source.json` records the app commit and SHA-256 of every copied
+contract file. The validator checks those digests, so update all three files
+together when the app contract changes.
 
 Every JSON file includes a `$schema` reference, so editors with JSON language
 support get completion, hover docs, and error squiggles while writing manifests
@@ -343,13 +374,15 @@ python scripts/validate.py --skip-signature --skip-release
 `generate.py --check` fails if a committed language `adapter.lua` differs from
 the template. `registry.py format --check` enforces sorted keys, two-space
 indent, LF, and one trailing newline. `update.py --check` fails when mirrored
-manifest fields (including `bootstrap`) or file checksums in `registry.json`
-are stale. The validator checks both schemas and cross-file consistency:
-folder contents, `adapter.lua` presence, manifest/registry id, version,
-permissions, runtimes, known mise tools and backends, runtime default/options,
-generated adapter tool hints, the Python 3.8-3.15 ceiling, registry keys and
-description agreement, README version lines, formula variables, smoke metadata
-in `scripts/languages.json`, and each declared file's SHA-256 checksum. It also
+manifest fields (including `bootstrap`, inputs, outputs, grants, and picker) or
+file checksums in `registry.json` are stale. The validator checks both schemas
+and cross-file consistency: schema 7 / manifest 5 / API 2, folder contents,
+`adapter.lua` presence, manifest/registry id, version, permissions, runtimes,
+known mise tools and backends, runtime default/options, the primary
+`runtimes[0].tool`, the Python 3.8-3.15 ceiling, registry keys and description
+agreement, README version lines, formula variables, smoke metadata in
+`scripts/languages.json`, the copied contract digests, and each declared file's
+SHA-256 checksum. It also
 runs `luac -p` on every `adapter.lua` when `--luac` is passed and `luac` is
 available. After changing a manifest or script, run `python scripts/update.py`
 and commit the updated `registry.json`. The same checks run in GitHub Actions

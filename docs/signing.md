@@ -104,7 +104,8 @@ config changes) or manually. A pull request never triggers it.
 1. **Preflight** (no environment, `contents: read`): read the config with the
    registry's settings helper, check out the signer at the pinned SHA, require
    that SHA to be reachable from the signer repository's `main`, and run the
-   pinned signer's full schema-6/tree validation. No secret exists yet.
+   pinned signer's full schema 7 / manifest 5 / API 2 tree validation. No
+   secret exists yet.
 2. **Signing job**: enter the environment from the config
    (`registry-signing-official` or `registry-signing-community`), with
    `contents: write` only in this job and `persist-credentials: false`.
@@ -123,11 +124,12 @@ config changes) or manually. A pull request never triggers it.
    now and `expiresAt` to now plus `signing.expiresInDays`, and write
    deterministic bytes. Assert the new sequence is above the refreshed latest
    tag and that the tag does not already exist.
-9. Validate the prepared tree with the pinned signer (full schema 6, hashes,
-   manifests, release metadata rules). Run signer commands from the signer
-   checkout with `python -P` / `PYTHONSAFEPATH=1`, `PYTHONPATH` pointing at the
-   signer, and absolute registry paths. A fake `redpen_signing` package in the
-   registry commit cannot shadow the pinned signer.
+9. Validate the prepared tree with the pinned signer (full schema 7 /
+   manifest 5 / API 2, hashes, manifests, release metadata rules). Run signer
+   commands from the signer checkout with `python -P` / `PYTHONSAFEPATH=1`,
+   `PYTHONPATH` pointing at the signer, and absolute registry paths. A fake
+   `redpen_signing` package in the registry commit cannot shadow the pinned
+   signer.
 10. Sign the exact bytes with the environment key.
 11. Verify immediately with the committed public key and trusted comment.
 12. Write `release.json` and `registry.sha256`; the signer asserts registry id,
