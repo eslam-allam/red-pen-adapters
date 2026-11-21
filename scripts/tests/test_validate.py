@@ -8,6 +8,7 @@ Run from the repository root:
 from __future__ import annotations
 
 import json
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -313,6 +314,19 @@ class PythonCeilingTests(unittest.TestCase):
         self.assertEqual(
             python_runtime_errors(manifest, settings, "registry entry python"), []
         )
+
+
+class AdapterOutcomeProtocolTests(unittest.TestCase):
+    def test_every_adapter_returns_an_explicit_status(self) -> None:
+        adapters = sorted(
+            path for path in ROOT.glob("*/adapter.lua") if path.parent.name != "scripts"
+        )
+        self.assertEqual(len(adapters), 26)
+        for path in adapters:
+            with self.subTest(adapter=path.parent.name):
+                source = path.read_text(encoding="utf-8")
+                self.assertIn('status = "graded"', source)
+                self.assertNotRegex(source, r"app\.result\(\s*\{\s*error\s*=")
 
 
 if __name__ == "__main__":
