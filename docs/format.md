@@ -159,6 +159,67 @@ Runtime rules enforced by the validator:
   app supports (`2026.11.11` and `0.13.9`); arbitrary strings are rejected;
 - every runnable adapter needs smoke metadata in `scripts/languages.json`.
 
+## Adapter result protocol
+
+An adapter reports its outcome by calling `app.result` exactly once. Every run
+ends in one of five statuses. The old `{ error = ... }` table and a score
+without a status are no longer accepted.
+
+| Status | When | Fields |
+| --- | --- | --- |
+| `graded` | The adapter compared the submission with the key. | `score`, `comment`; optional `rationale`, `text`, `output`, `outputPath` |
+| `previewed` | The app asked for a preview (`request.mode == "preview"`). | `text`; optional `output`, `outputPath` |
+| `declined` | The adapter cannot run because the key or an input is missing. | `code` (`missing-key` or `missing-input`), `message`; optional `detail` |
+| `failed` | The adapter or a program it started failed. | `code` (for example `program-error`), `message`; optional `detail` |
+| `timeout` | A program run by the adapter exceeded its limit. | `stage` (`runtime` or `script`), `message`; optional `detail` |
+
+```lua
+-- A completed comparison.
+app.result({
+  status = "graded",
+  score = 2.5,
+  comment = "Program output matches the key.",
+  rationale = "Printed output matched the expected answer.",
+  text = output.stdout,
+  output = { kind = "diff", expected = expected, actual = output.stdout },
+})
+
+-- Preview mode.
+app.result({ status = "previewed", text = output.stdout })
+
+-- The key is missing: leave the question unmarked.
+app.result({
+  status = "declined",
+  code = "missing-key",
+  message = "The key has no expected output to compare with.",
+})
+
+-- A program that exited non-zero or could not start.
+app.result({
+  status = "failed",
+  code = "program-error",
+  message = "The program stopped with an error.",
+  detail = output.stderr,
+})
+
+-- A program that exceeded its time limit.
+app.result({
+  status = "timeout",
+  stage = "runtime",
+  message = "The program timed out.",
+})
+```
+
+Use `declined` with `code = "missing-input"` when the submitted file or a
+required question input is absent. Use `failed` with code `program-error` when
+a process exits non-zero or cannot start, and `timeout` with stage `runtime`
+when a process reports `code == -1`.
+
+A failure, timeout, or decline must never return `score = 0`: that records a
+wrong answer. Leave the question unmarked instead. Only a completed comparison
+returns `score` with `status = "graded"`. Call `app.result` once; a missing or
+second call is an adapter error.
+
 ## Deterministic JSON
 
 `registry.json` and `registry.config.json` are written with:

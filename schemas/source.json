@@ -1,9 +1,9 @@
 {
   "$comment": "Generated contract artifacts copied from the Red Pen app. Do not edit by hand; regenerate from schema/contract.json in the app repository.",
-  "appCommit": "47a4f83d92f102583ac95048856ec00376d55d3c",
+  "appCommit": "df00b6cde65e837fb0eca3b8502ac8b66b4bd975",
   "appRepository": "eslam-allam/red-pen",
   "files": {
-    "lua/red-pen-api.lua": "5e9e06915bac15b4fcb1d9c8f8c8b35fbdc70d18619ce94d051bde9532a9a017",
+    "lua/red-pen-api.lua": "a7944c63c716a45beacd66edea9e17c93c6332960391d96bdc01c5e11daf4056",
     "schemas/manifest.schema.json": "2586c96b7d42f8b5dc5a005d0699b661052145ed4c53b1cdc19cb5bb2945fe3e",
     "schemas/mirror-fields.json": "2fc8241f1559c28420df7b0bce4e5fe139c949877642110cbc87e6379fbc339d",
     "schemas/registry.schema.json": "d9ee1818067b30a4411a243b0f4adaef164efb4e8ba1d2a4f04853175c1057b3"

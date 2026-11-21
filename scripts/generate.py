@@ -49,18 +49,22 @@ def compiled_block(entry: dict) -> str:
         [
             f"local started, build = pcall(run, {lua_string(entry['compiler'])}, build_args)",
             "if not started then",
-            '  fail("The compiler could not be started or timed out.", tostring(build), "")',
+            '  fail("program-error", "The compiler could not be started.", tostring(build))',
+            "  return",
+            "end",
+            "if build.code == -1 then",
+            '  timeout("runtime", "The compiler timed out.", build.stderr)',
             "  return",
             "end",
             "if build.code ~= 0 then",
-            '  fail("The program did not compile.", build.stderr, build.stdout)',
+            '  fail("program-error", "The program did not compile.", build.stderr)',
             "  return",
             "end",
             "local args = {}",
             'if input_file ~= "" then args[#args + 1] = input_file end',
             "local ran, output = pcall(app.run_command, binary, args, \"\")",
             "if not ran then",
-            '  fail("The compiled program could not be started or timed out.", tostring(output), "")',
+            '  fail("program-error", "The compiled program could not be started.", tostring(output))',
             "  return",
             "end",
         ]
@@ -74,7 +78,7 @@ def system_block(entry: dict) -> str:
         'if input_file ~= "" then args[#args + 1] = input_file end',
         f"local started, output = pcall(app.run_command, {lua_string(entry['program'])}, args, \"\")",
         "if not started then",
-        '  local message = "The program could not be started or timed out."',
+        '  local message = "The program could not be started."',
     ]
     if entry.get("windowsHelp"):
         lines.extend(
@@ -86,7 +90,7 @@ def system_block(entry: dict) -> str:
         )
     lines.extend(
         [
-            "  fail(message, tostring(output), \"\")",
+            '  fail("program-error", message, tostring(output))',
             "  return",
             "end",
         ]
@@ -101,7 +105,7 @@ def interpreted_block(entry: dict) -> str:
             'if input_file ~= "" then args[#args + 1] = input_file end',
             f"local started, output = pcall(run, {lua_string(entry['program'])}, args)",
             "if not started then",
-            '  fail("The program could not be started or timed out.", tostring(output), "")',
+            '  fail("program-error", "The program could not be started.", tostring(output))',
             "  return",
             "end",
         ]

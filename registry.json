@@ -20,7 +20,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "e1d6f8028f332b001215a081196ee174fcddef47130daa181a98bbfb81159215"
+          "sha256": "1960464131dd4fa1cf4a43a866bf6338ec7ef1fd362352a38437e700505f2f34"
         }
       ],
       "folder": "bash",
@@ -80,7 +80,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "52628a519254555a44c6cf4f4a9ee96fb0fdcece09908533785047d0052801f1"
+          "sha256": "183a02d69cd0f6b55a3803cf3889ce52b0bc37e960a703f5535e9b49c1ba17d2"
         }
       ],
       "folder": "c",
@@ -160,7 +160,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "093c142f7ee7d66144542658ff7f62edd7a78442716c7da0e0097ecec3a6acf6"
+          "sha256": "e6be6fde8dc073c29ce75ce0b0a1a345309de285afb9e7121391b60db52c69f4"
         }
       ],
       "folder": "cpp",
@@ -238,7 +238,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "ac0aa95cc19f5c31427c7671fdd62443f8bf987f2575c5dc8fac53e47ede1de8"
+          "sha256": "0bda1b4c1163304535462861a94931049130dc6908323335e795d25e146eb3f5"
         }
       ],
       "folder": "csharp",
@@ -317,7 +317,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "3de1f0686f0274a47ddf1dd17bcf67aae10468cd1a6071829fc76e7847534b43"
+          "sha256": "d1bab070ad992e00e4c980fdbec0ba4bf69f092d3ca286b0521cb813ed1e65e0"
         }
       ],
       "folder": "dart",
@@ -396,7 +396,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "75c354c7fb8a3e4ac933dd3c15963982dcdd46a785df60dde90fed6121c9efc4"
+          "sha256": "f45d00cab56228b574d68fcbfc4fd93aef0ac922759831600b8ef52a24886078"
         }
       ],
       "folder": "elixir",
@@ -474,7 +474,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "8ae2d3d6a1c6dd419dbd1684557405a19d6e0f8c755017d853784a7571f61442"
+          "sha256": "2ab50d025b82eac19133a41cdca4f7e88a31d7b2c5a072d65e438af5e1a4fd48"
         }
       ],
       "folder": "erlang",
@@ -553,7 +553,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "ffa17ebb3259f38755ddc8c2e7953d2b2f611c7a072f8789239d99457aa5ee3f"
+          "sha256": "f6b04975d1ae84776fcb954de5b809941e97a3ae3f84e16a6eb1deaa7e339a4f"
         }
       ],
       "folder": "fsharp",
@@ -631,7 +631,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "c7296767fb26f4d3e2260e03b54267776101797766f0edf720ac4f694914ea74"
+          "sha256": "54dd7236c8c7071ea990d362793717cecb84a9369220e3bbfb2e782d1481fb52"
         }
       ],
       "folder": "go",
@@ -709,7 +709,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "d3e6e03ddf90c2d43bd1485e21e2ff4f0d0b72078fccae73967cd0d910d86333"
+          "sha256": "2ab3d056c985de4dcf4159d2941f942f0228a397be63a9968b394a6aecd4ffcc"
         }
       ],
       "folder": "haskell",
@@ -787,7 +787,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "a12afec07bfaa41126e5ee3346b2282d91a0b14a900af258a76414fead88f569"
+          "sha256": "9c9f1f35a234d2467a9a5554761a4e396106c86aa407bb0df468ce307ba052fe"
         }
       ],
       "folder": "java",
@@ -867,7 +867,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "8bbd9f43801bdc03b731700c53d8bfeca1816e423a9b83a1a73eeda8fe91a841"
+          "sha256": "574ebc0c9ac79e19b3dab6b8551855614c553463f75593f20bde99f278ef0976"
         }
       ],
       "folder": "javascript",
@@ -945,7 +945,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "1c8d96978ae6a47e7c3b5d5c3d2328224b9894c573eb185510c5cedd473de22a"
+          "sha256": "5dcbe0229bf4074d1f4a366aceed42bf4bf8c55a94df8b094c0da0351056fd96"
         }
       ],
       "folder": "julia",
@@ -1024,7 +1024,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "96d5d17eb768921a454162f21021f3fcf70759cd3e3a78b647f718fe1772b8a7"
+          "sha256": "6f6adcbf2d809a5244256edee3796ab24f77f535a53d6685a340f3f7caeb3070"
         }
       ],
       "folder": "kotlin",
@@ -1098,7 +1098,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "8dd4a983c5abad2fc37d6bafb33e21788cf12761cc7e007757e1679789200764"
+          "sha256": "aad91db31824686b915acc8bd4eda290ce6cde3efb4051485037524fbaf807df"
         }
       ],
       "folder": "logisim",
@@ -1195,7 +1195,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "deba39b377f40652ad1030ee097f1e1adafcc03465e589e2586bbd3acb547ca6"
+          "sha256": "0afd7eaed02da7fe51b785dd04bf5a4a0a9cbf28b6d37f6ff2b44491fd37328b"
         }
       ],
       "folder": "lua",
@@ -1273,7 +1273,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "3b3a99fbb42aff25cc29a76fda6df96e2844fa30dfc62a1e105a67017f6f4bf2"
+          "sha256": "9f3d92ef3c89dff33e579534362673c9863ceccf655b3ea6a740af7f4e7f4677"
         }
       ],
       "folder": "perl",
@@ -1351,7 +1351,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "8062970fbcc66239c2c84c842d82ac17aac9a2dd00a400c472ade79f291027c8"
+          "sha256": "bc5711827882cd1165b83c338a48729a8ffbbe0485834e7ecccd863c9b566a70"
         }
       ],
       "folder": "php",
@@ -1429,7 +1429,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "03fe8e7b4f8e3e6d5249b6bd0a816d29727874368f5a6324967d86e6ec5609d8"
+          "sha256": "a66ea2c739e24abf791f9572b7ac5de3cac14bb61698719d843c86656142d9a0"
         }
       ],
       "folder": "powershell",
@@ -1507,7 +1507,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "b46f0589cc3d1a6cd5467d3cdc24e5a8b96c18ea7023bab7ca8fa08c0f8d8b31"
+          "sha256": "9a0540f5aea4782ab77df5a2669612e12a5a7a16760b9e253043e6a20a9d126e"
         }
       ],
       "folder": "python",
@@ -1603,7 +1603,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "246fac8e47927f4c63ad80a76e5cf8d1b27f48d2200c6a06a6c55e8791799ce9"
+          "sha256": "f68816c20c2b595d5e45a1a2299145cc08a841383e43952ba2285f65064f998f"
         }
       ],
       "folder": "r",
@@ -1681,7 +1681,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "be87af69d4ad63c3f8a2b9ae72a63583a2c85243e50248b2aebd4ee5a0e8e2d3"
+          "sha256": "4d99c30723f6b9895d960ed67a475ce2df70f67588215ec72eb8bde933b1a82e"
         }
       ],
       "folder": "ruby",
@@ -1759,7 +1759,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "844aab30e2d2fc2e4c3a3432a2b1bd52f9320063e7f880bcf5a9a824a028bc78"
+          "sha256": "f58b911c06db75e1860106da8b3770e66c7da2e409ba84c7dc92424502199c9e"
         }
       ],
       "folder": "rust",
@@ -1837,7 +1837,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "4f2c34b68208c58587e6c540650a1e0e78ec98bff88771139b8a31ec13f16a67"
+          "sha256": "e257ee686957b9ad8018c9b739de00771f8031d1253af3d87992c485606cae4a"
         }
       ],
       "folder": "scala",
@@ -1915,7 +1915,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "87048bdc0da651b13fb8ffeb8a726173a7716b08440ab3d2d1d0b9d571bf2a45"
+          "sha256": "0af3a30128791cea4b42d18e0f15ae75e23c7a4d34b1d7fe388c87872f912c19"
         }
       ],
       "folder": "swift",
@@ -1996,7 +1996,7 @@
         },
         {
           "path": "adapter.lua",
-          "sha256": "8363847f3d9083b8ca906abf73dd84473a66e54ede563094a82aea199add59d0"
+          "sha256": "5029286223e41455d8bdbf7ace9ae8c59e18175539696a33266b20bfd9e27fbc"
         }
       ],
       "folder": "typescript",

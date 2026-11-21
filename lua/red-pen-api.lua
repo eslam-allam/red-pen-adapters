@@ -75,14 +75,27 @@
 ---@field runtime? RedPenRuntime
 
 ---@class RedPenResult
+--- The outcome kind. Call app.result exactly once.
+---@field status "graded"|"previewed"|"declined"|"failed"|"timeout"
+--- Graded only. Finite and between 0 and request.context.maxPoints.
 ---@field score? number
+--- Graded only and required there. The only text shown to the student.
 ---@field comment? string
+--- Graded only. Grader-facing explanation.
 ---@field rationale? string
---- Preview text shown when the attachment is opened.
+--- Previewed only and required there. Also allowed on a graded result as preview text.
 ---@field text? string
+--- Graded or previewed. A file kept under the app's retention rules.
 ---@field outputPath? string
----@field error? string
---- The outputs declared by the manifest. Return one object for one kind, or a list whose kinds match the manifest exactly and in the same order.
+--- Declined requires missing-key or missing-input; failed may name its own code.
+---@field code? string
+--- Declined, failed, and timeout. Required there.
+---@field message? string
+--- Declined, failed, and timeout. Optional grader-facing detail.
+---@field detail? string
+--- Timeout only and required there.
+---@field stage? "script"|"runtime"
+--- Graded or previewed. The outputs declared by the manifest. Return one object for one kind, or a list whose kinds match the manifest exactly and in the same order.
 ---@field output? RedPenOutput|RedPenOutput[]
 
 ---@class RedPenTableOutput

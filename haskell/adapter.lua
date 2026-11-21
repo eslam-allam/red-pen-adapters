@@ -20,16 +20,39 @@ local function normalise(text)
   return table.concat(lines, "\n"):match("^%s*(.-)%s*$")
 end
 
--- A failed run, missing key or timeout leaves the question unmarked. It must
--- never return score = 0: that would silently record a wrong answer.
-local function fail(message, detail, text)
-  local rationale = message
-  if detail and detail ~= "" then rationale = message .. "\n\n" .. detail end
+local function detail_text(value)
+  if value == nil then return "" end
+  return tostring(value)
+end
+
+-- Every run ends with exactly one app.result call and an explicit status:
+-- graded, previewed, declined, failed or timeout. A failure, timeout or
+-- decline must never return score = 0: the app would record that as a wrong
+-- answer instead of leaving the question for manual marking.
+local function decline(code, message, detail)
   app.result({
-    error = rationale,
-    comment = message,
-    rationale = rationale,
-    text = text or "",
+    status = "declined",
+    code = code,
+    message = message,
+    detail = detail_text(detail),
+  })
+end
+
+local function fail(code, message, detail)
+  app.result({
+    status = "failed",
+    code = code,
+    message = message,
+    detail = detail_text(detail),
+  })
+end
+
+local function timeout(stage, message, detail)
+  app.result({
+    status = "timeout",
+    stage = stage,
+    message = message,
+    detail = detail_text(detail),
   })
 end
 
@@ -40,28 +63,45 @@ end
 local question = context.questionValues or {}
 local input_file = (question.inputFile or ""):match("^%s*(.-)%s*$")
 
+if type(file) ~= "string" or file == "" then
+  decline("missing-input", "There is no submitted file to run.")
+  return
+end
+
 local args = { file }
 if input_file ~= "" then args[#args + 1] = input_file end
 local started, output = pcall(run, "runghc", args)
 if not started then
-  fail("The program could not be started or timed out.", tostring(output), "")
+  fail("program-error", "The program could not be started.", tostring(output))
   return
 end
 
+if output.code == -1 then
+  timeout("runtime", "The program timed out.", output.stderr)
+  return
+end
 if output.code ~= 0 then
-  fail("The program stopped with an error.", output.stderr, output.stdout)
+  fail("program-error", "The program stopped with an error.", output.stderr)
   return
 end
 if request.mode == "preview" then
-  app.result({ text = output.stdout or "", rationale = "Program ran successfully." })
+  app.result({
+    status = "previewed",
+    text = output.stdout or "",
+  })
   return
 end
 if normalise(expected) == "" then
-  fail("The key has no expected output to compare with.", nil, output.stdout)
+  decline(
+    "missing-key",
+    "The key has no expected output to compare with.",
+    output.stdout
+  )
   return
 end
 local same = normalise(output.stdout) == normalise(expected)
 app.result({
+  status = "graded",
   score = same and max_points or 0,
   comment = same and "The output matches the expected answer." or "The output does not match the expected answer.",
   rationale = same and "Printed output matched the key." or "Printed output differed from the key.",

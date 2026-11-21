@@ -7,6 +7,43 @@ local max_points = tonumber(context.maxPoints) or 0
 local program = settings.programPath
 if not program or program == "" then program = "logisim-evolution" end
 local circuit = (question.circuit or ""):match("^%s*(.-)%s*$")
+local file = request.filePath
+
+local function detail_text(value)
+  if value == nil then return "" end
+  return tostring(value)
+end
+
+-- Every run ends with exactly one app.result call and an explicit status:
+-- graded, previewed, declined, failed or timeout. A failure, timeout or
+-- decline must never return score = 0: the app would record that as a wrong
+-- answer instead of leaving the question for manual marking.
+local function decline(code, message, detail)
+  app.result({
+    status = "declined",
+    code = code,
+    message = message,
+    detail = detail_text(detail),
+  })
+end
+
+local function fail(code, message, detail)
+  app.result({
+    status = "failed",
+    code = code,
+    message = message,
+    detail = detail_text(detail),
+  })
+end
+
+local function timeout(stage, message, detail)
+  app.result({
+    status = "timeout",
+    stage = stage,
+    message = message,
+    detail = detail_text(detail),
+  })
+end
 
 local function trim(text)
   return (text:gsub("^%s*(.-)%s*$", "%1"))
@@ -161,15 +198,24 @@ local function build_tables(actual_headers, actual, wanted_headers, wanted)
 end
 
 ---@param code integer
----@param error string
+---@param stderr string
 ---@param circuitName string
-local function handleBadExitLogisim(code, error, circuitName)
-  error = error ~= "" and error or "Logisim failed"
-  if string.find(error, "\"circuit\" is null") ~= nil then
-    app.result({error = "Circuit '" .. (circuitName or "main") .. "' Not present."})
+local function handleBadExitLogisim(code, stderr, circuitName)
+  local detail = stderr ~= "" and stderr or ("Logisim exited with code " .. tostring(code) .. ".")
+  if string.find(detail, "\"circuit\" is null", 1, true) ~= nil then
+    fail(
+      "program-error",
+      "Circuit '" .. (circuitName or "main") .. "' is not present.",
+      detail
+    )
     return
   end
-  app.result({ error = error})
+  fail("program-error", "Logisim failed.", detail)
+end
+
+if type(file) ~= "string" or file == "" then
+  decline("missing-input", "There is no submitted circuit file to run.")
+  return
 end
 
 local args = {}
@@ -179,43 +225,47 @@ if circuit ~= "" then
 end
 args[#args + 1] = "-tty"
 args[#args + 1] = "table"
-args[#args + 1] = request.filePath
+args[#args + 1] = file
 local started, output = pcall(app.run_command, program, args, "")
 if not started then
-  app.result({
-    error = "Logisim could not be started or timed out.",
-    text = tostring(output),
-  })
+  fail("program-error", "Logisim could not be started.", output)
+  return
+end
+if output.code == -1 then
+  timeout("runtime", "Logisim timed out.", output.stderr)
   return
 end
 if output.code ~= 0 then
   return handleBadExitLogisim(output.code, output.stderr, circuit)
 end
 if request.mode == "preview" then
-  app.result({ text = output.stdout or "" })
+  app.result({
+    status = "previewed",
+    text = output.stdout or "",
+  })
   return
 end
 
 local actual_headers, actual = parse_table(output.stdout)
 if #actual == 0 then
-  app.result({
-    error = circuit ~= ""
+  fail(
+    "program-error",
+    circuit ~= ""
       and ("Logisim returned no truth table for circuit '"
         .. circuit
         .. "'. Check the circuit name in the question settings.")
       or "Logisim returned no truth table. Check the circuit file.",
-    text = output.stdout or "",
-  })
+    output.stdout
+  )
   return
 end
 local wanted_headers, wanted = parse_table(expected)
 if #wanted == 0 then
-  app.result({
-    error = "The key has no truth-table rows.",
-    comment = "The key has no truth-table rows.",
-    rationale = "Fill every output cell in the key table before grading.",
-    text = output.stdout or "",
-  })
+  decline(
+    "missing-key",
+    "The key has no truth-table rows.",
+    "Fill every output cell in the key table before grading."
+  )
   return
 end
 local order = column_order(actual_headers, wanted_headers)
@@ -257,6 +307,7 @@ local table_output = {
 
 if same then
   app.result({
+    status = "graded",
     score = max_points,
     comment = "The generated truth table matches the key.",
     rationale = #wanted_headers > 0
@@ -278,6 +329,7 @@ elseif #student_bad_cells > 0 then
   rationale = "The highlighted cells do not match the key."
 end
 app.result({
+  status = "graded",
   score = 0,
   comment = comment,
   rationale = rationale,

@@ -155,8 +155,8 @@ jobs:
       - name: Install pinned minisign
         uses: ./.github/actions/install-minisign
 
-      - name: Run validator unit tests
-        run: python scripts/tests/test_validate.py
+      - name: Run tests
+        run: python tests/run.py
 
       - name: Check generated language adapters
         run: python scripts/generate.py --check
