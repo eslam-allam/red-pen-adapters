@@ -6,7 +6,7 @@ on:
       - "registry-v*"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: release-${{ github.ref_name }}
@@ -17,6 +17,8 @@ jobs:
     name: Verify and publish
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    permissions:
+      contents: write
     steps:
       - name: Checkout tagged release
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -29,37 +31,114 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Install schema validator
-        run: python -m pip install --disable-pip-version-check jsonschema==4.26.0
-
-      - name: Install pinned minisign
-        uses: ./.github/actions/install-minisign
-
-      - name: Validate the tagged registry and signature
+      # Trusted selection: read the pinned signer from the tagged
+      # registry.config.json with jq, never with code from the checkout.
+      - name: Read pinned signer from configuration
+        id: config
         run: |
           set -euo pipefail
-          python scripts/registry.py format --check registry.json registry.config.json
-          python scripts/update.py --check
-          python scripts/validate.py --require-signature
+          config=registry.config.json
+          source_repo=$(jq -er '.repository' "$config")
+          enabled=$(jq -r '.signing.enabled // false' "$config")
+          signer_repo=$(jq -r '.signing.signerRepository // ""' "$config")
+          signer_commit=$(jq -r '.signing.signerCommit // ""' "$config")
+          [ "$enabled" = "true" ] || {
+            echo "a release requires signing.enabled: true" >&2
+            exit 1
+          }
+          printf '%s' "$signer_repo" | grep -Eq '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$' || {
+            echo "invalid signer repository" >&2
+            exit 1
+          }
+          printf '%s' "$signer_commit" | grep -Eq '^[0-9a-f]{40}$' || {
+            echo "signerCommit must be a full lowercase SHA" >&2
+            exit 1
+          }
+          [ "$signer_repo" != "$source_repo" ] || {
+            echo "signerRepository must not be the registry repository itself" >&2
+            exit 1
+          }
+          {
+            echo "signer_repository=$signer_repo"
+            echo "signer_commit=$signer_commit"
+          } >> "$GITHUB_OUTPUT"
 
-      - name: Check checksums and release metadata
+      - name: Checkout pinned signer by SHA
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: ${{ steps.config.outputs.signer_repository }}
+          ref: ${{ steps.config.outputs.signer_commit }}
+          path: signer
+          persist-credentials: false
+
+      - name: Install pinned signer validation dependency
+        run: python -m pip install --disable-pip-version-check jsonschema==4.26.0
+
+      - name: Install pinned minisign from the signer
+        uses: ./signer/.github/actions/install-minisign
+
+      - name: Require the pinned signer commit on signer main
+        env:
+          PYTHONPATH: ${{ github.workspace }}/signer
+          PYTHONSAFEPATH: "1"
+          SIGNER_COMMIT: ${{ steps.config.outputs.signer_commit }}
+          SIGNER_REPOSITORY: ${{ steps.config.outputs.signer_repository }}
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE/signer"
+          python -P -m redpen_signing.cli check-pin \
+            --repo-dir "$GITHUB_WORKSPACE/signer" \
+            --commit "$SIGNER_COMMIT" \
+            --expected-repository "$SIGNER_REPOSITORY"
+
+      # The tag must describe this release, and the tagged commit must be
+      # reachable from main. This rejects a tag on an unmerged commit.
+      - name: Assert tag identity and main ancestry
+        run: |
+          set -euo pipefail
+          release_tag="$(jq -er '.tag' release.json)"
+          release_sequence="$(jq -er '.sequence' release.json)"
+          registry_sequence="$(jq -er '.sequence' registry.json)"
+          [ "$release_sequence" = "$registry_sequence" ] || {
+            echo "release.json sequence ${release_sequence} does not match registry.json ${registry_sequence}" >&2
+            exit 1
+          }
+          expected_tag="registry-v${release_sequence}"
+          [ "$release_tag" = "$expected_tag" ] || {
+            echo "release.json tag ${release_tag} does not match ${expected_tag}" >&2
+            exit 1
+          }
+          [ "$GITHUB_REF_NAME" = "$expected_tag" ] || {
+            echo "tag ${GITHUB_REF_NAME} does not match release ${expected_tag}" >&2
+            exit 1
+          }
+          git fetch --no-tags origin main
+          git rev-parse --verify --quiet origin/main >/dev/null || {
+            echo "origin/main is unavailable" >&2
+            exit 1
+          }
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main || {
+            echo "tagged commit ${GITHUB_SHA} is not an ancestor of origin/main" >&2
+            exit 1
+          }
+
+      - name: Validate with the pinned signer
+        env:
+          PYTHONPATH: ${{ github.workspace }}/signer
+          PYTHONSAFEPATH: "1"
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE/signer"
+          python -P -m redpen_signing.cli validate \
+            --root "$GITHUB_WORKSPACE" \
+            --registry "$GITHUB_WORKSPACE/registry.json" \
+            --config "$GITHUB_WORKSPACE/registry.config.json" \
+            --require-signature
+
+      - name: Check checksums
         run: |
           set -euo pipefail
           sha256sum --check --strict registry.sha256
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          from scripts import registry
-
-          release = json.loads(Path("release.json").read_text(encoding="utf-8"))
-          assert release["registrySha256"] == registry.sha256_file("registry.json")
-          assert release["signatureSha256"] == registry.sha256_file("registry.json.minisig")
-          assert release["tag"] == f"registry-v{release['sequence']}"
-          print(f"release metadata matches {release['tag']}")
-          PY
-
-      - name: Verify with the committed public key
-        run: python scripts/verify.py --json
 
       - name: Create GitHub release
         env:

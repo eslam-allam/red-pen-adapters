@@ -228,7 +228,24 @@ The app must:
 `registrySha256`, `signatureSha256`, key id, public-key fingerprint, signer
 commit, workflow run, and generation time. It is written deterministically.
 
-The tag push runs `.github/workflows/release.yml`, which validates
-`--require-signature`, checks `registry.sha256` and `release.json`, verifies
-with the committed public key, and creates a GitHub release with the index,
-signature, checksum, metadata, and public keys.
+The tag push runs `.github/workflows/release.yml`. It runs no code from the
+tagged commit except the pinned signer itself. The job:
+
+1. reads `signing.signerRepository` and `signing.signerCommit` from the tagged
+   `registry.config.json` with `jq` and requires signing to be enabled;
+2. checks out that exact signer commit with `persist-credentials: false` and
+   runs the signer's `check-pin` to require the commit on the signer's `main`;
+3. requires `release.json.tag`, `GITHUB_REF_NAME`, and
+   `registry-v<registry.json sequence>` to agree;
+4. fetches `origin/main` explicitly and requires `GITHUB_SHA` to be an ancestor
+   of it, so a tag on an unmerged commit cannot publish;
+5. installs the pinned `jsonschema` and the signer-owned, SHA-pinned minisign
+   action, then runs `redpen_signing.cli validate --require-signature` against
+   the tagged tree, which re-verifies the signature, registry bytes, and
+   `release.json` digests;
+6. runs `sha256sum --check --strict registry.sha256`;
+7. creates a GitHub release with `--verify-tag` and the index, signature,
+   checksum, metadata, and public keys.
+
+`contents: write` is granted only to the release job; the workflow-level
+permission stays `contents: read`.
