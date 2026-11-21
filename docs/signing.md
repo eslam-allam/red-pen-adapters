@@ -228,7 +228,50 @@ The app must:
 `registrySha256`, `signatureSha256`, key id, public-key fingerprint, signer
 commit, workflow run, and generation time. It is written deterministically.
 
-The tag push runs `.github/workflows/release.yml`, which validates
-`--require-signature`, checks `registry.sha256` and `release.json`, verifies
-with the committed public key, and creates a GitHub release with the index,
-signature, checksum, metadata, and public keys.
+The tag push runs `.github/workflows/release.yml`. The workflow definition,
+`registry.config.json`, and the published files come from the tagged commit;
+only the validation/signing code and the minisign action are loaded from the
+pinned signer. The job:
+
+1. reads `signing.signerRepository`, `signing.signerCommit`, and
+   `signing.keyFile` from the tagged `registry.config.json` with `jq`; requires
+   signing to be enabled; requires tier `official` or `community` with the
+   fixed signer repository `eslam-allam/red-pen-registry-signing`; and rejects
+   the registry repository as its own signer;
+2. checks out that exact signer commit with `persist-credentials: false` and
+   runs the signer's `check-pin` to require the commit on the signer's `main`
+   before loading any composite action from the selected signer repository;
+3. requires `release.json.tag`, `GITHUB_REF_NAME`, and
+   `registry-v<registry.json sequence>` to agree;
+4. fetches `refs/heads/main` into `refs/remotes/origin/main` explicitly and
+   requires `GITHUB_SHA` to be an ancestor of that ref, so a tag on an
+   unmerged commit cannot publish;
+5. installs the pinned `jsonschema` and the signer-owned, SHA-pinned minisign
+   action, then runs `redpen_signing.cli validate --require-signature` against
+   the tagged tree, which re-verifies the signature, registry bytes, and
+   `release.json` digests;
+6. runs `sha256sum --check --strict registry.sha256`;
+7. checks that `registry.json`, `registry.json.minisig`, `registry.sha256`,
+   and `release.json` exist, then uploads an explicit allowlist of regular
+   `keys/*.pub` files (no glob or symlink following) and creates a GitHub
+   release with `--verify-tag`.
+
+`contents: write` is granted only to the release job; the workflow-level
+permission stays `contents: read`.
+
+### Residual release risks
+
+- **Older `main` tag:** ancestry proves the tagged commit is reachable from
+  `main`, not that it is the newest sequence. A maintainer-created tag on an
+  older `main` commit can still publish a stale GitHub release; the app's
+  strictly increasing `sequence` check limits replay.
+- **Tag creation:** the workflow does not restrict who can create
+  `registry-v*` tags. Tag immutability depends on repository tag rules and the
+  GitHub App key used by the signer.
+- **No release approval gate:** the release job does not use a protected
+  environment, so it has no required reviewers and can publish without a
+  second approval. Protect `registry-v*` tags and this workflow path.
+- **Signer trusts the tagged tree's key:** the pinned signer verifies against
+  `signing.keyFile` from the tagged commit. A reviewed commit that replaces a
+  public key can change what the release verifies against, so treat `keys/**`
+  and `registry.config.json` changes as security changes.

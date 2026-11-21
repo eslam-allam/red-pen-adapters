@@ -39,8 +39,9 @@ registry compromise must not silently become code execution in the app.
 | Tampered manifest or script | Signed index lists SHA-256 for every file; app verifies each download. |
 | Sequence race | Per-tier `concurrency`; tag existence check; latest tag plus current sequence. |
 | Old tag rewritten | Tags are protected; never rotate by editing a tag; releases keep old artifacts. |
+| Stale or misplaced release tag | The release job requires `release.json.tag`, `GITHUB_REF_NAME`, and `registry-v<sequence>` to agree, requires `GITHUB_SHA` to be an ancestor of `origin/main`, and re-validates with the pinned signer before publishing. |
 | Third-party registry impersonation | Unique `registryId`; app maps trust by URL and embedded key; unsigned/unknown requires explicit persistent consent. |
-| Broad CI token | Top-level `contents: read`; signing job only `contents: write`; `persist-credentials: false`; minimal GitHub App. |
+| Broad CI token | Top-level `contents: read`; only the signing and release jobs get `contents: write`; `persist-credentials: false`; minimal GitHub App. |
 | Dependency compromise | Actions pinned by full SHA; Python validator pinned; minisign tarball pinned by SHA-256. |
 | Expired index | Validator and app refuse an expired trusted registry; signing refreshes it. |
 
@@ -87,7 +88,10 @@ needed for checkout).
 - `jsonschema` is pinned in CI.
 - The public signer repository is pinned by SHA in `registry.config.json`; no
   cross-repository token is stored. CI requires the pin to be reachable from
-  the signer's `main` before signing.
+  the signer's `main` before signing and before releasing.
+- The release job executes only the pinned signer, its minisign action, and
+  trusted runner tools (`jq`, `git`, and `sha256sum`); it runs no repo-local
+  script from the tagged commit.
 - The signer validates the full schema 7 / manifest 5 / API 2 contract itself:
   publisher is a string, adapter fields and files are checked, file paths
   reject `..`/colon/control, hashes and manifests are verified, and
