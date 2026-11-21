@@ -1,0 +1,17 @@
+{
+  "expiresAt": "2027-05-20T08:37:02Z",
+  "generatedAt": "2026-11-21T08:37:05Z",
+  "issuedAt": "2026-11-21T08:37:02Z",
+  "keyId": "E7A93C572FF84DB5",
+  "kind": "red-pen-adapters-release",
+  "publicKeyFingerprint": "bd34ac56e04f8fa42de1fb7b48b4e6c9a68bf160447263f563ebf294f8815dde",
+  "registryId": "red-pen-official",
+  "registrySha256": "2d728552cb2651a84417876f7233e77af7f6dc0b604ad89dfd7e467a8b0bcdd9",
+  "schema": 1,
+  "sequence": 2,
+  "signatureSha256": "f576e1c0a084ed533bd8ce9190b42319f86386bbf85a409e71a60a130ff86d06",
+  "signerCommit": "4c288332f38f4ce718bd5a3804899646eb7a3fd7",
+  "tag": "registry-v2",
+  "tier": "official",
+  "workflowRun": "https://github.com/eslam-allam/red-pen-adapters/actions/runs/44855550563"
+}
