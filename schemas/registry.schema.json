@@ -146,23 +146,7 @@
           "uniqueItems": true
         },
         "bootstrap": {
-          "type": "object",
-          "additionalProperties": false,
-          "description": "The pinned mise/uv bootstrap the adapter needs, mirrored from manifest.json so the signed index can gate it.",
-          "properties": {
-            "uv": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "mise": {
-              "type": [
-                "string",
-                "null"
-              ]
-            }
-          }
+          "$ref": "#/$defs/bootstrap"
         },
         "extensions": {
           "type": "array",
@@ -267,6 +251,35 @@
           }
         }
       }
+    },
+    "bootstrap": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "description": "Bootstrap tool pins mirrored from manifest.json. Managed runtimes require mise; only latest or a SemVer 2.0.0 pin is allowed.",
+      "properties": {
+        "uv": {
+          "$ref": "#/$defs/bootstrapPin"
+        },
+        "mise": {
+          "$ref": "#/$defs/bootstrapPin"
+        }
+      }
+    },
+    "bootstrapPin": {
+      "description": "'latest', null, or a full SemVer 2.0.0 pin with optional v prefix, prerelease, and build metadata.",
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "const": "latest"
+        },
+        {
+          "type": "string",
+          "pattern": "^v?(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+        }
+      ]
     }
   }
 }

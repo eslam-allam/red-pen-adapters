@@ -117,6 +117,9 @@ Runtime rules enforced by the validator:
   `X.Y.Z` version;
 - Python options are limited to 3.8 through 3.15, with 3.13 as the default;
 - an adapter with managed runtimes must declare a non-empty `bootstrap.mise`;
+- `bootstrap.mise`/`bootstrap.uv` must be `latest`, `null`, or a full SemVer
+  2.0.0 pin (optional `v` prefix, prerelease, and build metadata); arbitrary
+  strings are rejected;
 - a generated adapter's `miseTool`/`language` must match its runtime tool;
 - every runnable adapter needs smoke metadata in `scripts/languages.json`.
 
