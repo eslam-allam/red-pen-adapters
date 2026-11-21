@@ -116,14 +116,25 @@ Every adapter is a Lua script named `adapter.lua`. The app runs it in its
 embedded Lua runtime; there is no command line, process runtime or built-in
 handler in a manifest.
 
-The script returns one result table through `app.result`:
+The script reports exactly one outcome through `app.result`. Every run ends in
+one of five statuses, and the old `{ error = ... }` table or a score without a
+status is no longer accepted:
+
+| Status | When | Fields |
+| --- | --- | --- |
+| `graded` | The adapter compared the submission with the key. | `score`, `comment`, `rationale`; optional `text`, `output`, `outputPath` |
+| `previewed` | The app asked for a preview. | `text`; optional `output`, `outputPath` |
+| `declined` | The key or an input is missing. | `code` (`missing-key` or `missing-input`), `message`; optional `detail` |
+| `failed` | The adapter or a started program failed. | `code` (for example `program-error`), `message`; optional `detail` |
+| `timeout` | A started program exceeded its limit. | `stage` (`runtime` or `script`), `message`; optional `detail` |
 
 ```lua
 app.result({
+  status = "graded",
   score = 2.5,
   comment = "Student-facing comment",
   rationale = "Grader-only explanation",
-  text = "Preview text shown when the attachment is opened",
+  text = "Program output shown when the attachment is opened",
   output = {
     kind = "diff",
     title = "Program output",
@@ -132,6 +143,24 @@ app.result({
   },
 })
 ```
+
+A missing key is a decline, not a zero:
+
+```lua
+app.result({
+  status = "declined",
+  code = "missing-key",
+  message = "The key has no expected output to compare with.",
+})
+```
+
+A process that cannot start or exits non-zero returns `status = "failed"` with
+`code = "program-error"`; a process that reports `code == -1` returns
+`status = "timeout"` with `stage = "runtime"`. A failure, timeout or decline
+must never return `score = 0`, because that records a wrong answer instead of
+leaving the question unmarked. Only a completed comparison returns a score with
+`status = "graded"`. See [docs/format.md](docs/format.md#adapter-result-protocol)
+for the full table.
 
 The manifest declares what outputs the script returns, in order:
 
@@ -282,8 +311,9 @@ and highlights every row or cell that differs from the key.
 The language adapters run a submitted file or a question answer with the
 language's runtime and compare the printed output with the `expected` key
 field. They declare their supported extensions and work on both files and
-questions. A run that cannot start, times out or has a missing key returns no
-score; it never records 0.
+questions. A run that cannot start or exits non-zero returns `failed`; a
+timeout returns `timeout`; a missing key or input returns `declined`. None of
+them returns a score, so a failed run never records 0.
 
 Each language question also offers an optional **Input file** path. When set,
 the app makes that file readable to the adapter sandbox and the adapter passes
