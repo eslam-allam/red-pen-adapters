@@ -12,7 +12,7 @@
     "expiresInDays": 180,
     "keyFile": "keys/official-2026.pub",
     "requiredReviewers": 1,
-    "signerCommit": "4c288332f38f4ce718bd5a3804899646eb7a3fd7",
+    "signerCommit": "f558366b804681f91a7a4116921ceff15bb6f803",
     "signerRepository": "eslam-allam/red-pen-registry-signing"
   },
   "tier": "official"
