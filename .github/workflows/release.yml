@@ -39,11 +39,26 @@ jobs:
           set -euo pipefail
           config=registry.config.json
           source_repo=$(jq -er '.repository' "$config")
+          tier=$(jq -er '.tier' "$config")
           enabled=$(jq -r '.signing.enabled // false' "$config")
           signer_repo=$(jq -r '.signing.signerRepository // ""' "$config")
           signer_commit=$(jq -r '.signing.signerCommit // ""' "$config")
+          key_file=$(jq -r '.signing.keyFile // ""' "$config")
           [ "$enabled" = "true" ] || {
             echo "a release requires signing.enabled: true" >&2
+            exit 1
+          }
+          case "$tier" in
+            official|community)
+              expected_signer=eslam-allam/red-pen-registry-signing
+              ;;
+            *)
+              echo "release workflow only supports official and community registries" >&2
+              exit 1
+              ;;
+          esac
+          [ "$signer_repo" = "$expected_signer" ] || {
+            echo "$tier registries must use signer repository $expected_signer" >&2
             exit 1
           }
           printf '%s' "$signer_repo" | grep -Eq '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$' || {
@@ -54,6 +69,10 @@ jobs:
             echo "signerCommit must be a full lowercase SHA" >&2
             exit 1
           }
+          printf '%s' "$key_file" | grep -Eq '^keys/[A-Za-z0-9._-]+\.pub$' || {
+            echo "invalid signing.keyFile path" >&2
+            exit 1
+          }
           [ "$signer_repo" != "$source_repo" ] || {
             echo "signerRepository must not be the registry repository itself" >&2
             exit 1
@@ -61,6 +80,7 @@ jobs:
           {
             echo "signer_repository=$signer_repo"
             echo "signer_commit=$signer_commit"
+            echo "key_file=$key_file"
           } >> "$GITHUB_OUTPUT"
 
       - name: Checkout pinned signer by SHA
@@ -74,9 +94,8 @@ jobs:
       - name: Install pinned signer validation dependency
         run: python -m pip install --disable-pip-version-check jsonschema==4.26.0
 
-      - name: Install pinned minisign from the signer
-        uses: ./signer/.github/actions/install-minisign
-
+      # check-pin runs before any composite action from the selected signer
+      # repository, so identity/reachability is checked before that code runs.
       - name: Require the pinned signer commit on signer main
         env:
           PYTHONPATH: ${{ github.workspace }}/signer
@@ -90,6 +109,9 @@ jobs:
             --repo-dir "$GITHUB_WORKSPACE/signer" \
             --commit "$SIGNER_COMMIT" \
             --expected-repository "$SIGNER_REPOSITORY"
+
+      - name: Install pinned minisign from the signer
+        uses: ./signer/.github/actions/install-minisign
 
       # The tag must describe this release, and the tagged commit must be
       # reachable from main. This rejects a tag on an unmerged commit.
@@ -112,12 +134,12 @@ jobs:
             echo "tag ${GITHUB_REF_NAME} does not match release ${expected_tag}" >&2
             exit 1
           }
-          git fetch --no-tags origin main
-          git rev-parse --verify --quiet origin/main >/dev/null || {
+          git fetch --no-tags origin refs/heads/main:refs/remotes/origin/main
+          git rev-parse --verify --quiet refs/remotes/origin/main >/dev/null || {
             echo "origin/main is unavailable" >&2
             exit 1
           }
-          git merge-base --is-ancestor "$GITHUB_SHA" origin/main || {
+          git merge-base --is-ancestor "$GITHUB_SHA" refs/remotes/origin/main || {
             echo "tagged commit ${GITHUB_SHA} is not an ancestor of origin/main" >&2
             exit 1
           }
@@ -143,14 +165,56 @@ jobs:
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
+          KEY_FILE: ${{ steps.config.outputs.key_file }}
         run: |
           set -euo pipefail
+          test -f release.json || {
+            echo "release.json is missing" >&2
+            exit 1
+          }
+          test -f registry.json.minisig || {
+            echo "registry.json.minisig is missing" >&2
+            exit 1
+          }
+          test -f registry.sha256 || {
+            echo "registry.sha256 is missing" >&2
+            exit 1
+          }
+          test -f registry.json || {
+            echo "registry.json is missing" >&2
+            exit 1
+          }
+          test -f "$KEY_FILE" || {
+            echo "signing.keyFile is missing: $KEY_FILE" >&2
+            exit 1
+          }
+          if [ -L "$KEY_FILE" ]; then
+            echo "signing.keyFile must not be a symlink: $KEY_FILE" >&2
+            exit 1
+          fi
+          invalid_key=$(find keys -maxdepth 1 -name '*.pub' ! -type f -print -quit)
+          if [ -n "$invalid_key" ]; then
+            echo "public key entries must be regular files: $invalid_key" >&2
+            exit 1
+          fi
+          key_files=()
+          while IFS= read -r key_path; do
+            key_files+=("$key_path")
+          done < <(find keys -maxdepth 1 -type f -name '*.pub' -print | LC_ALL=C sort)
+          if [ "${#key_files[@]}" -eq 0 ]; then
+            echo "no public key files found in keys/" >&2
+            exit 1
+          fi
+          printf '%s\n' "${key_files[@]}" | grep -Fxq -- "$KEY_FILE" || {
+            echo "signing.keyFile is not in the public key allowlist: $KEY_FILE" >&2
+            exit 1
+          }
           gh release create "${GITHUB_REF_NAME}" \
             registry.json \
             registry.json.minisig \
             registry.sha256 \
             release.json \
-            keys/*.pub \
+            "${key_files[@]}" \
             --verify-tag \
             --title "${GITHUB_REF_NAME}" \
             --notes "Signed Red Pen adapter registry ${GITHUB_REF_NAME}. Verify registry.json with registry.json.minisig and the committed public key."
